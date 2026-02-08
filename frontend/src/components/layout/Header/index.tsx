@@ -27,6 +27,7 @@ interface HeaderProps {
 const navigation = [
   { name: 'Products', href: '/products' },
   { name: 'Sellers', href: '/sellers' },
+  { name: 'About', href: '/about' },
   { name: 'How it works', href: '/how-it-works' },
 ];
 

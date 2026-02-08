@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Products Page
  * Browse and search products from sellers worldwide
@@ -5,14 +7,10 @@
  * Route: /products
  */
 
-import { Metadata } from 'next';
+import { useState, useMemo } from 'react';
 import { ProductGrid } from '@/components/features/ProductGrid';
-import { Product } from '@/types';
-
-export const metadata: Metadata = {
-  title: 'Products | Pluribus',
-  description: 'Browse products from sellers worldwide. Find what you need and get it delivered internationally.',
-};
+import { ProductFilters } from '@/components/features/ProductFilters';
+import { Product, ProductFiltersState } from '@/types';
 
 // Mock data for development
 // TODO: Replace with actual API call
@@ -142,21 +140,80 @@ const getMockProducts = (): Product[] => {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
+    {
+      id: '5',
+      sellerId: 'seller-2',
+      seller: {
+        id: 'seller-2',
+        name: 'Maria Garcia',
+        email: 'maria@example.com',
+        role: 'SELLER',
+        country: 'Spain',
+        city: 'Barcelona',
+        rating: 4.9,
+        reviewCount: 89,
+        emailVerified: true,
+        phoneVerified: true,
+        idVerified: true,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      title: 'Winter Wool Coat',
+      description: 'Premium winter coat made from 100% Italian wool. Elegant and warm for cold weather.',
+      photos: ['https://images.unsplash.com/photo-1539533057440-7814a5dc7dea?w=400'],
+      price: 189,
+      currency: 'EUR',
+      category: 'CLOTHING',
+      tags: ['coat', 'wool', 'winter'],
+      stockQuantity: 7,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '6',
+      sellerId: 'seller-3',
+      seller: {
+        id: 'seller-3',
+        name: 'Yuki Tanaka',
+        email: 'yuki@example.com',
+        role: 'SELLER',
+        country: 'Japan',
+        city: 'Tokyo',
+        rating: 5.0,
+        reviewCount: 234,
+        emailVerified: true,
+        phoneVerified: true,
+        idVerified: true,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      title: 'Japanese Ceramic Vase',
+      description: 'Hand-painted ceramic vase from Kyoto. Unique decorative piece with traditional patterns.',
+      photos: ['https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400'],
+      price: 145,
+      currency: 'USD',
+      category: 'HOME',
+      tags: ['vase', 'ceramic', 'japanese'],
+      stockQuantity: 4,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
   ];
 };
 
-interface ProductsPageProps {
-  searchParams: {
-    category?: string;
-    page?: string;
+export default function ProductsPage() {
+  const allProducts = useMemo(() => getMockProducts(), []);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
+  const [activeFilters, setActiveFilters] = useState<ProductFiltersState>({});
+
+  const handleFiltersChange = (filtered: Product[], filters: ProductFiltersState) => {
+    setFilteredProducts(filtered);
+    setActiveFilters(filters);
   };
-}
-
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  const products = getMockProducts();
 
   return (
     <div className="container px-4 py-8">
@@ -168,10 +225,29 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </p>
       </div>
 
-      {/* TODO: Add filters and search */}
+      {/* Layout: Filters on left, Products on right */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Filters Sidebar */}
+        <div className="lg:col-span-1">
+          <ProductFilters
+            products={allProducts}
+            onFiltersChange={handleFiltersChange}
+          />
+        </div>
 
-      {/* Products Grid */}
-      <ProductGrid products={products} />
+        {/* Products Section */}
+        <div className="lg:col-span-3">
+          {/* Results Info */}
+          <div className="mb-6">
+            <p className="text-sm text-muted-foreground">
+              Showing {filteredProducts.length} of {allProducts.length} products
+            </p>
+          </div>
+
+          {/* Products Grid */}
+          <ProductGrid products={filteredProducts} />
+        </div>
+      </div>
 
       {/* TODO: Add pagination */}
     </div>

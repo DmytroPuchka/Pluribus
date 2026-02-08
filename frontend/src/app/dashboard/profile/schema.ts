@@ -7,7 +7,7 @@ export const profileFormSchema = z.object({
   city: z.string().min(1, "Please enter a city"),
   bio: z.string().max(500, "Bio must not exceed 500 characters").optional().or(z.literal("")),
   role: z.enum(["buyer", "seller", "both"], {
-    errorMap: () => ({ message: "Please select a valid role" })
+    message: "Please select a valid role"
   }),
 })
 

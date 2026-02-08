@@ -378,7 +378,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
   const reviews = getMockSellerReviews(params.id);
 
   // Calculate statistics
-  const totalOrders = Math.floor(seller.reviewCount * 1.2);
+  const totalOrders = Math.floor((seller.reviewCount ?? 0) * 1.2);
   const responseTime = '< 2 hours';
   const yearsSelling = Math.floor((new Date().getTime() - seller.createdAt.getTime()) / (365 * 24 * 60 * 60 * 1000));
 

@@ -189,3 +189,13 @@ export interface CreateOrderFormData {
   deliveryAddress: string;
   notes?: string;
 }
+
+// Product Filter types
+export interface ProductFiltersState {
+  category?: ProductCategory;
+  minPrice?: number;
+  maxPrice?: number;
+  minRating?: number;
+  country?: string;
+  sortBy?: 'newest' | 'price-low-high' | 'price-high-low' | 'rating';
+}
