@@ -8,57 +8,16 @@
     "ui": [
       "create-component",
       "create-page",
-      "add-layout"
+      "integrate-pagination",
+      "add-loading-error-states",
+      "add-store"
     ],
     "api": [
-      "create-api-route",
-      "create-server-action"
-    ],
-    "database": [
-      "add-model",
-      "generate-migration"
-    ],
-    "testing": [
-      "generate-tests",
-      "run-tests"
+      "create-api-route"
     ]
   },
 
-  "agents": {
-    "ui-component-agent": {
-      "description": "Creates Next.js components with TypeScript, styling, and tests",
-      "triggers": ["create component", "new component", "add component"],
-      "capabilities": [
-        "Generate React Server/Client components",
-        "Create TypeScript interfaces",
-        "Add Tailwind CSS styling",
-        "Generate unit tests",
-        "Create Storybook stories"
-      ]
-    },
-    "page-agent": {
-      "description": "Creates Next.js pages with routing and layouts",
-      "triggers": ["create page", "new page", "add page"],
-      "capabilities": [
-        "Generate App Router pages",
-        "Setup metadata",
-        "Configure layouts",
-        "Add loading and error states",
-        "Generate tests"
-      ]
-    },
-    "api-agent": {
-      "description": "Creates API routes and server actions",
-      "triggers": ["create api", "new endpoint", "server action"],
-      "capabilities": [
-        "Generate API route handlers",
-        "Create Server Actions",
-        "Add validation schemas",
-        "Generate types",
-        "Create tests"
-      ]
-    }
-  },
+  "note_on_agents": "Custom agents not created - using Task tool with general-purpose subagents is more effective for this project",
 
   "paths": {
     "components": "src/components",
@@ -71,17 +30,32 @@
   },
 
   "conventions": {
-    "componentStyle": "functional",
+    "componentStyle": "functional with FC type",
     "typeStyle": "interface",
-    "testFramework": "jest",
-    "stylingMethod": "tailwind",
-    "namingConvention": "PascalCase"
+    "clientComponents": "use 'use client' directive when needed",
+    "stylingMethod": "tailwind + shadcn/ui",
+    "namingConvention": "PascalCase",
+    "fileStructure": "component/index.tsx (no separate CSS files)",
+    "imports": "use @ alias for src imports",
+    "props": "always destructure props",
+    "exports": "named export + default export",
+    "comments": "JSDoc for component description"
   },
 
   "templates": {
     "component": ".claude/templates/component.template.tsx",
     "page": ".claude/templates/page.template.tsx",
-    "apiRoute": ".claude/templates/api-route.template.ts",
-    "serverAction": ".claude/templates/server-action.template.ts"
+    "loadingState": ".claude/templates/loading.template.tsx",
+    "errorState": ".claude/templates/error.template.tsx",
+    "store": ".claude/templates/store.template.ts",
+    "apiRoute": ".claude/templates/api-route.template.ts"
+  },
+
+  "real_world_usage": {
+    "primary_method": "Task tool with subagents for parallel development",
+    "components_created": "36+ components via Write/Edit tools",
+    "pages_created": "22 pages via Task tool + subagents",
+    "skills_usage": "Skills serve as reference documentation, not directly invoked",
+    "effectiveness": "Task tool + subagents proved more flexible and powerful than custom skills"
   }
 }

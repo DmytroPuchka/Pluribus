@@ -16,7 +16,7 @@
 
 'use client';
 
-import { FC, useRef, useState, useCallback, useEffect } from 'react';
+import { FC, useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { Search, X, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -69,11 +69,14 @@ interface SearchBarProps {
   maxSuggestions?: number;
 }
 
+// Default empty array outside component to maintain reference equality
+const DEFAULT_SUGGESTIONS: string[] = [];
+
 export const SearchBar: FC<SearchBarProps> = ({
   placeholder = 'Search...',
   onSearch,
   loading = false,
-  suggestions = [],
+  suggestions = DEFAULT_SUGGESTIONS,
   className,
   debounceDelay = 300,
   onSuggestionSelect,
@@ -82,25 +85,30 @@ export const SearchBar: FC<SearchBarProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Filter suggestions based on search query
+  // Filter suggestions based on search query using useMemo to prevent infinite loops
+  const filteredSuggestions = useMemo(() => {
+    if (!searchQuery.trim() || suggestions.length === 0) {
+      return [];
+    }
+
+    return suggestions
+      .filter((suggestion) =>
+        suggestion.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .slice(0, maxSuggestions);
+  }, [searchQuery, suggestions, maxSuggestions]);
+
+  // Update showSuggestions based on filteredSuggestions
   useEffect(() => {
-    if (searchQuery.trim()) {
-      const filtered = suggestions
-        .filter((suggestion) =>
-          suggestion.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        .slice(0, maxSuggestions);
-      setFilteredSuggestions(filtered);
+    if (searchQuery.trim() && filteredSuggestions.length > 0) {
       setShowSuggestions(true);
     } else {
-      setFilteredSuggestions([]);
       setShowSuggestions(false);
     }
-  }, [searchQuery, suggestions, maxSuggestions]);
+  }, [searchQuery, filteredSuggestions.length]); // Use .length to avoid array reference issues
 
   // Debounced search handler
   const handleSearch = useCallback(
@@ -127,7 +135,6 @@ export const SearchBar: FC<SearchBarProps> = ({
   const handleClear = () => {
     setSearchQuery('');
     setShowSuggestions(false);
-    setFilteredSuggestions([]);
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }

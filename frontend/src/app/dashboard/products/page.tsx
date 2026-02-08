@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState, useMemo } from 'react';
+import { FC, useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Plus,
@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Image from 'next/image';
 import { PriceDisplay } from '@/components/common/PriceDisplay';
+import { Pagination } from '@/components/common/Pagination';
 import { Product, ProductCategory } from '@/types';
 
 // Mock seller products data
@@ -410,6 +411,10 @@ const DashboardProductsPage: FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+
   // Filter products based on selected filters
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -422,6 +427,18 @@ const DashboardProductsPage: FC = () => {
       return categoryMatch && statusMatch;
     });
   }, [products, selectedCategory, selectedStatus]);
+
+  // Calculate pagination
+  const totalItems = filteredProducts.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+  // Reset page on filter change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, selectedStatus]);
 
   // Calculate stats
   const totalProducts = products.length;
@@ -441,6 +458,16 @@ const DashboardProductsPage: FC = () => {
     // TODO: Implement delete functionality
     console.log('Delete product:', productId);
     // Call API to delete product
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
   };
 
   return (
@@ -545,6 +572,15 @@ const DashboardProductsPage: FC = () => {
           onStatusChange={setSelectedStatus}
         />
 
+        {/* Results Info */}
+        {filteredProducts.length > 0 && (
+          <div className="mb-6">
+            <p className="text-sm text-muted-foreground">
+              Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} products
+            </p>
+          </div>
+        )}
+
         {/* Products Grid or Empty State */}
         {filteredProducts.length === 0 && selectedCategory === null && selectedStatus === null ? (
           <EmptyState />
@@ -559,16 +595,33 @@ const DashboardProductsPage: FC = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <DashboardProductCard
-                key={product.id}
-                product={product}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {currentProducts.map((product) => (
+                <DashboardProductCard
+                  key={product.id}
+                  product={product}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  itemsPerPage={itemsPerPage}
+                  totalItems={totalItems}
+                  onPageChange={handlePageChange}
+                  onItemsPerPageChange={handleItemsPerPageChange}
+                  showItemsPerPageSelector={true}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

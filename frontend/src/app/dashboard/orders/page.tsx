@@ -7,12 +7,13 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { OrderCard } from '@/components/features/OrderCard';
+import { Pagination } from '@/components/common/Pagination';
 import { Order, OrderStatus } from '@/types';
 
 // Mock data for development
@@ -516,6 +517,10 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
     (searchParams.tab as OrderStatusTab) || 'all'
   );
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const orders = getMockOrders();
 
   // Filter orders by status and search query
@@ -548,6 +553,28 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
 
     return result;
   }, [orders, activeTab, searchQuery]);
+
+  // Calculate pagination
+  const totalItems = filteredOrders.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentOrders = filteredOrders.slice(startIndex, endIndex);
+
+  // Reset page on tab or search change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchQuery]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="container px-4 py-8">
@@ -611,8 +638,17 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
 
         {/* Orders List */}
         <div className="mt-6 space-y-4">
-          {filteredOrders.length > 0 ? (
-            filteredOrders.map((order) => (
+          {/* Results Info */}
+          {filteredOrders.length > 0 && (
+            <div className="mb-4">
+              <p className="text-sm text-muted-foreground">
+                Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} orders
+              </p>
+            </div>
+          )}
+
+          {currentOrders.length > 0 ? (
+            currentOrders.map((order) => (
               <OrderCard key={order.id} order={order} />
             ))
           ) : (
@@ -630,21 +666,23 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
               )}
             </div>
           )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                itemsPerPage={itemsPerPage}
+                totalItems={totalItems}
+                onPageChange={handlePageChange}
+                onItemsPerPageChange={handleItemsPerPageChange}
+                showItemsPerPageSelector={true}
+              />
+            </div>
+          )}
         </div>
       </Tabs>
-
-      {/* Pagination placeholder */}
-      {filteredOrders.length > 10 && (
-        <div className="mt-8 flex items-center justify-center gap-2">
-          <Button variant="outline" disabled>
-            Previous
-          </Button>
-          <span className="text-sm text-muted-foreground">Page 1 of 1</span>
-          <Button variant="outline" disabled>
-            Next
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

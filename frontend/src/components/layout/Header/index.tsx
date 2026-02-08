@@ -8,9 +8,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
 import { Menu, X, User, Globe } from 'lucide-react';
 import { Logo } from '@/components/common/Logo';
+import { SearchBar } from '@/components/common/SearchBar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -39,20 +41,25 @@ const languages = [
 ];
 
 export const Header: FC<HeaderProps> = ({ className }) => {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState('en');
 
   // TODO: Replace with actual auth state
   const isAuthenticated = false;
 
+  const handleSearch = (query: string) => {
+    router.push(`/products?search=${encodeURIComponent(query)}`);
+  };
+
   return (
     <header className={cn('sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60', className)}>
-      <nav className="container flex h-16 items-center justify-between px-4">
+      <nav className="container flex h-16 items-center justify-between px-4 gap-4">
         {/* Logo */}
         <Logo size="md" />
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex md:gap-8 items-center">
+        <div className="hidden lg:flex lg:gap-6 items-center">
           {navigation.map((item) => (
             <Link
               key={item.name}
@@ -62,6 +69,16 @@ export const Header: FC<HeaderProps> = ({ className }) => {
               {item.name}
             </Link>
           ))}
+        </div>
+
+        {/* Search Bar - Desktop Only */}
+        <div className="hidden md:flex flex-1 max-w-md mx-4">
+          <SearchBar
+            placeholder="Search products..."
+            onSearch={handleSearch}
+            showSearchButton={false}
+            className="w-full"
+          />
         </div>
 
         {/* Right side actions */}
@@ -140,6 +157,19 @@ export const Header: FC<HeaderProps> = ({ className }) => {
       {mobileMenuOpen && (
         <div className="md:hidden border-t">
           <div className="container px-4 py-4 space-y-4">
+            {/* Mobile Search Bar */}
+            <div className="pb-2">
+              <SearchBar
+                placeholder="Search products..."
+                onSearch={(query) => {
+                  handleSearch(query);
+                  setMobileMenuOpen(false);
+                }}
+                showSearchButton={false}
+                className="w-full"
+              />
+            </div>
+
             {navigation.map((item) => (
               <Link
                 key={item.name}

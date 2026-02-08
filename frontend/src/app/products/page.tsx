@@ -7,9 +7,10 @@
  * Route: /products
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ProductGrid } from '@/components/features/ProductGrid';
 import { ProductFilters } from '@/components/features/ProductFilters';
+import { Pagination } from '@/components/common/Pagination';
 import { Product, ProductFiltersState } from '@/types';
 
 // Mock data for development
@@ -210,9 +211,35 @@ export default function ProductsPage() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
   const [activeFilters, setActiveFilters] = useState<ProductFiltersState>({});
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+
+  // Calculate pagination
+  const totalItems = filteredProducts.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredProducts]);
+
   const handleFiltersChange = (filtered: Product[], filters: ProductFiltersState) => {
     setFilteredProducts(filtered);
     setActiveFilters(filters);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
   };
 
   return (
@@ -240,16 +267,29 @@ export default function ProductsPage() {
           {/* Results Info */}
           <div className="mb-6">
             <p className="text-sm text-muted-foreground">
-              Showing {filteredProducts.length} of {allProducts.length} products
+              Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} products
             </p>
           </div>
 
           {/* Products Grid */}
-          <ProductGrid products={filteredProducts} />
+          <ProductGrid products={currentProducts} />
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                itemsPerPage={itemsPerPage}
+                totalItems={totalItems}
+                onPageChange={handlePageChange}
+                onItemsPerPageChange={handleItemsPerPageChange}
+                showItemsPerPageSelector={true}
+              />
+            </div>
+          )}
         </div>
       </div>
-
-      {/* TODO: Add pagination */}
     </div>
   );
 }

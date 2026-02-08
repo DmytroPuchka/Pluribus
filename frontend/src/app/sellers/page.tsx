@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Search, MapPin, Star, Filter, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { SellerCard } from '@/components/features/SellerCard';
+import { Pagination } from '@/components/common/Pagination';
 import { User, SellerLocation } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -187,6 +188,10 @@ export default function SellersPage() {
   const [minRating, setMinRating] = useState<number>(0);
   const [showFilters, setShowFilters] = useState(false);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(9); // 3x3 grid
+
   const sellers = getMockSellers();
   const countries = getCountries(sellers);
 
@@ -223,12 +228,34 @@ export default function SellersPage() {
     return getSellerLocations(filteredSellers);
   }, [filteredSellers]);
 
+  // Calculate pagination
+  const totalItems = filteredSellers.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentSellers = filteredSellers.slice(startIndex, endIndex);
+
+  // Reset page on filter change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredSellers]);
+
   const hasActiveFilters = searchQuery || selectedCountry || minRating > 0;
 
   const handleClearFilters = () => {
     setSearchQuery('');
     setSelectedCountry('');
     setMinRating(0);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
   };
 
   return (
@@ -404,6 +431,11 @@ export default function SellersPage() {
                 Showing sellers matching your filters
               </p>
             )}
+            {filteredSellers.length > 0 && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} sellers
+              </p>
+            )}
           </div>
 
           {/* Empty State */}
@@ -423,12 +455,29 @@ export default function SellersPage() {
               </CardContent>
             </Card>
           ) : (
-            /* Sellers Grid */
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredSellers.map(seller => (
-                <SellerCard key={seller.id} seller={seller} />
-              ))}
-            </div>
+            <>
+              {/* Sellers Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentSellers.map(seller => (
+                  <SellerCard key={seller.id} seller={seller} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-8">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    itemsPerPage={itemsPerPage}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                    onItemsPerPageChange={handleItemsPerPageChange}
+                    showItemsPerPageSelector={true}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
