@@ -8,14 +8,33 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { Search, MapPin, Star, Filter, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { SellerCard } from '@/components/features/SellerCard';
-import { User } from '@/types';
+import { User, SellerLocation } from '@/types';
 import { cn } from '@/lib/utils';
+
+// Dynamic import for InteractiveSellerMap to avoid SSR issues with Leaflet
+const InteractiveSellerMap = dynamic(
+  () => import('@/components/features/InteractiveSellerMap').then(mod => mod.InteractiveSellerMap),
+  {
+    ssr: false,
+    loading: () => (
+      <Card className="overflow-hidden">
+        <div className="h-[500px] w-full flex items-center justify-center bg-muted">
+          <div className="text-center">
+            <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-3 animate-pulse" />
+            <p className="text-muted-foreground">Loading map...</p>
+          </div>
+        </div>
+      </Card>
+    ),
+  }
+);
 
 // Mock data for development
 // TODO: Replace with actual API call
@@ -138,6 +157,30 @@ const getCountries = (sellers: User[]): string[] => {
   return Array.from(new Set(countries)).sort();
 };
 
+// City coordinates map
+const cityCoordinates: Record<string, { lat: number; lng: number }> = {
+  'New York': { lat: 40.7128, lng: -74.0060 },
+  'Barcelona': { lat: 41.3874, lng: 2.1686 },
+  'Tokyo': { lat: 35.6762, lng: 139.6503 },
+  'Berlin': { lat: 52.5200, lng: 13.4050 },
+  'Mexico City': { lat: 19.4326, lng: -99.1332 },
+  'Paris': { lat: 48.8566, lng: 2.3522 },
+};
+
+// Convert sellers to SellerLocation format
+const getSellerLocations = (sellers: (User & { productCount: number })[]): SellerLocation[] => {
+  return sellers.map(seller => {
+    const coords = cityCoordinates[seller.city] || { lat: 0, lng: 0 };
+    return {
+      sellerId: seller.id,
+      seller: seller,
+      productCount: seller.productCount,
+      lat: coords.lat,
+      lng: coords.lng,
+    };
+  });
+};
+
 export default function SellersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<string>('');
@@ -175,6 +218,11 @@ export default function SellersPage() {
     });
   }, [searchQuery, selectedCountry, minRating]);
 
+  // Convert filtered sellers to map locations
+  const sellerLocations = useMemo(() => {
+    return getSellerLocations(filteredSellers);
+  }, [filteredSellers]);
+
   const hasActiveFilters = searchQuery || selectedCountry || minRating > 0;
 
   const handleClearFilters = () => {
@@ -199,21 +247,19 @@ export default function SellersPage() {
         </div>
       </section>
 
-      {/* Map Placeholder */}
-      <section className="py-8 md:py-12 border-b">
+      {/* Interactive Seller Map */}
+      <section className="py-8 md:py-12 border-b bg-muted/30">
         <div className="container px-4">
-          <div className="bg-muted rounded-lg overflow-hidden aspect-video flex items-center justify-center">
-            <div className="text-center">
-              <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-              <h3 className="font-semibold text-lg mb-2">Interactive Seller Map</h3>
-              <p className="text-muted-foreground mb-4 max-w-md">
-                TODO: Google Maps integration to visualize sellers by location
-              </p>
-              <Button variant="outline" disabled>
-                Coming Soon
-              </Button>
-            </div>
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold mb-2">Seller Locations</h2>
+            <p className="text-muted-foreground">
+              Explore sellers around the world. Click on a marker to see seller info, then click "View Profile" to visit their page.
+            </p>
           </div>
+          <InteractiveSellerMap
+            sellers={sellerLocations}
+            height="500px"
+          />
         </div>
       </section>
 
