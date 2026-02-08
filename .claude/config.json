@@ -1,0 +1,87 @@
+{
+  "project": "Pluribus",
+  "version": "0.1.0",
+  "framework": "next.js",
+  "description": "International delivery platform - Skills and Agents configuration",
+
+  "skills": {
+    "ui": [
+      "create-component",
+      "create-page",
+      "add-layout"
+    ],
+    "api": [
+      "create-api-route",
+      "create-server-action"
+    ],
+    "database": [
+      "add-model",
+      "generate-migration"
+    ],
+    "testing": [
+      "generate-tests",
+      "run-tests"
+    ]
+  },
+
+  "agents": {
+    "ui-component-agent": {
+      "description": "Creates Next.js components with TypeScript, styling, and tests",
+      "triggers": ["create component", "new component", "add component"],
+      "capabilities": [
+        "Generate React Server/Client components",
+        "Create TypeScript interfaces",
+        "Add Tailwind CSS styling",
+        "Generate unit tests",
+        "Create Storybook stories"
+      ]
+    },
+    "page-agent": {
+      "description": "Creates Next.js pages with routing and layouts",
+      "triggers": ["create page", "new page", "add page"],
+      "capabilities": [
+        "Generate App Router pages",
+        "Setup metadata",
+        "Configure layouts",
+        "Add loading and error states",
+        "Generate tests"
+      ]
+    },
+    "api-agent": {
+      "description": "Creates API routes and server actions",
+      "triggers": ["create api", "new endpoint", "server action"],
+      "capabilities": [
+        "Generate API route handlers",
+        "Create Server Actions",
+        "Add validation schemas",
+        "Generate types",
+        "Create tests"
+      ]
+    }
+  },
+
+  "paths": {
+    "components": "src/components",
+    "pages": "src/app",
+    "api": "src/app/api",
+    "lib": "src/lib",
+    "types": "src/types",
+    "tests": "__tests__",
+    "styles": "src/styles"
+  },
+
+  "conventions": {
+    "componentStyle": "functional",
+    "typeStyle": "interface",
+    "testFramework": "jest",
+    "stylingMethod": "tailwind",
+    "namingConvention": "PascalCase"
+  },
+
+  "templates": {
+    "component": ".claude/templates/component.template.tsx",
+    "page": ".claude/templates/page.template.tsx",
+    "apiRoute": ".claude/templates/api-route.template.ts",
+    "serverAction": ".claude/templates/server-action.template.ts"
+  }
+}

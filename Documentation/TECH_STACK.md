@@ -3,10 +3,15 @@
 ## Frontend
 
 ### Core Framework
-- **React 18+** с TypeScript
+- **Next.js 15+** (App Router) с TypeScript
+  - Server Components и Client Components
+  - Server-side rendering (SSR) и Static Site Generation (SSG)
+  - Built-in API routes
+  - Automatic code splitting и optimization
+  - Image optimization с next/image
+- **React 18+** (включен в Next.js)
   - React Hooks для управления состоянием
-  - React Context API / Redux Toolkit для глобального состояния
-  - React Router v6 для навигации
+  - React Context API / Zustand для глобального состояния
 
 ### UI Framework & Styling
 - **Tailwind CSS** - утилитарный CSS фреймворк
@@ -30,9 +35,12 @@
 - **React Query (TanStack Query)** - кеширование и синхронизация данных
 
 ### Authentication
-- **Firebase Authentication** или **Auth0** - готовые решения
-- **NextAuth.js** (если используется Next.js)
-- Google OAuth 2.0 integration
+- **NextAuth.js v5** - основное решение для аутентификации
+  - Google OAuth 2.0 integration
+  - Credentials provider (Email/Password)
+  - JWT и Session management
+  - Built-in CSRF protection
+- **Альтернатива**: Clerk или Supabase Auth
 
 ### Real-time Communication
 - **Socket.io-client** - WebSocket для чата
@@ -48,16 +56,17 @@
 - Оптимизация: next/image или cloudinary
 
 ### Build Tools
-- **Vite** - быстрый сборщик (рекомендуется)
-- **Webpack** (если нужна сложная конфигурация)
+- **Next.js Built-in** - встроенная система сборки (Turbopack/Webpack)
 - **ESLint** + **Prettier** - линтинг и форматирование
 - **Husky** + **lint-staged** - pre-commit хуки
+- **TypeScript** strict mode
 
 ### Testing
-- **Vitest** - unit тесты (совместим с Vite)
+- **Jest** или **Vitest** - unit тесты
 - **React Testing Library** - тестирование компонентов
-- **Playwright** или **Cypress** - E2E тесты
+- **Playwright** (рекомендуется для Next.js) - E2E тесты
 - **MSW (Mock Service Worker)** - моки API
+- **@testing-library/react** для Server Components
 
 ## Backend
 
@@ -242,30 +251,28 @@
 - **Apache Kafka** - для больших объемов данных
 - **AWS SQS** - управляемая очередь
 
-## Alternative Stack (Fullstack Next.js)
+## Преимущества выбранного стека (Next.js)
 
-Если предпочесть fullstack подход:
+Использование Next.js в качестве основного фреймворка предоставляет:
 
-- **Next.js 14+** (App Router)
-- **tRPC** - type-safe API
-- **Prisma** - ORM
-- **NextAuth.js** - аутентификация
-- **Vercel** - хостинг
-
-Преимущества:
-- Server-side rendering (SEO)
-- Лучшая производительность
-- Единая кодовая база
-- Type-safety от фронта до БД
+- **Server-side rendering (SSR)** - лучшее SEO и производительность
+- **Server Components** - меньше JavaScript на клиенте
+- **Server Actions** - type-safe мутации без API endpoints
+- **Built-in Optimization** - автоматическая оптимизация изображений, шрифтов, скриптов
+- **Edge Functions** - быстрые API routes на edge network
+- **Streaming** - прогрессивная загрузка страниц
+- **Type-safety** - от фронтенда до бэкенда
+- **Developer Experience** - отличная DX с Fast Refresh и TypeScript
+- **Vercel Integration** - простой деплой и масштабирование
 
 ## Рекомендуемый для старта (MVP)
 
 ### Frontend
-- React + TypeScript + Vite
+- Next.js 15+ (App Router) + TypeScript
 - Tailwind CSS + shadcn/ui
-- React Query + Axios
+- Server Actions для мутаций
 - React Hook Form + Zod
-- Google Maps API
+- Google Maps API + @vis.gl/react-google-maps
 
 ### Backend
 - Node.js + Express + TypeScript
@@ -278,8 +285,9 @@
 - AWS S3 или Cloudinary
 
 ### Hosting
-- Frontend: Vercel / Netlify
+- Frontend: **Vercel** (оптимизирован для Next.js) / Netlify
 - Backend: Railway / Render / DigitalOcean
-- DB: Supabase / Neon (управляемый PostgreSQL)
+- DB: **Vercel Postgres** / Supabase / Neon (управляемый PostgreSQL)
+- Edge: Vercel Edge Functions для API routes
 
 Этот стек позволит быстро начать разработку MVP с возможностью масштабирования.
