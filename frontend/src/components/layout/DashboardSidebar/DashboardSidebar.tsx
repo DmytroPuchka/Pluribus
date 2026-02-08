@@ -1,0 +1,196 @@
+'use client';
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import {
+  LayoutDashboard,
+  ShoppingCart,
+  Package,
+  User,
+  Settings,
+  Menu,
+  X,
+  LogOut,
+  ChevronDown,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { User as UserType } from '@/types';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+
+interface DashboardSidebarProps {
+  user: UserType;
+  onRoleSwitch?: (role: 'BUYER' | 'SELLER') => void;
+  currentRole?: 'BUYER' | 'SELLER';
+}
+
+export function DashboardSidebar({
+  user,
+  onRoleSwitch,
+  currentRole = 'BUYER',
+}: DashboardSidebarProps) {
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navItems = [
+    {
+      href: '/dashboard',
+      label: 'Overview',
+      icon: LayoutDashboard,
+      exact: true,
+    },
+    {
+      href: '/dashboard/orders',
+      label: 'Orders',
+      icon: ShoppingCart,
+    },
+    {
+      href: '/dashboard/products',
+      label: 'Products',
+      icon: Package,
+    },
+    {
+      href: '/dashboard/profile',
+      label: 'Profile',
+      icon: User,
+    },
+    {
+      href: '/dashboard/settings',
+      label: 'Settings',
+      icon: Settings,
+    },
+  ];
+
+  const isActive = (href: string, exact: boolean = false) => {
+    if (exact) {
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
+  };
+
+  const sidebarContent = (
+    <>
+      {/* User Info */}
+      <div className="mb-8 flex items-center gap-3">
+        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-sm">
+          {user.name
+            .split(' ')
+            .map((n) => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2)}
+        </div>
+        <div className="flex-1">
+          <p className="font-semibold text-sm truncate">{user.name}</p>
+          <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+        </div>
+      </div>
+
+      {/* Role Switcher */}
+      {user.role === 'BOTH' && onRoleSwitch && (
+        <div className="mb-6 rounded-lg bg-muted p-3">
+          <p className="text-xs font-medium text-muted-foreground mb-2">
+            Current Role
+          </p>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between"
+              >
+                <span>{currentRole === 'BUYER' ? '🛍️ Buyer' : '🏪 Seller'}</span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-40">
+              <DropdownMenuItem onClick={() => onRoleSwitch('BUYER')}>
+                <span>🛍️ Buyer</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onRoleSwitch('SELLER')}>
+                <span>🏪 Seller</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
+
+      {/* Navigation */}
+      <nav className="space-y-2 mb-8 flex-1">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.href, item.exact);
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                active
+                  ? 'bg-blue-100 text-blue-900'
+                  : 'text-muted-foreground hover:bg-muted'
+              }`}
+              onClick={() => setIsMobileOpen(false)}
+            >
+              <Icon className="h-4 w-4" />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Logout */}
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-full justify-start"
+        onClick={() => setIsMobileOpen(false)}
+      >
+        <LogOut className="h-4 w-4 mr-2" />
+        Logout
+      </Button>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Toggle */}
+      <div className="lg:hidden sticky top-0 z-40 border-b bg-background p-4 flex items-center justify-between">
+        <h1 className="font-bold text-lg">Pluribus</h1>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+        >
+          {isMobileOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </Button>
+      </div>
+
+      {/* Mobile Drawer */}
+      {isMobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-30 bg-black/50" onClick={() => setIsMobileOpen(false)} />
+      )}
+
+      <aside
+        className={`fixed left-0 top-0 z-30 h-screen w-64 border-r bg-background p-6 transition-transform duration-200 lg:relative lg:translate-x-0 lg:top-auto ${
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="hidden lg:block mb-8">
+          <h1 className="font-bold text-lg text-blue-600">Pluribus</h1>
+        </div>
+        {sidebarContent}
+      </aside>
+    </>
+  );
+}
