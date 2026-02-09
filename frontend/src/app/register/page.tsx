@@ -20,33 +20,7 @@ import {
 } from '@/components/ui/form';
 import { Logo } from '@/components/common/Logo';
 import { Mail, Lock, User, Globe, MapPin, UserCheck } from 'lucide-react';
-
-const registrationSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Name must be at least 2 characters.',
-  }),
-  email: z.string().email({
-    message: 'Please enter a valid email address.',
-  }),
-  password: z.string().min(8, {
-    message: 'Password must be at least 8 characters.',
-  }),
-  confirmPassword: z.string(),
-  country: z.string().min(1, {
-    message: 'Please select a country.',
-  }),
-  city: z.string().min(2, {
-    message: 'City must be at least 2 characters.',
-  }),
-  role: z.enum(['buyer', 'seller', 'both'], {
-    message: 'Please select a role.',
-  }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
-});
-
-type RegistrationFormValues = z.infer<typeof registrationSchema>;
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 const countries = [
   'United States',
@@ -68,6 +42,34 @@ const countries = [
 ];
 
 export default function RegisterPage() {
+  const { t } = useTranslations();
+
+  const registrationSchema = z.object({
+    name: z.string().min(2, {
+      message: t('auth.signup.validation.nameMinLength'),
+    }),
+    email: z.string().email({
+      message: t('auth.signup.validation.emailInvalid'),
+    }),
+    password: z.string().min(8, {
+      message: t('auth.signup.validation.passwordMinLength'),
+    }),
+    confirmPassword: z.string(),
+    country: z.string().min(1, {
+      message: t('auth.signup.validation.countryRequired'),
+    }),
+    city: z.string().min(2, {
+      message: t('auth.signup.validation.cityMinLength'),
+    }),
+    role: z.enum(['buyer', 'seller', 'both'], {
+      message: t('auth.signup.validation.roleRequired'),
+    }),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('auth.signup.validation.passwordMismatch'),
+    path: ['confirmPassword'],
+  });
+
+  type RegistrationFormValues = z.infer<typeof registrationSchema>;
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -129,9 +131,9 @@ export default function RegisterPage() {
         {/* Main Card */}
         <Card className="border shadow-lg">
           <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t('auth.signup.title')}</CardTitle>
             <CardDescription className="text-base">
-              Join Pluribus to buy and sell internationally
+              {t('auth.signup.subtitle')}
             </CardDescription>
           </CardHeader>
 
@@ -140,7 +142,7 @@ export default function RegisterPage() {
             {success && (
               <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <p className="text-green-800 font-medium">
-                  Account created successfully! Please check your email to verify.
+                  {t('auth.signup.success.message')}
                 </p>
               </div>
             )}
@@ -157,7 +159,7 @@ export default function RegisterPage() {
                   G
                 </text>
               </svg>
-              Sign up with Google
+              {t('auth.signup.google')}
             </Button>
 
             {/* Divider */}
@@ -166,7 +168,7 @@ export default function RegisterPage() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">or continue with email</span>
+                <span className="px-2 bg-white text-gray-500">{t('auth.signup.or')}</span>
               </div>
             </div>
 
@@ -181,11 +183,11 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <User className="w-4 h-4" />
-                        Full Name
+                        {t('auth.signup.fullName')}
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="John Doe"
+                          placeholder={t('auth.signup.placeholders.fullName')}
                           disabled={isLoading}
                           {...field}
                         />
@@ -203,12 +205,12 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <Mail className="w-4 h-4" />
-                        Email Address
+                        {t('auth.signup.email')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="email"
-                          placeholder="you@example.com"
+                          placeholder={t('auth.signup.placeholders.email')}
                           disabled={isLoading}
                           {...field}
                         />
@@ -226,18 +228,18 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <Lock className="w-4 h-4" />
-                        Password
+                        {t('auth.signup.password')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="password"
-                          placeholder="••••••••"
+                          placeholder={t('auth.signup.placeholders.password')}
                           disabled={isLoading}
                           {...field}
                         />
                       </FormControl>
                       <FormDescription className="text-xs">
-                        At least 8 characters for security
+                        {t('auth.signup.passwordDescription')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -252,12 +254,12 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <Lock className="w-4 h-4" />
-                        Confirm Password
+                        {t('auth.signup.confirmPassword')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="password"
-                          placeholder="••••••••"
+                          placeholder={t('auth.signup.placeholders.password')}
                           disabled={isLoading}
                           {...field}
                         />
@@ -275,7 +277,7 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <Globe className="w-4 h-4" />
-                        Country
+                        {t('auth.signup.country')}
                       </FormLabel>
                       <FormControl>
                         <select
@@ -283,7 +285,7 @@ export default function RegisterPage() {
                           className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
                           {...field}
                         >
-                          <option value="">Select a country</option>
+                          <option value="">{t('auth.signup.placeholders.country')}</option>
                           {countries.map((country) => (
                             <option key={country} value={country}>
                               {country}
@@ -304,11 +306,11 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <MapPin className="w-4 h-4" />
-                        City
+                        {t('auth.signup.city')}
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="New York"
+                          placeholder={t('auth.signup.placeholders.city')}
                           disabled={isLoading}
                           {...field}
                         />
@@ -326,7 +328,7 @@ export default function RegisterPage() {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <UserCheck className="w-4 h-4" />
-                        I want to be a
+                        {t('auth.signup.role')}
                       </FormLabel>
                       <FormControl>
                         <select
@@ -334,13 +336,13 @@ export default function RegisterPage() {
                           className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
                           {...field}
                         >
-                          <option value="buyer">Buyer</option>
-                          <option value="seller">Seller</option>
-                          <option value="both">Both Buyer & Seller</option>
+                          <option value="buyer">{t('auth.signup.roleOptions.buyer')}</option>
+                          <option value="seller">{t('auth.signup.roleOptions.seller')}</option>
+                          <option value="both">{t('auth.signup.roleOptions.both')}</option>
                         </select>
                       </FormControl>
                       <FormDescription className="text-xs">
-                        You can change this later in your profile settings
+                        {t('auth.signup.roleDescription')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -353,7 +355,7 @@ export default function RegisterPage() {
                   disabled={isLoading}
                   className="w-full h-10 mt-6"
                 >
-                  {isLoading ? 'Creating account...' : 'Create Account'}
+                  {isLoading ? t('auth.signup.submitting') : t('auth.signup.submit')}
                 </Button>
               </form>
             </Form>
@@ -361,12 +363,12 @@ export default function RegisterPage() {
             {/* Login Link */}
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                Already have an account?{' '}
+                {t('auth.signup.haveAccount')}{' '}
                 <Link
                   href="/login"
                   className="font-medium text-primary hover:underline transition-colors"
                 >
-                  Sign in
+                  {t('auth.signup.loginLink')}
                 </Link>
               </p>
             </div>
@@ -374,13 +376,13 @@ export default function RegisterPage() {
             {/* Terms */}
             <div className="mt-4 text-center text-xs text-muted-foreground">
               <p>
-                By creating an account, you agree to our{' '}
+                {t('auth.signup.termsFooter')}{' '}
                 <Link href="/terms" className="hover:underline text-primary">
-                  Terms of Service
+                  {t('auth.signup.termsLink')}
                 </Link>
-                {' '}and{' '}
+                {' '}{t('auth.signup.and')}{' '}
                 <Link href="/privacy" className="hover:underline text-primary">
-                  Privacy Policy
+                  {t('auth.signup.privacyLink')}
                 </Link>
               </p>
             </div>

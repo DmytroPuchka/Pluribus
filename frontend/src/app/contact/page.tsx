@@ -1,4 +1,5 @@
-import type { Metadata } from "next"
+'use client';
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -14,28 +15,10 @@ import {
   HelpCircle,
 } from "lucide-react"
 import { ContactForm } from "./contact-form"
-
-export const metadata: Metadata = {
-  title: "Contact Us - Pluribus",
-  description:
-    "Get in touch with Pluribus. We're here to help with questions about buying, selling, or using our platform. Contact us via email, phone, or our contact form.",
-  keywords: [
-    "contact",
-    "support",
-    "customer service",
-    "help",
-    "email",
-    "phone",
-  ],
-  openGraph: {
-    title: "Contact Us - Pluribus",
-    description:
-      "Get in touch with Pluribus. We're here to help with questions about buying, selling, or using our platform.",
-    type: "website",
-  },
-}
+import { useTranslations } from "@/contexts/TranslationsContext"
 
 export default function Contact() {
+  const { t } = useTranslations();
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -43,10 +26,10 @@ export default function Contact() {
         <div className="container px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-6">
-              Get in Touch
+              {t('pages.contact.hero.title')}
             </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              We're here to help! Whether you have questions about our platform, need support, or want to partner with us, our team is ready to assist.
+              {t('pages.contact.hero.subtitle')}
             </p>
           </div>
         </div>
@@ -254,12 +237,12 @@ export default function Contact() {
         <div className="container px-4">
           <Card className="bg-gradient-to-r from-blue-600 to-blue-700 text-white border-0 max-w-3xl mx-auto">
             <CardContent className="p-12 text-center">
-              <h2 className="text-3xl font-bold mb-4">Have a General Question?</h2>
+              <h2 className="text-3xl font-bold mb-4">{t('pages.contact.cta.title')}</h2>
               <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-                Check out our how-it-works guide for detailed information about using Pluribus as a buyer or seller.
+                {t('pages.contact.cta.subtitle')}
               </p>
               <Button size="lg" variant="secondary" asChild>
-                <Link href="/how-it-works">Learn How It Works</Link>
+                <Link href="/how-it-works">{t('pages.contact.cta.button')}</Link>
               </Button>
             </CardContent>
           </Card>

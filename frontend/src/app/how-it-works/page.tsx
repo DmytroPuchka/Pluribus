@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+'use client';
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,27 +18,10 @@ import {
   HelpCircle,
   Lock,
 } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "How It Works - Pluribus",
-  description:
-    "Learn how Pluribus works. Complete guide for buyers and sellers on international delivery and global marketplace.",
-  keywords: [
-    "how it works",
-    "guide",
-    "international delivery",
-    "buyer guide",
-    "seller guide",
-  ],
-  openGraph: {
-    title: "How It Works - Pluribus",
-    description:
-      "Learn how Pluribus works. Complete guide for buyers and sellers on international delivery and global marketplace.",
-    type: "website",
-  },
-};
+import { useTranslations } from "@/contexts/TranslationsContext";
 
 export default function HowItWorks() {
+  const { t } = useTranslations();
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -45,14 +29,12 @@ export default function HowItWorks() {
         <div className="container px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-6">
-              How
-              <span className="text-blue-600"> Pluribus </span>
-              Works
+              {t('pages.howItWorks.hero.title')}
+              <span className="text-blue-600">{t('pages.howItWorks.hero.titleHighlight')}</span>
+              {t('pages.howItWorks.hero.titleEnd')}
             </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Discover the simple process behind connecting global buyers and
-              sellers. Whether you're looking to purchase or sell, we've made
-              international delivery accessible and secure for everyone.
+              {t('pages.howItWorks.hero.subtitle')}
             </p>
           </div>
         </div>
@@ -62,10 +44,9 @@ export default function HowItWorks() {
       <section className="py-20 md:py-32">
         <div className="container px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Why Pluribus?</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('pages.howItWorks.why.title')}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              We've built a platform that removes the barriers of international
-              shopping, making it as easy as local commerce.
+              {t('pages.howItWorks.why.subtitle')}
             </p>
           </div>
 
@@ -117,10 +98,9 @@ export default function HowItWorks() {
       <section className="py-20 md:py-32 bg-muted/50">
         <div className="container px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">For Buyers</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('pages.howItWorks.forBuyers.title')}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Follow these simple steps to find and purchase products from
-              sellers worldwide
+              {t('pages.howItWorks.forBuyers.subtitle')}
             </p>
           </div>
 
@@ -360,9 +340,9 @@ export default function HowItWorks() {
       <section className="py-20 md:py-32">
         <div className="container px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">For Sellers</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('pages.howItWorks.forSellers.title')}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Start selling to customers around the world in just a few steps
+              {t('pages.howItWorks.forSellers.subtitle')}
             </p>
           </div>
 
@@ -602,10 +582,9 @@ export default function HowItWorks() {
       <section className="py-20 md:py-32 bg-muted/50">
         <div className="container px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('pages.howItWorks.faq.title')}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Have questions? Find answers to the most common questions about
-              using Pluribus
+              {t('pages.howItWorks.faq.subtitle')}
             </p>
           </div>
 
@@ -777,10 +756,9 @@ export default function HowItWorks() {
       <section className="py-20 md:py-32">
         <div className="container px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Your Safety is Our Priority</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('pages.howItWorks.security.title')}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              We've implemented multiple layers of protection to ensure safe and
-              secure transactions for all users
+              {t('pages.howItWorks.security.subtitle')}
             </p>
           </div>
 
@@ -859,15 +837,14 @@ export default function HowItWorks() {
         <div className="container px-4">
           <Card className="bg-gradient-to-r from-blue-600 to-blue-700 text-white border-0 max-w-3xl mx-auto">
             <CardContent className="p-12 text-center">
-              <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
+              <h2 className="text-3xl font-bold mb-4">{t('pages.howItWorks.cta.title')}</h2>
               <p className="text-blue-100 mb-8">
-                Join thousands of buyers and sellers using Pluribus to connect
-                globally. It's free to join!
+                {t('pages.howItWorks.cta.subtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" variant="secondary" asChild>
                   <Link href="/register">
-                    Create Your Account
+                    {t('pages.howItWorks.cta.createAccount')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -877,7 +854,7 @@ export default function HowItWorks() {
                   className="bg-transparent border-white text-white hover:bg-white/10"
                   asChild
                 >
-                  <Link href="/products">Browse Products</Link>
+                  <Link href="/products">{t('pages.howItWorks.cta.browseProducts')}</Link>
                 </Button>
               </div>
             </CardContent>

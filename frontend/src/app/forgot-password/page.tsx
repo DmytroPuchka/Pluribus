@@ -18,18 +18,20 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react'
-
-// Validation schema
-const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .email('Please enter a valid email address')
-    .min(1, 'Email is required'),
-})
-
-type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>
+import { useTranslations } from '@/contexts/TranslationsContext'
 
 export default function ForgotPasswordPage() {
+  const { t } = useTranslations()
+
+  // Validation schema
+  const forgotPasswordSchema = z.object({
+    email: z
+      .string()
+      .email(t('auth.forgotPassword.validation.emailInvalid'))
+      .min(1, t('auth.forgotPassword.validation.emailRequired')),
+  })
+
+  type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submittedEmail, setSubmittedEmail] = useState('')
@@ -61,8 +63,8 @@ export default function ForgotPasswordPage() {
       setIsSubmitted(true)
     } catch (err) {
       console.error('Forgot password error:', err)
-      setError('An error occurred. Please try again.')
-      form.setError('root', { message: 'Failed to process password reset. Please try again.' })
+      setError(t('auth.forgotPassword.errors.generic'))
+      form.setError('root', { message: t('auth.forgotPassword.errors.failedToProcess') })
     } finally {
       setIsLoading(false)
     }
@@ -83,7 +85,7 @@ export default function ForgotPasswordPage() {
       await new Promise(resolve => setTimeout(resolve, 1000))
     } catch (err) {
       console.error('Resend error:', err)
-      setError('Failed to resend email. Please try again.')
+      setError(t('auth.forgotPassword.errors.failedToResend'))
     } finally {
       setIsLoading(false)
     }
@@ -103,7 +105,7 @@ export default function ForgotPasswordPage() {
           className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to login
+          {t('auth.forgotPassword.backToLogin')}
         </Link>
 
         {/* Header with Logo */}
@@ -111,11 +113,11 @@ export default function ForgotPasswordPage() {
           <div className="mb-6 flex justify-center">
             <Logo size="lg" href="/" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Reset Your Password</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('auth.forgotPassword.title')}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {isSubmitted
-              ? 'Check your email for a password reset link'
-              : 'Enter your email address and we\'ll send you a link to reset your password'}
+              ? t('auth.forgotPassword.subtitleSuccess')
+              : t('auth.forgotPassword.subtitle')}
           </p>
         </div>
 
@@ -134,16 +136,16 @@ export default function ForgotPasswordPage() {
 
                 {/* Success Message */}
                 <div className="space-y-2 text-center">
-                  <h2 className="text-lg font-semibold text-foreground">Check your email</h2>
+                  <h2 className="text-lg font-semibold text-foreground">{t('auth.forgotPassword.success.title')}</h2>
                   <p className="text-sm text-muted-foreground">
-                    We've sent a password reset link to <span className="font-medium text-foreground">{submittedEmail}</span>
+                    {t('auth.forgotPassword.success.message')} <span className="font-medium text-foreground">{submittedEmail}</span>
                   </p>
                 </div>
 
                 {/* Instructions */}
                 <div className="rounded-lg bg-blue-50/50 p-4 text-sm text-muted-foreground space-y-2">
-                  <p>The reset link will expire in 24 hours.</p>
-                  <p>If you don't see the email, check your spam folder.</p>
+                  <p>{t('auth.forgotPassword.success.instructions1')}</p>
+                  <p>{t('auth.forgotPassword.success.instructions2')}</p>
                 </div>
 
                 {/* Resend Email Button */}
@@ -154,7 +156,7 @@ export default function ForgotPasswordPage() {
                   className="w-full"
                   size="lg"
                 >
-                  {isLoading ? 'Sending...' : 'Didn\'t receive the email? Resend'}
+                  {isLoading ? t('auth.forgotPassword.resend.sending') : t('auth.forgotPassword.resend.button')}
                 </Button>
 
                 {/* Back to Login Button */}
@@ -164,14 +166,14 @@ export default function ForgotPasswordPage() {
                   className="w-full"
                   size="lg"
                 >
-                  Back to Login
+                  {t('auth.forgotPassword.backToLoginButton')}
                 </Button>
 
                 {/* Help Text */}
                 <p className="text-center text-xs text-muted-foreground">
-                  Having trouble?{' '}
+                  {t('auth.forgotPassword.help.trouble')}{' '}
                   <Link href="/contact-support" className="text-primary hover:underline">
-                    Contact support
+                    {t('auth.forgotPassword.help.contactSupport')}
                   </Link>
                 </p>
               </div>
@@ -181,7 +183,7 @@ export default function ForgotPasswordPage() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   {/* Instructions */}
                   <div className="rounded-lg bg-blue-50/50 p-3 text-sm text-muted-foreground">
-                    <p>Enter the email address associated with your account, and we'll send you a link to reset your password.</p>
+                    <p>{t('auth.forgotPassword.instructions')}</p>
                   </div>
 
                   {/* Email Field */}
@@ -190,13 +192,13 @@ export default function ForgotPasswordPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="email">Email Address</FormLabel>
+                        <FormLabel htmlFor="email">{t('auth.forgotPassword.email')}</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                             <Input
                               id="email"
-                              placeholder="name@example.com"
+                              placeholder={t('auth.forgotPassword.placeholders.email')}
                               type="email"
                               autoComplete="email"
                               className="pl-10"
@@ -224,7 +226,7 @@ export default function ForgotPasswordPage() {
                     className="w-full"
                     size="lg"
                   >
-                    {isLoading ? 'Sending reset link...' : 'Send Reset Link'}
+                    {isLoading ? t('auth.forgotPassword.submitting') : t('auth.forgotPassword.submit')}
                   </Button>
 
                   {/* Root Error Message */}
@@ -242,15 +244,15 @@ export default function ForgotPasswordPage() {
         {/* Additional Help Links */}
         <div className="mt-6 text-center space-y-2 text-sm text-muted-foreground">
           <p>
-            Remember your password?{' '}
+            {t('auth.forgotPassword.rememberPassword')}{' '}
             <Link href="/login" className="text-primary font-medium hover:underline">
-              Sign in instead
+              {t('auth.forgotPassword.signInInstead')}
             </Link>
           </p>
           <p>
-            Don't have an account?{' '}
+            {t('auth.forgotPassword.noAccount')}{' '}
             <Link href="/register" className="text-primary font-medium hover:underline">
-              Sign up
+              {t('auth.forgotPassword.signUp')}
             </Link>
           </p>
         </div>

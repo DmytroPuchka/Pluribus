@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+'use client';
+
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,25 +15,7 @@ import {
   Cookie,
   FileText,
 } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Privacy Policy - Pluribus",
-  description:
-    "Learn about how Pluribus collects, uses, and protects your personal data. GDPR compliant privacy policy for international delivery marketplace.",
-  keywords: [
-    "privacy policy",
-    "GDPR",
-    "data protection",
-    "privacy",
-    "personal data",
-  ],
-  openGraph: {
-    title: "Privacy Policy - Pluribus",
-    description:
-      "GDPR compliant privacy policy for Pluribus international delivery marketplace.",
-    type: "website",
-  },
-};
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 interface TableOfContentsItem {
   title: string;
@@ -54,6 +37,8 @@ const tableOfContents: TableOfContentsItem[] = [
 ];
 
 export default function PrivacyPolicy() {
+  const { t } = useTranslations();
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Hero Section */}
@@ -62,20 +47,17 @@ export default function PrivacyPolicy() {
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
               <Shield className="h-4 w-4" />
-              Your Privacy Matters
+              {t('pages.privacy.hero.badge')}
             </div>
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-6">
-              Privacy <span className="text-blue-600">Policy</span>
+              {t('pages.privacy.hero.title')} <span className="text-blue-600">{t('pages.privacy.hero.titleHighlight')}</span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              At Pluribus, we are committed to protecting your privacy and
-              ensuring transparency in how we collect, use, and manage your
-              personal data. This privacy policy outlines our practices in
-              compliance with GDPR and other applicable regulations.
+              {t('pages.privacy.hero.subtitle')}
             </p>
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4" />
-              <span>Last Updated: February 8, 2025</span>
+              <span>{t('pages.privacy.hero.lastUpdated')}: February 8, 2025</span>
             </div>
           </div>
         </div>
@@ -88,15 +70,10 @@ export default function PrivacyPolicy() {
             <AlertCircle className="h-6 w-6 text-amber-600 flex-shrink-0 mt-0.5" />
             <div>
               <h3 className="font-semibold text-amber-900 mb-2">
-                Important Legal Notice
+                {t('pages.privacy.disclaimer.title')}
               </h3>
               <p className="text-sm text-amber-800">
-                This privacy policy is a template provided for informational
-                purposes. While it reflects standard data protection practices,
-                it should be reviewed and customized by a qualified legal
-                professional to ensure full compliance with applicable laws in
-                your jurisdiction. Pluribus cannot be held responsible for any
-                gaps or misalignment with local regulations.
+                {t('pages.privacy.disclaimer.description')}
               </p>
             </div>
           </div>
@@ -113,7 +90,7 @@ export default function PrivacyPolicy() {
                   <CardContent className="p-6">
                     <h3 className="font-semibold text-lg mb-6 flex items-center gap-2">
                       <FileText className="h-5 w-5" />
-                      Table of Contents
+                      {t('pages.privacy.toc.title')}
                     </h3>
                     <nav className="space-y-3">
                       {tableOfContents.map((item) => (
@@ -995,12 +972,10 @@ export default function PrivacyPolicy() {
                 <Card className="bg-gradient-to-r from-blue-600 to-blue-700 text-white border-0">
                   <CardContent className="p-12 text-center">
                     <h3 className="text-2xl font-bold mb-4">
-                      Your Privacy Matters to Us
+                      {t('pages.privacy.cta.title')}
                     </h3>
                     <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-                      We are committed to transparency and putting you in control
-                      of your personal data. If you have any questions or
-                      concerns, please don't hesitate to reach out.
+                      {t('pages.privacy.cta.description')}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button
@@ -1010,7 +985,7 @@ export default function PrivacyPolicy() {
                         className="bg-white text-blue-600 hover:bg-blue-50"
                       >
                         <a href="mailto:privacy@pluribus.com">
-                          Contact Privacy Team
+                          {t('pages.privacy.cta.contactButton')}
                         </a>
                       </Button>
                       <Button
@@ -1019,7 +994,7 @@ export default function PrivacyPolicy() {
                         className="bg-transparent border-white text-white hover:bg-white/10"
                         asChild
                       >
-                        <Link href="/">Return to Home</Link>
+                        <Link href="/">{t('pages.privacy.cta.homeButton')}</Link>
                       </Button>
                     </div>
                   </CardContent>
@@ -1034,12 +1009,11 @@ export default function PrivacyPolicy() {
       <section className="bg-slate-50 border-t border-slate-200 py-8">
         <div className="container px-4 max-w-6xl mx-auto">
           <p className="text-sm text-muted-foreground text-center">
-            This privacy policy is effective as of February 8, 2025. Last updated:
-            February 8, 2025. Please review our{" "}
+            {t('pages.privacy.footer.effective')}{" "}
             <Link href="/terms" className="text-blue-600 hover:underline">
-              Terms of Service
+              {t('pages.privacy.footer.terms')}
             </Link>{" "}
-            for additional important information about using Pluribus.
+            {t('pages.privacy.footer.forAdditional')}
           </p>
         </div>
       </section>

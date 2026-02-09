@@ -19,23 +19,23 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
-
-// Validation schema
-const loginSchema = z.object({
-  email: z
-    .string()
-    .email('Please enter a valid email address')
-    .min(1, 'Email is required'),
-  password: z
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .min(1, 'Password is required'),
-  rememberMe: z.boolean(),
-})
-
-type LoginFormValues = z.infer<typeof loginSchema>
+import { useTranslations } from '@/contexts/TranslationsContext'
 
 export default function LoginPage() {
+  const { t } = useTranslations()
+
+  // Validation schema
+  const loginSchema = z.object({
+    email: z
+      .string()
+      .email(t('auth.login.validation.emailInvalid'))
+      .min(1, t('auth.login.validation.emailRequired')),
+    password: z
+      .string()
+      .min(6, t('auth.login.validation.passwordMinLength'))
+      .min(1, t('auth.login.validation.passwordRequired')),
+    rememberMe: z.boolean(),
+  })
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -57,13 +57,13 @@ export default function LoginPage() {
 
       // Mock success for demonstration
       await new Promise(resolve => setTimeout(resolve, 1000))
-      alert('Login successful! (Mock)')
+      alert(t('auth.login.messages.success'))
 
       // Clear form on successful submission
       form.reset()
     } catch (error) {
       console.error('Login error:', error)
-      alert('Login failed. Please try again.')
+      alert(t('auth.login.messages.failed'))
     } finally {
       setIsLoading(false)
     }
@@ -79,9 +79,9 @@ export default function LoginPage() {
 
         <Card>
           <CardHeader className="space-y-2">
-            <CardTitle className="text-2xl">Welcome Back</CardTitle>
+            <CardTitle className="text-2xl">{t('auth.login.title')}</CardTitle>
             <CardDescription>
-              Sign in to your account to continue shopping
+              {t('auth.login.subtitle')}
             </CardDescription>
           </CardHeader>
 
@@ -94,13 +94,13 @@ export default function LoginPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email Address</FormLabel>
+                      <FormLabel>{t('auth.login.email')}</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 w-5 h-5 text-muted-foreground pointer-events-none" />
                           <Input
                             type="email"
-                            placeholder="you@example.com"
+                            placeholder={t('auth.login.placeholders.email')}
                             className="pl-10"
                             {...field}
                           />
@@ -117,13 +117,13 @@ export default function LoginPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>{t('auth.login.password')}</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Lock className="absolute left-3 top-3 w-5 h-5 text-muted-foreground pointer-events-none" />
                           <Input
                             type={showPassword ? 'text' : 'password'}
-                            placeholder="••••••••"
+                            placeholder={t('auth.login.placeholders.password')}
                             className="pl-10 pr-10"
                             {...field}
                           />
@@ -159,7 +159,7 @@ export default function LoginPage() {
                         className="w-4 h-4 rounded border border-input cursor-pointer"
                       />
                       <Label htmlFor="rememberMe" className="cursor-pointer font-normal">
-                        Remember me
+                        {t('auth.login.rememberMe')}
                       </Label>
                     </FormItem>
                   )}
@@ -172,7 +172,7 @@ export default function LoginPage() {
                   className="w-full"
                   size="lg"
                 >
-                  {isLoading ? 'Signing in...' : 'Sign In'}
+                  {isLoading ? t('auth.login.submitting') : t('auth.login.submit')}
                 </Button>
               </form>
             </Form>
@@ -183,18 +183,18 @@ export default function LoginPage() {
                 <div className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-background text-muted-foreground">or</span>
+                <span className="px-2 bg-background text-muted-foreground">{t('auth.login.or')}</span>
               </div>
             </div>
 
             {/* Sign Up Link */}
             <p className="text-center text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              {t('auth.login.noAccount')}{' '}
               <Link
                 href="/register"
                 className="font-semibold text-primary hover:underline"
               >
-                Sign up here
+                {t('auth.login.signupLink')}
               </Link>
             </p>
 
@@ -204,7 +204,7 @@ export default function LoginPage() {
                 href="/forgot-password"
                 className="text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
               >
-                Forgot your password?
+                {t('auth.login.forgotPassword')}
               </Link>
             </p>
           </CardContent>
@@ -212,13 +212,13 @@ export default function LoginPage() {
 
         {/* Additional Info */}
         <p className="text-center text-xs text-muted-foreground mt-6">
-          By signing in, you agree to our{' '}
+          {t('auth.login.termsFooter')}{' '}
           <Link href="/terms" className="underline hover:text-foreground">
-            Terms of Service
+            {t('auth.login.termsLink')}
           </Link>
-          {' '}and{' '}
+          {' '}{t('auth.login.and')}{' '}
           <Link href="/privacy" className="underline hover:text-foreground">
-            Privacy Policy
+            {t('auth.login.privacyLink')}
           </Link>
         </p>
       </div>

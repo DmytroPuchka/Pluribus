@@ -1,0 +1,939 @@
+{
+  "common": {
+    "buttons": {
+      "login": "Login",
+      "signup": "Sign Up",
+      "logout": "Logout",
+      "save": "Save",
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "continue": "Continue",
+      "back": "Back",
+      "next": "Next",
+      "finish": "Finish",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirm": "Confirm",
+      "close": "Close",
+      "search": "Search",
+      "filter": "Filter",
+      "apply": "Apply",
+      "reset": "Reset",
+      "clear": "Clear"
+    },
+    "navigation": {
+      "home": "Home",
+      "products": "Products",
+      "sellers": "Sellers",
+      "about": "About",
+      "howItWorks": "How it Works",
+      "contact": "Contact",
+      "profile": "Profile",
+      "settings": "Settings",
+      "help": "Help"
+    },
+    "forms": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone Number",
+      "address": "Address",
+      "city": "City",
+      "country": "Country",
+      "postalCode": "Postal Code",
+      "message": "Message",
+      "required": "This field is required",
+      "invalidEmail": "Please enter a valid email address",
+      "passwordMismatch": "Passwords do not match",
+      "minLength": "Must be at least {min} characters",
+      "maxLength": "Must be no more than {max} characters"
+    },
+    "messages": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Information",
+      "loading": "Loading...",
+      "noResults": "No results found",
+      "somethingWentWrong": "Something went wrong. Please try again."
+    },
+    "time": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "tomorrow": "Tomorrow",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "thisYear": "This Year"
+    }
+  },
+  "header": {
+    "nav": {
+      "products": "Products",
+      "sellers": "Sellers",
+      "about": "About Us",
+      "contact": "Contact",
+      "login": "Login",
+      "signup": "Sign Up",
+      "dashboard": "Dashboard"
+    },
+    "user": {
+      "profile": "My Profile",
+      "orders": "My Orders",
+      "wishlist": "Wishlist",
+      "settings": "Settings",
+      "logout": "Logout"
+    },
+    "search": {
+      "placeholder": "Search for products, sellers...",
+      "submit": "Search"
+    }
+  },
+  "footer": {
+    "description": "Making international delivery simple and accessible for everyone.",
+    "product": {
+      "title": "Product",
+      "howItWorks": "How it works",
+      "products": "Products",
+      "sellers": "Sellers",
+      "pricing": "Pricing"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About",
+      "blog": "Blog",
+      "careers": "Careers",
+      "contact": "Contact"
+    },
+    "support": {
+      "title": "Support",
+      "helpCenter": "Help Center",
+      "safety": "Safety",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy"
+    },
+    "copyright": "© {year} Pluribus. All rights reserved."
+  },
+  "landing": {
+    "hero": {
+      "title": "International Delivery",
+      "titleHighlight": " Made Simple",
+      "subtitle": "Connect with sellers worldwide and get products delivered internationally. Fast, secure, and accessible for everyone.",
+      "browseProducts": "Browse Products",
+      "viewSellers": "View Sellers",
+      "stats": {
+        "countries": "Countries",
+        "products": "Products",
+        "sellers": "Sellers"
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Simple process to get products from anywhere in the world",
+      "step1": {
+        "title": "1. Find Sellers",
+        "description": "Browse our interactive map to find sellers from around the world"
+      },
+      "step2": {
+        "title": "2. Place Order",
+        "description": "Choose products or create custom orders with specific requirements"
+      },
+      "step3": {
+        "title": "3. Get Delivered",
+        "description": "Track your order and receive it at your doorstep anywhere in the world"
+      }
+    },
+    "features": {
+      "title": "Why Choose Pluribus",
+      "subtitle": "We make international delivery accessible and secure for everyone",
+      "globalNetwork": {
+        "title": "Global Network",
+        "description": "Access sellers from over 50 countries worldwide"
+      },
+      "securePayments": {
+        "title": "Secure Payments",
+        "description": "Stripe integration with escrow protection for your safety"
+      },
+      "realTimeChat": {
+        "title": "Real-time Chat",
+        "description": "Communicate directly with sellers for custom requests"
+      },
+      "verifiedRatings": {
+        "title": "Verified Ratings",
+        "description": "Transparent reviews from real buyers and sellers"
+      },
+      "safeSecure": {
+        "title": "Safe & Secure",
+        "description": "Your data and transactions are fully protected"
+      },
+      "communityDriven": {
+        "title": "Community Driven",
+        "description": "Join thousands of satisfied buyers and sellers"
+      }
+    },
+    "cta": {
+      "title": "Ready to Start Your Global Shopping Experience?",
+      "subtitle": "Join Pluribus today and discover products from around the world",
+      "getStarted": "Get Started Free",
+      "learnMore": "Learn More"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to your account to continue shopping",
+      "email": "Email Address",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot your password?",
+      "submit": "Sign In",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "signupLink": "Sign up here",
+      "or": "or",
+      "google": "Continue with Google",
+      "facebook": "Continue with Facebook",
+      "termsFooter": "By signing in, you agree to our",
+      "termsLink": "Terms of Service",
+      "and": "and",
+      "privacyLink": "Privacy Policy",
+      "placeholders": {
+        "email": "you@example.com",
+        "password": "••••••••"
+      },
+      "validation": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "passwordRequired": "Password is required",
+        "passwordMinLength": "Password must be at least 6 characters"
+      },
+      "messages": {
+        "success": "Login successful!",
+        "failed": "Login failed. Please try again."
+      }
+    },
+    "signup": {
+      "title": "Create Account",
+      "subtitle": "Join Pluribus to buy and sell internationally",
+      "fullName": "Full Name",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "country": "Country",
+      "city": "City",
+      "role": "I want to be a",
+      "roleOptions": {
+        "buyer": "Buyer",
+        "seller": "Seller",
+        "both": "Both Buyer & Seller"
+      },
+      "roleDescription": "You can change this later in your profile settings",
+      "passwordDescription": "At least 8 characters for security",
+      "acceptTerms": "I accept the {terms} and {privacy}",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "submit": "Create Account",
+      "submitting": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Sign in",
+      "or": "or continue with email",
+      "google": "Sign up with Google",
+      "facebook": "Sign up with Facebook",
+      "termsFooter": "By creating an account, you agree to our",
+      "termsLink": "Terms of Service",
+      "and": "and",
+      "privacyLink": "Privacy Policy",
+      "placeholders": {
+        "fullName": "John Doe",
+        "email": "you@example.com",
+        "password": "••••••••",
+        "country": "Select a country",
+        "city": "New York"
+      },
+      "validation": {
+        "nameRequired": "Name is required",
+        "nameMinLength": "Name must be at least 2 characters.",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address.",
+        "passwordRequired": "Password is required",
+        "passwordMinLength": "Password must be at least 8 characters.",
+        "passwordMismatch": "Passwords don't match",
+        "countryRequired": "Please select a country.",
+        "cityRequired": "City is required",
+        "cityMinLength": "City must be at least 2 characters.",
+        "roleRequired": "Please select a role."
+      },
+      "errors": {
+        "emailExists": "This email is already registered",
+        "weakPassword": "Password is too weak",
+        "mustAcceptTerms": "You must accept the terms and conditions"
+      },
+      "success": {
+        "title": "Account Created!",
+        "message": "Account created successfully! Please check your email to verify."
+      }
+    },
+    "forgotPassword": {
+      "title": "Reset Your Password",
+      "subtitle": "Enter your email address and we'll send you a link to reset your password",
+      "subtitleSuccess": "Check your email for a password reset link",
+      "email": "Email Address",
+      "submit": "Send Reset Link",
+      "submitting": "Sending reset link...",
+      "backToLogin": "Back to login",
+      "backToLoginButton": "Back to Login",
+      "success": {
+        "title": "Check your email",
+        "message": "We've sent a password reset link to",
+        "instructions1": "The reset link will expire in 24 hours.",
+        "instructions2": "If you don't see the email, check your spam folder."
+      },
+      "resend": {
+        "button": "Didn't receive the email? Resend",
+        "sending": "Sending..."
+      },
+      "help": {
+        "trouble": "Having trouble?",
+        "contactSupport": "Contact support"
+      },
+      "instructions": "Enter the email address associated with your account, and we'll send you a link to reset your password.",
+      "rememberPassword": "Remember your password?",
+      "signInInstead": "Sign in instead",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "placeholders": {
+        "email": "name@example.com"
+      },
+      "validation": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address"
+      },
+      "errors": {
+        "emailNotFound": "No account found with this email address",
+        "generic": "An error occurred. Please try again.",
+        "failedToProcess": "Failed to process password reset. Please try again.",
+        "failedToResend": "Failed to resend email. Please try again."
+      }
+    },
+    "resetPassword": {
+      "title": "Create New Password",
+      "subtitle": "Enter a new password for your account",
+      "subtitleSuccess": "Your password has been reset successfully",
+      "password": "New Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Reset Password",
+      "submitting": "Resetting password...",
+      "backToLogin": "Back to login",
+      "backToLoginButton": "Back to Login",
+      "requirements": {
+        "title": "Password requirements:",
+        "minLength": "At least 8 characters",
+        "uppercase": "One uppercase letter",
+        "lowercase": "One lowercase letter",
+        "number": "One number"
+      },
+      "placeholders": {
+        "password": "Enter your new password",
+        "confirmPassword": "Confirm your new password"
+      },
+      "invalidToken": {
+        "title": "Invalid Link",
+        "message": "The password reset link has expired or is invalid. Please request a new one.",
+        "requestNew": "Request New Reset Link"
+      },
+      "success": {
+        "title": "Password Reset Successfully",
+        "message": "Your password has been updated. You can now sign in with your new password.",
+        "signIn": "Sign In"
+      },
+      "help": {
+        "trouble": "Having trouble?",
+        "contactSupport": "Contact support"
+      },
+      "validation": {
+        "passwordRequired": "Password is required",
+        "passwordMinLength": "Password must be at least 8 characters",
+        "passwordUppercase": "Password must contain at least one uppercase letter",
+        "passwordLowercase": "Password must contain at least one lowercase letter",
+        "passwordNumber": "Password must contain at least one number",
+        "confirmPasswordRequired": "Please confirm your password",
+        "passwordMismatch": "Passwords do not match"
+      },
+      "errors": {
+        "invalidToken": "Invalid or expired reset link. Please request a new one.",
+        "failedToReset": "Failed to reset password. Please try again."
+      }
+    },
+    "verifyEmail": {
+      "title": "Verify Your Email",
+      "subtitle": "We sent a verification link to your email",
+      "resend": "Resend verification email",
+      "success": "Email verified successfully!",
+      "error": "Invalid or expired verification link"
+    }
+  },
+  "pages": {
+    "about": {
+      "hero": {
+        "title": "Connecting the",
+        "titleHighlight": " World",
+        "subtitle": "Pluribus is building the future of international commerce by making it simple, secure, and accessible for buyers and sellers everywhere."
+      },
+      "story": {
+        "title": "Our Story",
+        "subtitle": "From a simple idea to a global platform",
+        "beginning": {
+          "title": "The Beginning",
+          "description": "Pluribus was founded on a simple observation: billions of people worldwide want access to products they can't find locally, but the process is complicated, expensive, and often unreliable. We saw an opportunity to create a better way."
+        },
+        "mission": {
+          "title": "Our Mission",
+          "description": "We set out to eliminate the barriers of international commerce. By connecting buyers with trustworthy sellers across the globe, we're creating a marketplace where anyone can shop globally as easily as shopping locally."
+        },
+        "today": {
+          "title": "Today & Beyond",
+          "description": "Today, Pluribus connects thousands of buyers and sellers across 50+ countries. We're continuously innovating, adding new features, and expanding our reach to make international shopping truly accessible to everyone."
+        }
+      },
+      "whatWeDo": {
+        "title": "What We Do",
+        "subtitle": "Pluribus is more than just a marketplace—it's a complete platform designed to make international commerce simple and secure"
+      },
+      "values": {
+        "title": "Our Core Values",
+        "subtitle": "These principles guide every decision we make and shape our culture"
+      },
+      "impact": {
+        "title": "Our Impact",
+        "subtitle": "Join thousands of satisfied buyers and sellers transforming international commerce"
+      },
+      "team": {
+        "title": "Our Team",
+        "subtitle": "Passionate people from around the world working together to transform global commerce",
+        "comingSoon": {
+          "title": "Meet the Team Coming Soon",
+          "description": "We're building an amazing team of engineers, designers, and operators dedicated to making international commerce accessible to everyone. Check back soon to meet the people behind Pluribus!"
+        }
+      },
+      "cta": {
+        "title": "Ready to Be Part of Our Story?",
+        "subtitle": "Join Pluribus today and become part of a global community transforming how people shop internationally. Whether you're a buyer seeking global products or a seller looking to reach new markets, we're here to help you succeed.",
+        "getStarted": "Get Started Free",
+        "browseProducts": "Browse Products"
+      }
+    },
+    "contact": {
+      "hero": {
+        "title": "Get in Touch",
+        "subtitle": "We're here to help! Whether you have questions about our platform, need support, or want to partner with us, our team is ready to assist."
+      },
+      "methods": {
+        "email": {
+          "title": "Email",
+          "description": "Send us an email and we'll respond within 24 hours.",
+          "address": "support@pluribus.com"
+        },
+        "phone": {
+          "title": "Phone",
+          "description": "Call us during business hours (9 AM - 6 PM UTC)",
+          "number": "+1 (234) 567-890"
+        },
+        "office": {
+          "title": "Office",
+          "address1": "123 Commerce Street",
+          "address2": "Tech City, TC 12345",
+          "address3": "United States"
+        }
+      },
+      "social": {
+        "title": "Connect With Us",
+        "subtitle": "Follow our social media channels for updates, news, and community discussions about Pluribus."
+      },
+      "quickHelp": {
+        "title": "Quick Help",
+        "subtitle": "Can't find what you're looking for? Check out our FAQ or knowledge base.",
+        "faq": {
+          "title": "Frequently Asked Questions",
+          "description": "Browse our comprehensive FAQ section to find answers to common questions about buying, selling, payments, and shipping.",
+          "button": "View FAQ"
+        },
+        "liveChat": {
+          "title": "Live Chat Support",
+          "description": "For immediate assistance, open our live chat to connect with our support team. Available 24/7 for urgent issues.",
+          "button": "Start Live Chat"
+        }
+      },
+      "responseTime": {
+        "title": "We Value Your Time",
+        "subtitle": "We're committed to responding to all inquiries as quickly as possible. Here's what to expect:",
+        "email": "Email responses",
+        "chat": "Live chat during business hours",
+        "emergency": "Emergency support"
+      },
+      "cta": {
+        "title": "Have a General Question?",
+        "subtitle": "Check out our how-it-works guide for detailed information about using Pluribus as a buyer or seller.",
+        "button": "Learn How It Works"
+      }
+    },
+    "help": {
+      "hero": {
+        "title": "How Can We",
+        "titleHighlight": " Help?",
+        "subtitle": "Find answers to common questions about Pluribus. Browse our FAQ or contact our support team.",
+        "searchPlaceholder": "Search FAQ..."
+      },
+      "categories": {
+        "title": "Categories",
+        "allTopics": "All Topics"
+      },
+      "noResults": "No results found. Try adjusting your search or selecting different categories.",
+      "popularTopics": {
+        "title": "Popular Topics"
+      },
+      "guides": {
+        "title": "Getting Started Guides",
+        "buyer": {
+          "title": "Buyer's Guide",
+          "description": "Learn how to find products, place orders, and track deliveries",
+          "button": "Read Guide"
+        },
+        "seller": {
+          "title": "Seller's Guide",
+          "description": "Start selling on Pluribus and reach global customers",
+          "button": "Read Guide"
+        }
+      },
+      "videos": {
+        "title": "Video Tutorials"
+      },
+      "support": {
+        "title": "Still Need Help?",
+        "subtitle": "Didn't find the answer you were looking for? Our support team is here to help.",
+        "email": {
+          "title": "Email Support",
+          "description": "Get a response within 24 hours",
+          "button": "Send Email"
+        },
+        "chat": {
+          "title": "Live Chat",
+          "description": "Chat with our team (9am-5pm UTC)",
+          "button": "Start Chat"
+        },
+        "phone": {
+          "title": "Call Us",
+          "description": "Phone support available 9am-5pm UTC",
+          "button": "Call Support"
+        }
+      }
+    },
+    "howItWorks": {
+      "hero": {
+        "title": "How",
+        "titleHighlight": " Pluribus ",
+        "titleEnd": "Works",
+        "subtitle": "Discover the simple process behind connecting global buyers and sellers. Whether you're looking to purchase or sell, we've made international delivery accessible and secure for everyone."
+      },
+      "why": {
+        "title": "Why Pluribus?",
+        "subtitle": "We've built a platform that removes the barriers of international shopping, making it as easy as local commerce."
+      },
+      "forBuyers": {
+        "title": "For Buyers",
+        "subtitle": "Follow these simple steps to find and purchase products from sellers worldwide"
+      },
+      "forSellers": {
+        "title": "For Sellers",
+        "subtitle": "Start selling to customers around the world in just a few steps"
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "subtitle": "Have questions? Find answers to the most common questions about using Pluribus"
+      },
+      "security": {
+        "title": "Your Safety is Our Priority",
+        "subtitle": "We've implemented multiple layers of protection to ensure safe and secure transactions for all users"
+      },
+      "cta": {
+        "title": "Ready to Get Started?",
+        "subtitle": "Join thousands of buyers and sellers using Pluribus to connect globally. It's free to join!",
+        "createAccount": "Create Your Account",
+        "browseProducts": "Browse Products"
+      }
+    },
+    "products": {
+      "title": "Browse Products",
+      "subtitle": "Discover products from sellers worldwide",
+      "showing": "Showing",
+      "of": "of",
+      "products": "products",
+      "filters": {
+        "title": "Filters",
+        "applied": "filter applied",
+        "appliedPlural": "filters applied",
+        "category": "Category",
+        "allCategories": "All Categories",
+        "priceRange": "Price Range",
+        "min": "Min",
+        "max": "Max",
+        "sellerRating": "Seller Rating",
+        "allRatings": "All Ratings",
+        "country": "Country",
+        "allCountries": "All Countries",
+        "sortBy": "Sort By",
+        "sortByPlaceholder": "Sort by...",
+        "none": "None",
+        "activeFilters": "Active Filters",
+        "clearAll": "Clear All",
+        "sortOptions": {
+          "newest": "Newest",
+          "priceLowToHigh": "Price: Low to High",
+          "priceHighToLow": "Price: High to Low",
+          "topRated": "Top Rated",
+          "mostPopular": "Most Popular"
+        },
+        "ratingOptions": {
+          "5stars": "5 Stars Only",
+          "4plus": "4+ Stars",
+          "3plus": "3+ Stars",
+          "2plus": "2+ Stars",
+          "1plus": "1+ Stars"
+        },
+        "badges": {
+          "category": "Category:",
+          "priceMin": "Min:",
+          "priceMax": "Max:",
+          "rating": "Rating:",
+          "country": "Country:",
+          "sort": "Sort:"
+        }
+      }
+    },
+    "sellers": {
+      "title": "Find Sellers",
+      "subtitle": "Connect with trusted sellers from around the world",
+      "map": {
+        "title": "Seller Locations",
+        "description": "Explore sellers around the world. Click on a marker to see seller info, then click \"View Profile\" to visit their page."
+      },
+      "search": {
+        "placeholder": "Search sellers by name, city, or country..."
+      },
+      "filters": {
+        "button": "Filters",
+        "clear": "Clear Filters",
+        "country": "Country",
+        "allCountries": "All Countries",
+        "minRating": "Minimum Rating",
+        "anyRating": "Any Rating",
+        "stars": "Stars",
+        "active": "Active Filters",
+        "searchLabel": "Search",
+        "ratingLabel": "Rating",
+        "noFilters": "No filters applied"
+      },
+      "results": {
+        "seller": "Seller",
+        "sellers": "Sellers",
+        "found": "Found",
+        "filtered": "Showing sellers matching your filters",
+        "showing": "Showing",
+        "of": "of"
+      },
+      "empty": {
+        "title": "No sellers found",
+        "description": "Try adjusting your search or filters to find what you're looking for."
+      },
+      "stats": {
+        "verifiedSellers": "Verified Sellers",
+        "countries": "Countries",
+        "avgRating": "Avg. Rating"
+      }
+    },
+    "productDetail": {
+      "meta": {
+        "notFoundTitle": "Product Not Found | Pluribus",
+        "notFoundDescription": "The product you are looking for does not exist."
+      },
+      "notFound": {
+        "title": "Product Not Found",
+        "description": "We couldn't find the product you're looking for.",
+        "browseProducts": "Browse Products",
+        "goHome": "Go Home"
+      },
+      "breadcrumb": {
+        "home": "Home",
+        "products": "Products"
+      },
+      "details": {
+        "reviews": "reviews",
+        "review": "review",
+        "price": "Price",
+        "availability": "Availability",
+        "outOfStock": "Out of Stock",
+        "addToCart": "Add to Cart",
+        "saveForLater": "Save for Later",
+        "share": "Share",
+        "description": "Description",
+        "tags": "Tags"
+      },
+      "seller": {
+        "title": "Seller Information",
+        "reviews": "reviews",
+        "verifiedBadges": "Verified Badges",
+        "emailVerified": "Email Verified",
+        "phoneVerified": "Phone Verified",
+        "idVerified": "ID Verified",
+        "viewAllProducts": "View All Products"
+      },
+      "customerReviews": {
+        "title": "Customer Reviews",
+        "subtitle": "Ratings and feedback from buyers",
+        "basedOn": "Based on {count} reviews"
+      },
+      "relatedProducts": {
+        "title": "Related Products",
+        "noImage": "No Image"
+      }
+    },
+    "sellerProfile": {
+      "meta": {
+        "title": "Seller Profile | Pluribus",
+        "notFoundTitle": "Seller Not Found | Pluribus",
+        "notFoundDescription": "The seller you are looking for does not exist."
+      },
+      "header": {
+        "idVerified": "ID Verified",
+        "review": "review",
+        "reviews": "reviews"
+      },
+      "badges": {
+        "emailVerified": "Email Verified",
+        "phoneVerified": "Phone Verified",
+        "idVerified": "ID Verified"
+      },
+      "buttons": {
+        "contactSeller": "Contact Seller"
+      },
+      "stats": {
+        "totalOrders": "Total Orders",
+        "positiveReviews": "Positive Reviews",
+        "responseTime": "Response Time",
+        "selling": "Selling",
+        "year": "year",
+        "years": "years"
+      },
+      "about": {
+        "title": "About"
+      },
+      "products": {
+        "title": "Products",
+        "browseAll": "Browse all products from"
+      },
+      "reviews": {
+        "title": "Customer Reviews",
+        "subtitle": "Recent feedback from buyers",
+        "anonymousBuyer": "Anonymous Buyer",
+        "communication": "Communication:",
+        "timeliness": "Timeliness:",
+        "noReviews": "No reviews yet. Be the first to review this seller!"
+      }
+    },
+    "privacy": {
+      "hero": {
+        "badge": "Your Privacy Matters",
+        "title": "Privacy",
+        "titleHighlight": "Policy",
+        "subtitle": "At Pluribus, we are committed to protecting your privacy and ensuring transparency in how we collect, use, and manage your personal data. This privacy policy outlines our practices in compliance with GDPR and other applicable regulations.",
+        "lastUpdated": "Last Updated"
+      },
+      "disclaimer": {
+        "title": "Important Legal Notice",
+        "description": "This privacy policy is a template provided for informational purposes. While it reflects standard data protection practices, it should be reviewed and customized by a qualified legal professional to ensure full compliance with applicable laws in your jurisdiction. Pluribus cannot be held responsible for any gaps or misalignment with local regulations."
+      },
+      "toc": {
+        "title": "Table of Contents"
+      },
+      "cta": {
+        "title": "Your Privacy Matters to Us",
+        "description": "We are committed to transparency and putting you in control of your personal data. If you have any questions or concerns, please don't hesitate to reach out.",
+        "contactButton": "Contact Privacy Team",
+        "homeButton": "Return to Home"
+      },
+      "footer": {
+        "effective": "This privacy policy is effective as of February 8, 2025. Last updated: February 8, 2025. Please review our",
+        "terms": "Terms of Service",
+        "forAdditional": "for additional important information about using Pluribus."
+      }
+    },
+    "terms": {
+      "hero": {
+        "title": "Terms of Service",
+        "subtitle": "Please read these terms carefully before using the Pluribus platform",
+        "lastUpdated": "Last Updated"
+      },
+      "disclaimer": {
+        "title": "Legal Disclaimer",
+        "description": "This Terms of Service is a template and should be reviewed by legal counsel before deployment in a production environment. It may require customization based on your specific business requirements, jurisdictional regulations, and operational practices."
+      },
+      "toc": {
+        "title": "Table of Contents"
+      },
+      "cta": {
+        "title": "Have Questions?",
+        "description": "If you have any questions about these Terms of Service, please reach out to our support team. We're here to help.",
+        "button": "Contact Support"
+      }
+    },
+    "dashboard": {
+      "welcome": "Welcome back",
+      "subtitle": "Here's an overview of your Pluribus dashboard",
+      "stats": {
+        "totalOrders": "Total Orders",
+        "activeProducts": "Active Products",
+        "totalRevenue": "Total Revenue",
+        "profileViews": "Profile Views",
+        "fromLastMonth": "from last month"
+      },
+      "recentOrders": {
+        "title": "Recent Orders",
+        "subtitle": "Your latest {count} orders",
+        "items": "item(s)",
+        "viewAll": "View All",
+        "view": "View"
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "placeOrder": "Place New Order",
+        "addProduct": "Add Product",
+        "viewProfile": "View Profile",
+        "settings": "Settings"
+      },
+      "activeProducts": {
+        "title": "Active Products",
+        "stock": "Stock"
+      },
+      "profile": {
+        "title": "Profile Settings",
+        "subtitle": "Manage your account information and preferences",
+        "photo": {
+          "title": "Profile Photo",
+          "description": "Upload a profile picture to help other users identify you",
+          "upload": "Upload new photo",
+          "clear": "Clear"
+        },
+        "personalInfo": {
+          "title": "Personal Information",
+          "description": "Update your basic profile information",
+          "name": "Full Name",
+          "namePlaceholder": "John Doe",
+          "email": "Email Address",
+          "emailPlaceholder": "john@example.com",
+          "emailDescription": "Your email address is used for account recovery and notifications",
+          "country": "Country",
+          "countryPlaceholder": "Select a country",
+          "city": "City",
+          "cityPlaceholder": "Select a city",
+          "bio": "Bio",
+          "bioPlaceholder": "Tell us about yourself...",
+          "bioDescription": "Max 500 characters. This will be displayed on your profile.",
+          "role": "Account Type",
+          "rolePlaceholder": "Select your account type",
+          "roleDescription": "Choose whether you want to buy, sell, or do both on Pluribus",
+          "roleBuyer": "Buyer",
+          "roleSeller": "Seller",
+          "roleBoth": "Buyer & Seller",
+          "saving": "Saving...",
+          "saveChanges": "Save Changes"
+        },
+        "verification": {
+          "title": "Verification Status",
+          "description": "Complete verification to increase trust and access more features",
+          "email": "Email Verification",
+          "phone": "Phone Verification",
+          "id": "ID Verification",
+          "verified": "Verified",
+          "notVerified": "Not verified",
+          "verify": "Verify"
+        },
+        "security": {
+          "title": "Security",
+          "description": "Manage your password and security settings",
+          "changePassword": "Change Password",
+          "currentPassword": "Current Password",
+          "currentPasswordPlaceholder": "Enter your current password",
+          "newPassword": "New Password",
+          "newPasswordPlaceholder": "Enter a new password",
+          "newPasswordDescription": "Must be at least 8 characters long",
+          "confirmPassword": "Confirm New Password",
+          "confirmPasswordPlaceholder": "Confirm your new password",
+          "updating": "Updating...",
+          "updatePassword": "Update Password",
+          "cancel": "Cancel"
+        }
+      },
+      "orders": {
+        "title": "My Orders",
+        "subtitle": "View and manage your orders across all transactions",
+        "searchPlaceholder": "Search by order number, product, or seller...",
+        "filters": "Filters",
+        "tabs": {
+          "all": "All",
+          "pending": "Pending",
+          "completed": "Completed",
+          "cancelled": "Cancelled"
+        },
+        "showing": "Showing",
+        "of": "of",
+        "orders": "orders",
+        "empty": {
+          "noSearch": "No orders in this category",
+          "noResults": "No orders found matching your search",
+          "clearSearch": "Clear search"
+        }
+      },
+      "products": {
+        "title": "Your Products",
+        "subtitle": "Manage your inventory and product listings",
+        "addNew": "Add New Product",
+        "stats": {
+          "total": "Total Products",
+          "active": "Active Products",
+          "outOfStock": "Out of Stock",
+          "lowStock": "Low Stock"
+        },
+        "alert": {
+          "title": "Low Stock Alert",
+          "description": "You have {count} product(s) with low stock levels. Consider restocking soon to avoid missed sales."
+        },
+        "filters": {
+          "category": "Category",
+          "allCategories": "All Categories",
+          "status": "Status",
+          "allStatus": "All Status",
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "showing": "Showing",
+        "of": "of",
+        "productsCount": "products",
+        "empty": {
+          "title": "No Products Found",
+          "description": "No products match your selected filters. Try adjusting your filters or adding new products."
+        },
+        "card": {
+          "stock": "Stock",
+          "outOfStock": "Out of Stock",
+          "lowStock": "Low Stock",
+          "active": "Active",
+          "inactive": "Inactive",
+          "edit": "Edit",
+          "delete": "Delete"
+        }
+      }
+    }
+  }
+}

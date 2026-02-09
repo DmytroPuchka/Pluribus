@@ -23,6 +23,7 @@ import Image from 'next/image';
 import { PriceDisplay } from '@/components/common/PriceDisplay';
 import { Pagination } from '@/components/common/Pagination';
 import { Product, ProductCategory } from '@/types';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 // Mock seller products data
 const MOCK_SELLER_PRODUCTS: Product[] = [
@@ -135,12 +136,14 @@ interface DashboardProductCardProps {
   product: Product;
   onEdit: (product: Product) => void;
   onDelete: (productId: string) => void;
+  t: (key: string, params?: Record<string, any>) => string;
 }
 
 const DashboardProductCard: FC<DashboardProductCardProps> = ({
   product,
   onEdit,
   onDelete,
+  t,
 }) => {
   const stockStatus =
     product.stockQuantity === undefined
@@ -167,11 +170,11 @@ const DashboardProductCard: FC<DashboardProductCardProps> = ({
   const getStockLabel = () => {
     switch (stockStatus) {
       case 'out-of-stock':
-        return 'Out of Stock';
+        return t('pages.dashboard.products.card.outOfStock');
       case 'low-stock':
-        return `Low Stock (${product.stockQuantity})`;
+        return `${t('pages.dashboard.products.card.lowStock')} (${product.stockQuantity})`;
       case 'in-stock':
-        return `In Stock (${product.stockQuantity})`;
+        return `${t('pages.dashboard.products.card.stock')}: ${product.stockQuantity}`;
       default:
         return 'Unknown';
     }
@@ -200,14 +203,14 @@ const DashboardProductCard: FC<DashboardProductCardProps> = ({
             variant={product.isActive ? 'default' : 'secondary'}
             className={product.isActive ? 'bg-green-600' : 'bg-gray-600'}
           >
-            {product.isActive ? 'Active' : 'Inactive'}
+            {product.isActive ? t('pages.dashboard.products.card.active') : t('pages.dashboard.products.card.inactive')}
           </Badge>
         </div>
 
         {/* Out of stock overlay */}
         {product.stockQuantity === 0 && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <Badge variant="destructive">Out of Stock</Badge>
+            <Badge variant="destructive">{t('pages.dashboard.products.card.outOfStock')}</Badge>
           </div>
         )}
       </div>
@@ -258,7 +261,7 @@ const DashboardProductCard: FC<DashboardProductCardProps> = ({
             onClick={() => onEdit(product)}
           >
             <Edit className="w-4 h-4 mr-1" />
-            Edit
+            {t('pages.dashboard.products.card.edit')}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -272,7 +275,7 @@ const DashboardProductCard: FC<DashboardProductCardProps> = ({
                 onClick={() => onDelete(product.id)}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
-                Delete Product
+                {t('pages.dashboard.products.card.delete')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -288,6 +291,7 @@ interface FilterControlsProps {
   selectedStatus: string | null;
   onCategoryChange: (category: string | null) => void;
   onStatusChange: (status: string | null) => void;
+  t: (key: string, params?: Record<string, any>) => string;
 }
 
 const FilterControls: FC<FilterControlsProps> = ({
@@ -295,6 +299,7 @@ const FilterControls: FC<FilterControlsProps> = ({
   selectedStatus,
   onCategoryChange,
   onStatusChange,
+  t,
 }) => {
   const categories: ProductCategory[] = [
     'ELECTRONICS',
@@ -314,7 +319,7 @@ const FilterControls: FC<FilterControlsProps> = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm">
-            Category
+            {t('pages.dashboard.products.filters.category')}
             {selectedCategory && (
               <Badge className="ml-2" variant="secondary">
                 {selectedCategory}
@@ -324,7 +329,7 @@ const FilterControls: FC<FilterControlsProps> = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onClick={() => onCategoryChange(null)}>
-            All Categories
+            {t('pages.dashboard.products.filters.allCategories')}
           </DropdownMenuItem>
           {categories.map((cat) => (
             <DropdownMenuItem
@@ -342,29 +347,29 @@ const FilterControls: FC<FilterControlsProps> = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm">
-            Status
+            {t('pages.dashboard.products.filters.status')}
             {selectedStatus && (
               <Badge className="ml-2" variant="secondary">
-                {selectedStatus === 'active' ? 'Active' : 'Inactive'}
+                {selectedStatus === 'active' ? t('pages.dashboard.products.filters.active') : t('pages.dashboard.products.filters.inactive')}
               </Badge>
             )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onClick={() => onStatusChange(null)}>
-            All Status
+            {t('pages.dashboard.products.filters.allStatus')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => onStatusChange('active')}
             className={selectedStatus === 'active' ? 'bg-accent' : ''}
           >
-            Active
+            {t('pages.dashboard.products.filters.active')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => onStatusChange('inactive')}
             className={selectedStatus === 'inactive' ? 'bg-accent' : ''}
           >
-            Inactive
+            {t('pages.dashboard.products.filters.inactive')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -407,6 +412,7 @@ const EmptyState: FC = () => (
 
 // Main Dashboard Products Page
 const DashboardProductsPage: FC = () => {
+  const { t } = useTranslations();
   const [products] = useState<Product[]>(MOCK_SELLER_PRODUCTS);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -477,15 +483,15 @@ const DashboardProductsPage: FC = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Your Products</h1>
+              <h1 className="text-3xl font-bold mb-2">{t('pages.dashboard.products.title')}</h1>
               <p className="text-muted-foreground">
-                Manage your inventory and product listings
+                {t('pages.dashboard.products.subtitle')}
               </p>
             </div>
             <Button asChild size="lg">
               <Link href="/dashboard/products/new">
                 <Plus className="w-4 h-4 mr-2" />
-                Add New Product
+                {t('pages.dashboard.products.addNew')}
               </Link>
             </Button>
           </div>
@@ -498,7 +504,7 @@ const DashboardProductsPage: FC = () => {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Products
+                {t('pages.dashboard.products.stats.total')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -509,7 +515,7 @@ const DashboardProductsPage: FC = () => {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Active Products
+                {t('pages.dashboard.products.stats.active')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -522,7 +528,7 @@ const DashboardProductsPage: FC = () => {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Out of Stock
+                {t('pages.dashboard.products.stats.outOfStock')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -535,7 +541,7 @@ const DashboardProductsPage: FC = () => {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Low Stock
+                {t('pages.dashboard.products.stats.lowStock')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -553,11 +559,10 @@ const DashboardProductsPage: FC = () => {
               <AlertCircle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
               <div>
                 <h4 className="font-semibold text-orange-900 mb-1">
-                  Low Stock Alert
+                  {t('pages.dashboard.products.alert.title')}
                 </h4>
                 <p className="text-sm text-orange-800">
-                  You have {lowStockCount} product(s) with low stock levels.
-                  Consider restocking soon to avoid missed sales.
+                  {t('pages.dashboard.products.alert.description', { count: lowStockCount })}
                 </p>
               </div>
             </CardContent>
@@ -570,13 +575,14 @@ const DashboardProductsPage: FC = () => {
           selectedStatus={selectedStatus}
           onCategoryChange={setSelectedCategory}
           onStatusChange={setSelectedStatus}
+          t={t}
         />
 
         {/* Results Info */}
         {filteredProducts.length > 0 && (
           <div className="mb-6">
             <p className="text-sm text-muted-foreground">
-              Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} products
+              {t('pages.dashboard.products.showing')} {startIndex + 1}-{Math.min(endIndex, totalItems)} {t('pages.dashboard.products.of')} {totalItems} {t('pages.dashboard.products.productsCount')}
             </p>
           </div>
         )}
@@ -589,9 +595,9 @@ const DashboardProductsPage: FC = () => {
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
               <Package className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">No Products Found</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('pages.dashboard.products.empty.title')}</h3>
             <p className="text-muted-foreground max-w-md">
-              No products match your selected filters. Try adjusting your filters or adding new products.
+              {t('pages.dashboard.products.empty.description')}
             </p>
           </div>
         ) : (
@@ -603,6 +609,7 @@ const DashboardProductsPage: FC = () => {
                   product={product}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
+                  t={t}
                 />
               ))}
             </div>

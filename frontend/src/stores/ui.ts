@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type Theme = 'light' | 'dark' | 'system';
-type Language = 'en' | 'ru' | 'es' | 'zh';
+type Language = 'en' | 'uk';
 
 interface UIState {
   // Sidebar
@@ -28,7 +28,7 @@ interface UIState {
 const initialState = {
   isSidebarOpen: true,
   theme: 'light' as Theme,
-  language: 'en' as Language,
+  language: 'uk' as Language,
   isMobileMenuOpen: false,
 };
 

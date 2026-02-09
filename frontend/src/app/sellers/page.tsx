@@ -18,6 +18,7 @@ import { SellerCard } from '@/components/features/SellerCard';
 import { Pagination } from '@/components/common/Pagination';
 import { User, SellerLocation } from '@/types';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 // Dynamic import for InteractiveSellerMap to avoid SSR issues with Leaflet
 const InteractiveSellerMap = dynamic(
@@ -183,6 +184,7 @@ const getSellerLocations = (sellers: (User & { productCount: number })[]): Selle
 };
 
 export default function SellersPage() {
+  const { t } = useTranslations();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [minRating, setMinRating] = useState<number>(0);
@@ -265,10 +267,10 @@ export default function SellersPage() {
         <div className="container px-4">
           <div className="max-w-3xl">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-              Connect with Sellers Worldwide
+              {t('pages.sellers.title')}
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Discover verified sellers from over 50 countries. Browse profiles, check ratings, and find exactly what you need.
+              {t('pages.sellers.subtitle')}
             </p>
           </div>
         </div>
@@ -278,9 +280,9 @@ export default function SellersPage() {
       <section className="py-8 md:py-12 border-b bg-muted/30">
         <div className="container px-4">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-2">Seller Locations</h2>
+            <h2 className="text-2xl font-bold mb-2">{t('pages.sellers.map.title')}</h2>
             <p className="text-muted-foreground">
-              Explore sellers around the world. Click on a marker to see seller info, then click "View Profile" to visit their page.
+              {t('pages.sellers.map.description')}
             </p>
           </div>
           <InteractiveSellerMap
@@ -299,7 +301,7 @@ export default function SellersPage() {
               <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search sellers by name, city, or country..."
+                placeholder={t('pages.sellers.search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 h-11"
@@ -316,7 +318,7 @@ export default function SellersPage() {
               className="gap-2"
             >
               <Filter className="h-4 w-4" />
-              Filters
+              {t('pages.sellers.filters.button')}
               {hasActiveFilters && (
                 <Badge variant="secondary" className="ml-2">
                   {[searchQuery, selectedCountry, minRating > 0].filter(Boolean).length}
@@ -332,7 +334,7 @@ export default function SellersPage() {
                 className="gap-2 text-muted-foreground"
               >
                 <X className="h-4 w-4" />
-                Clear Filters
+                {t('pages.sellers.filters.clear')}
               </Button>
             )}
           </div>
@@ -344,7 +346,7 @@ export default function SellersPage() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {/* Country Filter */}
                   <div>
-                    <label className="text-sm font-semibold mb-3 block">Country</label>
+                    <label className="text-sm font-semibold mb-3 block">{t('pages.sellers.filters.country')}</label>
                     <div className="space-y-2 max-h-48 overflow-y-auto">
                       <Button
                         variant={selectedCountry === '' ? 'default' : 'outline'}
@@ -352,7 +354,7 @@ export default function SellersPage() {
                         className="w-full justify-start"
                         onClick={() => setSelectedCountry('')}
                       >
-                        All Countries
+                        {t('pages.sellers.filters.allCountries')}
                       </Button>
                       {countries.map(country => (
                         <Button
@@ -370,7 +372,7 @@ export default function SellersPage() {
 
                   {/* Rating Filter */}
                   <div>
-                    <label className="text-sm font-semibold mb-3 block">Minimum Rating</label>
+                    <label className="text-sm font-semibold mb-3 block">{t('pages.sellers.filters.minRating')}</label>
                     <div className="space-y-2">
                       {[0, 4, 4.5, 4.8, 5].map(rating => (
                         <Button
@@ -381,7 +383,7 @@ export default function SellersPage() {
                           onClick={() => setMinRating(rating)}
                         >
                           <Star className="h-4 w-4 mr-2 fill-current" />
-                          {rating === 0 ? 'Any Rating' : `${rating}+ Stars`}
+                          {rating === 0 ? t('pages.sellers.filters.anyRating') : `${rating}+ ${t('pages.sellers.filters.stars')}`}
                         </Button>
                       ))}
                     </div>
@@ -389,25 +391,25 @@ export default function SellersPage() {
 
                   {/* Active Filters Summary */}
                   <div>
-                    <label className="text-sm font-semibold mb-3 block">Active Filters</label>
+                    <label className="text-sm font-semibold mb-3 block">{t('pages.sellers.filters.active')}</label>
                     <div className="space-y-2">
                       {searchQuery && (
                         <Badge variant="secondary" className="w-full justify-start">
-                          Search: {searchQuery}
+                          {t('pages.sellers.filters.searchLabel')}: {searchQuery}
                         </Badge>
                       )}
                       {selectedCountry && (
                         <Badge variant="secondary" className="w-full justify-start">
-                          Country: {selectedCountry}
+                          {t('pages.sellers.filters.country')}: {selectedCountry}
                         </Badge>
                       )}
                       {minRating > 0 && (
                         <Badge variant="secondary" className="w-full justify-start">
-                          Rating: {minRating}+
+                          {t('pages.sellers.filters.ratingLabel')}: {minRating}+
                         </Badge>
                       )}
                       {!hasActiveFilters && (
-                        <p className="text-sm text-muted-foreground">No filters applied</p>
+                        <p className="text-sm text-muted-foreground">{t('pages.sellers.filters.noFilters')}</p>
                       )}
                     </div>
                   </div>
@@ -424,16 +426,16 @@ export default function SellersPage() {
           {/* Results Header */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-2">
-              {filteredSellers.length} {filteredSellers.length === 1 ? 'Seller' : 'Sellers'} Found
+              {filteredSellers.length} {filteredSellers.length === 1 ? t('pages.sellers.results.seller') : t('pages.sellers.results.sellers')} {t('pages.sellers.results.found')}
             </h2>
             {hasActiveFilters && (
               <p className="text-muted-foreground">
-                Showing sellers matching your filters
+                {t('pages.sellers.results.filtered')}
               </p>
             )}
             {filteredSellers.length > 0 && (
               <p className="text-sm text-muted-foreground mt-2">
-                Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} sellers
+                {t('pages.sellers.results.showing')} {startIndex + 1}-{Math.min(endIndex, totalItems)} {t('pages.sellers.results.of')} {totalItems} {t('pages.sellers.results.sellers')}
               </p>
             )}
           </div>
@@ -443,13 +445,13 @@ export default function SellersPage() {
             <Card className="py-12">
               <CardContent className="text-center">
                 <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No sellers found</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('pages.sellers.empty.title')}</h3>
                 <p className="text-muted-foreground mb-6">
-                  Try adjusting your search or filters to find what you're looking for.
+                  {t('pages.sellers.empty.description')}
                 </p>
                 {hasActiveFilters && (
                   <Button onClick={handleClearFilters} variant="outline">
-                    Clear Filters
+                    {t('pages.sellers.filters.clear')}
                   </Button>
                 )}
               </CardContent>
@@ -490,19 +492,19 @@ export default function SellersPage() {
               <div className="text-3xl font-bold text-blue-600 mb-2">
                 {sellers.length}+
               </div>
-              <p className="text-muted-foreground">Verified Sellers</p>
+              <p className="text-muted-foreground">{t('pages.sellers.stats.verifiedSellers')}</p>
             </div>
             <div>
               <div className="text-3xl font-bold text-blue-600 mb-2">
                 {countries.length}
               </div>
-              <p className="text-muted-foreground">Countries</p>
+              <p className="text-muted-foreground">{t('pages.sellers.stats.countries')}</p>
             </div>
             <div>
               <div className="text-3xl font-bold text-blue-600 mb-2">
                 {sellers.reduce((sum, s) => sum + (s.rating || 0), 0).toFixed(1)}
               </div>
-              <p className="text-muted-foreground">Avg. Rating</p>
+              <p className="text-muted-foreground">{t('pages.sellers.stats.avgRating')}</p>
             </div>
           </div>
         </div>

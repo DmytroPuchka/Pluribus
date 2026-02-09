@@ -5,36 +5,18 @@
  * @component
  */
 
+'use client';
+
 import Link from 'next/link';
 import { FC } from 'react';
 import { Logo } from '@/components/common/Logo';
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 interface FooterProps {
   className?: string;
 }
-
-const footerLinks = {
-  product: [
-    { name: 'How it works', href: '/how-it-works' },
-    { name: 'Products', href: '/products' },
-    { name: 'Sellers', href: '/sellers' },
-    { name: 'Pricing', href: '/pricing' },
-  ],
-  company: [
-    { name: 'About', href: '/about' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Contact', href: '/contact' },
-  ],
-  support: [
-    { name: 'Help Center', href: '/help' },
-    { name: 'Safety', href: '/safety' },
-    { name: 'Terms of Service', href: '/terms' },
-    { name: 'Privacy Policy', href: '/privacy' },
-  ],
-};
 
 const socialLinks = [
   { name: 'Facebook', icon: Facebook, href: '#' },
@@ -44,6 +26,28 @@ const socialLinks = [
 ];
 
 export const Footer: FC<FooterProps> = ({ className }) => {
+  const { t } = useTranslations();
+
+  const footerLinks = {
+    product: [
+      { name: t('footer.product.howItWorks'), href: '/how-it-works' },
+      { name: t('footer.product.products'), href: '/products' },
+      { name: t('footer.product.sellers'), href: '/sellers' },
+      { name: t('footer.product.pricing'), href: '/pricing' },
+    ],
+    company: [
+      { name: t('footer.company.about'), href: '/about' },
+      { name: t('footer.company.blog'), href: '/blog' },
+      { name: t('footer.company.careers'), href: '/careers' },
+      { name: t('footer.company.contact'), href: '/contact' },
+    ],
+    support: [
+      { name: t('footer.support.helpCenter'), href: '/help' },
+      { name: t('footer.support.safety'), href: '/safety' },
+      { name: t('footer.support.terms'), href: '/terms' },
+      { name: t('footer.support.privacy'), href: '/privacy' },
+    ],
+  };
   return (
     <footer className={cn('border-t bg-muted/50', className)}>
       <div className="container px-4 py-12">
@@ -52,13 +56,13 @@ export const Footer: FC<FooterProps> = ({ className }) => {
           <div className="col-span-2 md:col-span-1">
             <Logo size="md" href="/" />
             <p className="mt-4 text-sm text-muted-foreground">
-              Making international delivery simple and accessible for everyone.
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Product Links */}
           <div>
-            <h3 className="font-semibold mb-4">Product</h3>
+            <h3 className="font-semibold mb-4">{t('footer.product.title')}</h3>
             <ul className="space-y-2">
               {footerLinks.product.map((link) => (
                 <li key={link.name}>
@@ -75,7 +79,7 @@ export const Footer: FC<FooterProps> = ({ className }) => {
 
           {/* Company Links */}
           <div>
-            <h3 className="font-semibold mb-4">Company</h3>
+            <h3 className="font-semibold mb-4">{t('footer.company.title')}</h3>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -92,7 +96,7 @@ export const Footer: FC<FooterProps> = ({ className }) => {
 
           {/* Support Links */}
           <div>
-            <h3 className="font-semibold mb-4">Support</h3>
+            <h3 className="font-semibold mb-4">{t('footer.support.title')}</h3>
             <ul className="space-y-2">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>

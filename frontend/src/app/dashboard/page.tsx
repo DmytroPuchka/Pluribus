@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -18,6 +20,7 @@ import {
   Eye,
 } from 'lucide-react';
 import { Order, Product, User } from '@/types';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 // Mock data
 const MOCK_USER: User = {
@@ -141,7 +144,7 @@ function StatCard({
                 }`}
               >
                 {trend === 'up' ? '+' : '-'}
-                {Math.abs(change)}% from last month
+                {Math.abs(change)}%
               </p>
             )}
           </div>
@@ -174,6 +177,7 @@ function OrderStatusBadge({ status }: { status: string }) {
 }
 
 export default function DashboardPage() {
+  const { t } = useTranslations();
   const totalRevenue = MOCK_PRODUCTS.reduce(
     (sum, product) => sum + product.price * (product.stockQuantity || 1),
     0
@@ -183,9 +187,9 @@ export default function DashboardPage() {
     <div className="p-6 md:p-8 space-y-8">
       {/* Welcome Header */}
       <div>
-        <h1 className="text-3xl font-bold mb-2">Welcome back, {MOCK_USER.name}!</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('pages.dashboard.welcome')}, {MOCK_USER.name}!</h1>
         <p className="text-muted-foreground">
-          Here's an overview of your Pluribus dashboard
+          {t('pages.dashboard.subtitle')}
         </p>
       </div>
 
@@ -193,28 +197,28 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           icon={ShoppingCart}
-          label="Total Orders"
+          label={t('pages.dashboard.stats.totalOrders')}
           value={MOCK_ORDERS.length}
           change={12}
           trend="up"
         />
         <StatCard
           icon={Package}
-          label="Active Products"
+          label={t('pages.dashboard.stats.activeProducts')}
           value={MOCK_PRODUCTS.length}
           change={8}
           trend="up"
         />
         <StatCard
           icon={TrendingUp}
-          label="Total Revenue"
+          label={t('pages.dashboard.stats.totalRevenue')}
           value={`$${totalRevenue.toFixed(2)}`}
           change={24}
           trend="up"
         />
         <StatCard
           icon={Eye}
-          label="Profile Views"
+          label={t('pages.dashboard.stats.profileViews')}
           value="1,234"
           change={5}
           trend="up"
@@ -228,14 +232,14 @@ export default function DashboardPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Recent Orders</CardTitle>
+                  <CardTitle>{t('pages.dashboard.recentOrders.title')}</CardTitle>
                   <CardDescription>
-                    Your latest {MOCK_ORDERS.length} orders
+                    {t('pages.dashboard.recentOrders.subtitle', { count: MOCK_ORDERS.length })}
                   </CardDescription>
                 </div>
                 <Button variant="outline" size="sm" asChild>
                   <Link href="/dashboard/orders">
-                    View All
+                    {t('pages.dashboard.recentOrders.viewAll')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -251,14 +255,14 @@ export default function DashboardPage() {
                     <div className="flex-1">
                       <p className="font-medium">{order.orderNumber}</p>
                       <p className="text-sm text-muted-foreground">
-                        {order.quantity} item(s) · ${order.price.toFixed(2)}
+                        {order.quantity} {t('pages.dashboard.recentOrders.items')} · ${order.price.toFixed(2)}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
                       <OrderStatusBadge status={order.status} />
                       <Button variant="ghost" size="sm" asChild>
                         <Link href={`/dashboard/orders/${order.id}`}>
-                          View
+                          {t('pages.dashboard.recentOrders.view')}
                         </Link>
                       </Button>
                     </div>
@@ -273,29 +277,29 @@ export default function DashboardPage() {
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Quick Actions</CardTitle>
+              <CardTitle className="text-lg">{t('pages.dashboard.quickActions.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button className="w-full justify-start" asChild>
                 <Link href="/dashboard/orders/new">
                   <Plus className="mr-2 h-4 w-4" />
-                  Place New Order
+                  {t('pages.dashboard.quickActions.placeOrder')}
                 </Link>
               </Button>
               <Button className="w-full justify-start" variant="outline" asChild>
                 <Link href="/dashboard/products/new">
                   <Plus className="mr-2 h-4 w-4" />
-                  Add Product
+                  {t('pages.dashboard.quickActions.addProduct')}
                 </Link>
               </Button>
               <Button className="w-full justify-start" variant="outline" asChild>
                 <Link href="/dashboard/profile">
-                  View Profile
+                  {t('pages.dashboard.quickActions.viewProfile')}
                 </Link>
               </Button>
               <Button className="w-full justify-start" variant="outline" asChild>
                 <Link href="/dashboard/settings">
-                  Settings
+                  {t('pages.dashboard.quickActions.settings')}
                 </Link>
               </Button>
             </CardContent>
@@ -305,10 +309,10 @@ export default function DashboardPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Active Products</CardTitle>
+                <CardTitle className="text-lg">{t('pages.dashboard.activeProducts.title')}</CardTitle>
                 <Button variant="outline" size="sm" asChild>
                   <Link href="/dashboard/products">
-                    View All
+                    {t('pages.dashboard.recentOrders.viewAll')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -333,7 +337,7 @@ export default function DashboardPage() {
                         {product.title}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        ${product.price.toFixed(2)} · Stock: {product.stockQuantity}
+                        ${product.price.toFixed(2)} · {t('pages.dashboard.activeProducts.stock')}: {product.stockQuantity}
                       </p>
                     </div>
                   </div>

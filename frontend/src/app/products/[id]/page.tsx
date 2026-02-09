@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Product Details Page
  * Display comprehensive product information with image gallery, pricing, seller info, and reviews
@@ -5,7 +7,6 @@
  * Route: /products/[id]
  */
 
-import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, ShoppingCart, Heart, Share2, Check, AlertCircle } from 'lucide-react';
@@ -18,6 +19,7 @@ import { Product, User } from '@/types';
 import { cn, truncate } from '@/lib/utils';
 import { ImageGallery } from './components/ImageGallery';
 import { StockStatus } from './components/StockStatus';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 // Mock data for development - same products as products page
 const getMockProducts = (): Product[] => {
@@ -195,40 +197,8 @@ interface ProductDetailsPageProps {
   };
 }
 
-export async function generateMetadata(
-  { params }: ProductDetailsPageProps
-): Promise<Metadata> {
-  const products = getMockProducts();
-  const product = products.find(p => p.id === params.id);
-
-  if (!product) {
-    return {
-      title: 'Product Not Found | Pluribus',
-      description: 'The product you are looking for does not exist.',
-    };
-  }
-
-  return {
-    title: `${product.title} | Pluribus`,
-    description: truncate(product.description, 160),
-    keywords: product.tags.join(', '),
-    openGraph: {
-      title: product.title,
-      description: product.description,
-      images: product.photos.map(photo => ({
-        url: photo,
-        width: 800,
-        height: 600,
-        alt: product.title,
-      })),
-      type: 'website',
-    },
-  };
-}
-
-export default async function ProductDetailsPage({ params }: ProductDetailsPageProps) {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 300));
+export default function ProductDetailsPage({ params }: ProductDetailsPageProps) {
+  const { t } = useTranslations();
 
   const products = getMockProducts();
   const product = products.find(p => p.id === params.id);
@@ -242,18 +212,18 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
               <AlertCircle className="w-6 h-6" />
             </div>
 
-            <h2 className="text-xl font-semibold mb-2">Product Not Found</h2>
+            <h2 className="text-xl font-semibold mb-2">{t('pages.productDetail.notFound.title')}</h2>
 
             <p className="text-muted-foreground mb-6">
-              We couldn't find the product you're looking for.
+              {t('pages.productDetail.notFound.description')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2 justify-center">
               <Button asChild>
-                <Link href="/products">Browse Products</Link>
+                <Link href="/products">{t('pages.productDetail.notFound.browseProducts')}</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/">Go Home</Link>
+                <Link href="/">{t('pages.productDetail.notFound.goHome')}</Link>
               </Button>
             </div>
           </CardContent>
@@ -275,11 +245,11 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
       {/* Breadcrumb */}
       <nav className="mb-8 text-sm text-muted-foreground">
         <Link href="/" className="hover:text-primary transition-colors">
-          Home
+          {t('pages.productDetail.breadcrumb.home')}
         </Link>
         <span className="mx-2">/</span>
         <Link href="/products" className="hover:text-primary transition-colors">
-          Products
+          {t('pages.productDetail.breadcrumb.products')}
         </Link>
         <span className="mx-2">/</span>
         <span className="text-foreground">{product.title}</span>
@@ -304,14 +274,16 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <Rating value={averageRating} size="md" readonly showValue />
-                <span className="text-muted-foreground">({reviews.length} reviews)</span>
+                <span className="text-muted-foreground">
+                  ({reviews.length} {reviews.length === 1 ? t('pages.productDetail.details.review') : t('pages.productDetail.details.reviews')})
+                </span>
               </div>
             </div>
           </div>
 
           {/* Price Section */}
           <div className="bg-muted/50 rounded-lg p-4">
-            <p className="text-muted-foreground text-sm mb-2">Price</p>
+            <p className="text-muted-foreground text-sm mb-2">{t('pages.productDetail.details.price')}</p>
             <div className="flex items-baseline gap-2 mb-2">
               <PriceDisplay amount={product.price} currency={product.currency} size="lg" />
             </div>
@@ -319,7 +291,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
 
           {/* Stock Status */}
           <div className="bg-muted/50 rounded-lg p-4">
-            <p className="text-muted-foreground text-sm mb-2">Availability</p>
+            <p className="text-muted-foreground text-sm mb-2">{t('pages.productDetail.details.availability')}</p>
             <StockStatus quantity={product.stockQuantity} />
           </div>
 
@@ -331,23 +303,23 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
               disabled={product.stockQuantity === 0}
             >
               <ShoppingCart className="w-4 h-4" />
-              {product.stockQuantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+              {product.stockQuantity === 0 ? t('pages.productDetail.details.outOfStock') : t('pages.productDetail.details.addToCart')}
             </Button>
 
             <Button variant="outline" size="lg" className="w-full">
               <Heart className="w-4 h-4" />
-              Save for Later
+              {t('pages.productDetail.details.saveForLater')}
             </Button>
 
             <Button variant="outline" size="lg" className="w-full">
               <Share2 className="w-4 h-4" />
-              Share
+              {t('pages.productDetail.details.share')}
             </Button>
           </div>
 
           {/* Description */}
           <div className="bg-muted/50 rounded-lg p-4">
-            <h3 className="font-semibold mb-2">Description</h3>
+            <h3 className="font-semibold mb-2">{t('pages.productDetail.details.description')}</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {product.description}
             </p>
@@ -356,7 +328,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
           {/* Tags */}
           {product.tags && product.tags.length > 0 && (
             <div>
-              <h3 className="font-semibold mb-2 text-sm">Tags</h3>
+              <h3 className="font-semibold mb-2 text-sm">{t('pages.productDetail.details.tags')}</h3>
               <div className="flex flex-wrap gap-2">
                 {product.tags.map((tag, index) => (
                   <Badge key={index} variant="secondary">
@@ -373,7 +345,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
       {product.seller && (
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Seller Information</CardTitle>
+            <CardTitle>{t('pages.productDetail.seller.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -406,7 +378,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
                   <div className="flex items-center gap-2 mt-1">
                     <Rating value={product.seller.rating || 0} size="sm" readonly />
                     <span className="text-sm text-muted-foreground">
-                      ({product.seller.reviewCount || 0} reviews)
+                      ({product.seller.reviewCount || 0} {t('pages.productDetail.seller.reviews')})
                     </span>
                   </div>
 
@@ -419,24 +391,24 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
 
               {/* Verification Badges */}
               <div className="space-y-2">
-                <h4 className="font-semibold text-sm mb-3">Verified Badges</h4>
+                <h4 className="font-semibold text-sm mb-3">{t('pages.productDetail.seller.verifiedBadges')}</h4>
                 <div className="space-y-2">
                   {product.seller.emailVerified && (
                     <div className="flex items-center gap-2 text-sm">
                       <Check className="w-4 h-4 text-green-600" />
-                      <span>Email Verified</span>
+                      <span>{t('pages.productDetail.seller.emailVerified')}</span>
                     </div>
                   )}
                   {product.seller.phoneVerified && (
                     <div className="flex items-center gap-2 text-sm">
                       <Check className="w-4 h-4 text-green-600" />
-                      <span>Phone Verified</span>
+                      <span>{t('pages.productDetail.seller.phoneVerified')}</span>
                     </div>
                   )}
                   {product.seller.idVerified && (
                     <div className="flex items-center gap-2 text-sm">
                       <Check className="w-4 h-4 text-green-600" />
-                      <span>ID Verified</span>
+                      <span>{t('pages.productDetail.seller.idVerified')}</span>
                     </div>
                   )}
                 </div>
@@ -444,7 +416,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
             </div>
 
             <Button variant="outline" asChild className="mt-4 w-full">
-              <Link href={`/sellers/${product.seller.id}`}>View All Products</Link>
+              <Link href={`/sellers/${product.seller.id}`}>{t('pages.productDetail.seller.viewAllProducts')}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -453,9 +425,9 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
       {/* Reviews Section */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Customer Reviews</CardTitle>
+          <CardTitle>{t('pages.productDetail.customerReviews.title')}</CardTitle>
           <CardDescription>
-            Ratings and feedback from buyers ({reviews.length} reviews)
+            {t('pages.productDetail.customerReviews.subtitle')} ({reviews.length} {reviews.length === 1 ? t('pages.productDetail.details.review') : t('pages.productDetail.details.reviews')})
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -468,7 +440,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
                 </div>
                 <Rating value={averageRating} size="md" readonly />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Based on {reviews.length} reviews
+                  {t('pages.productDetail.customerReviews.basedOn')} {reviews.length} {reviews.length === 1 ? t('pages.productDetail.details.review') : t('pages.productDetail.details.reviews')}
                 </p>
               </div>
             </div>
@@ -501,7 +473,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
       {/* Related Products Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Related Products</CardTitle>
+          <CardTitle>{t('pages.productDetail.relatedProducts.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -525,7 +497,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full text-muted-foreground">
-                        No Image
+                        {t('pages.productDetail.relatedProducts.noImage')}
                       </div>
                     )}
                   </div>

@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,18 +17,7 @@ import {
   Package,
   MessageSquare,
 } from "lucide-react";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "About Pluribus - Our Story & Mission",
-  description: "Learn about Pluribus: connecting buyers and sellers worldwide. Discover our mission, values, and commitment to making international delivery simple and secure.",
-  keywords: ["about pluribus", "international delivery", "global marketplace", "our story", "our mission"],
-  openGraph: {
-    title: "About Pluribus - Our Story & Mission",
-    description: "Learn about Pluribus: connecting buyers and sellers worldwide. Discover our mission, values, and commitment to making international delivery simple and secure.",
-    type: "website",
-  },
-};
+import { useTranslations } from "@/contexts/TranslationsContext";
 
 const values = [
   {
@@ -85,6 +76,8 @@ const stats = [
 ];
 
 export default function About() {
+  const { t } = useTranslations();
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -92,12 +85,11 @@ export default function About() {
         <div className="container px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-6">
-              Connecting the
-              <span className="text-blue-600"> World</span>
+              {t('pages.about.hero.title')}
+              <span className="text-blue-600">{t('pages.about.hero.titleHighlight')}</span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Pluribus is building the future of international commerce by making it simple,
-              secure, and accessible for buyers and sellers everywhere.
+              {t('pages.about.hero.subtitle')}
             </p>
           </div>
         </div>
@@ -108,9 +100,9 @@ export default function About() {
         <div className="container px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Our Story</h2>
+              <h2 className="text-3xl font-bold mb-4">{t('pages.about.story.title')}</h2>
               <p className="text-lg text-muted-foreground">
-                From a simple idea to a global platform
+                {t('pages.about.story.subtitle')}
               </p>
             </div>
 
@@ -122,11 +114,9 @@ export default function About() {
                       <Lightbulb className="h-6 w-6" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-2">The Beginning</h3>
+                      <h3 className="text-xl font-semibold mb-2">{t('pages.about.story.beginning.title')}</h3>
                       <p className="text-muted-foreground">
-                        Pluribus was founded on a simple observation: billions of people worldwide want access to products
-                        they can't find locally, but the process is complicated, expensive, and often unreliable. We saw an opportunity
-                        to create a better way.
+                        {t('pages.about.story.beginning.description')}
                       </p>
                     </div>
                   </div>
@@ -140,10 +130,9 @@ export default function About() {
                       <Target className="h-6 w-6" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-2">Our Mission</h3>
+                      <h3 className="text-xl font-semibold mb-2">{t('pages.about.story.mission.title')}</h3>
                       <p className="text-muted-foreground">
-                        We set out to eliminate the barriers of international commerce. By connecting buyers with trustworthy sellers
-                        across the globe, we're creating a marketplace where anyone can shop globally as easily as shopping locally.
+                        {t('pages.about.story.mission.description')}
                       </p>
                     </div>
                   </div>
@@ -157,10 +146,9 @@ export default function About() {
                       <Award className="h-6 w-6" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-2">Today & Beyond</h3>
+                      <h3 className="text-xl font-semibold mb-2">{t('pages.about.story.today.title')}</h3>
                       <p className="text-muted-foreground">
-                        Today, Pluribus connects thousands of buyers and sellers across 50+ countries. We're continuously innovating,
-                        adding new features, and expanding our reach to make international shopping truly accessible to everyone.
+                        {t('pages.about.story.today.description')}
                       </p>
                     </div>
                   </div>
@@ -340,17 +328,15 @@ export default function About() {
           <Card className="bg-gradient-to-r from-blue-600 to-blue-700 text-white border-0">
             <CardContent className="p-12 text-center">
               <h2 className="text-3xl font-bold mb-4">
-                Ready to Be Part of Our Story?
+                {t('pages.about.cta.title')}
               </h2>
               <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-                Join Pluribus today and become part of a global community transforming how people
-                shop internationally. Whether you're a buyer seeking global products or a seller
-                looking to reach new markets, we're here to help you succeed.
+                {t('pages.about.cta.subtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" variant="secondary" asChild>
                   <Link href="/register">
-                    Get Started Free
+                    {t('pages.about.cta.getStarted')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -360,7 +346,7 @@ export default function About() {
                   className="bg-transparent border-white text-white hover:bg-white/10"
                   asChild
                 >
-                  <Link href="/products">Browse Products</Link>
+                  <Link href="/products">{t('pages.about.cta.browseProducts')}</Link>
                 </Button>
               </div>
             </CardContent>

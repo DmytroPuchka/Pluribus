@@ -36,6 +36,7 @@ import {
 } from '@/components/ui/select';
 import { Product, ProductCategory } from '@/types';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 /**
  * Filter object structure
@@ -64,26 +65,6 @@ const CATEGORIES: ProductCategory[] = [
   'OTHER',
 ];
 
-/**
- * Sort options
- */
-const SORT_OPTIONS = [
-  { label: 'Newest', value: 'newest' as const },
-  { label: 'Price: Low to High', value: 'price-low-high' as const },
-  { label: 'Price: High to Low', value: 'price-high-low' as const },
-  { label: 'Rating: High to Low', value: 'rating' as const },
-];
-
-/**
- * Rating options (minimum seller rating)
- */
-const RATING_OPTIONS = [
-  { label: 'All Ratings', value: 0 },
-  { label: '3+ Stars', value: 3 },
-  { label: '4+ Stars', value: 4 },
-  { label: '4.5+ Stars', value: 4.5 },
-  { label: '5 Stars', value: 5 },
-];
 
 interface ProductFiltersProps {
   products: Product[];
@@ -169,8 +150,25 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
   onFiltersChange,
   className,
 }) => {
+  const { t } = useTranslations();
   const [filters, setFilters] = useState<ProductFiltersState>({});
   const [isExpanded, setIsExpanded] = useState(true);
+
+  // Sort options
+  const SORT_OPTIONS = useMemo(() => [
+    { label: t('pages.products.filters.sortOptions.newest'), value: 'newest' as const },
+    { label: t('pages.products.filters.sortOptions.priceLowToHigh'), value: 'price-low-high' as const },
+    { label: t('pages.products.filters.sortOptions.priceHighToLow'), value: 'price-high-low' as const },
+    { label: t('pages.products.filters.sortOptions.topRated'), value: 'rating' as const },
+  ], [t]);
+
+  // Rating options (minimum seller rating)
+  const RATING_OPTIONS = useMemo(() => [
+    { label: t('pages.products.filters.allRatings'), value: 0 },
+    { label: t('pages.products.filters.ratingOptions.3plus'), value: 3 },
+    { label: t('pages.products.filters.ratingOptions.4plus'), value: 4 },
+    { label: t('pages.products.filters.ratingOptions.5stars'), value: 5 },
+  ], [t]);
 
   // Get available countries
   const countries = useMemo(() => getCountriesFromProducts(products), [products]);
@@ -273,10 +271,10 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
           <div className="flex items-center gap-2">
             <Sliders className="w-5 h-5" />
             <div>
-              <CardTitle>Filters</CardTitle>
+              <CardTitle>{t('pages.products.filters.title')}</CardTitle>
               {hasActiveFilters && (
                 <CardDescription>
-                  {activeFilterCount} filter{activeFilterCount !== 1 ? 's' : ''} applied
+                  {activeFilterCount} {activeFilterCount !== 1 ? t('pages.products.filters.appliedPlural') : t('pages.products.filters.applied')}
                 </CardDescription>
               )}
             </div>
@@ -297,17 +295,17 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
             {/* Category Filter */}
             <div className="space-y-2">
               <Label htmlFor="category" className="text-sm font-medium">
-                Category
+                {t('pages.products.filters.category')}
               </Label>
               <Select
                 value={filters.category || 'ALL'}
                 onValueChange={handleCategoryChange}
               >
                 <SelectTrigger id="category">
-                  <SelectValue placeholder="All Categories" />
+                  <SelectValue placeholder={t('pages.products.filters.allCategories')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ALL">All Categories</SelectItem>
+                  <SelectItem value="ALL">{t('pages.products.filters.allCategories')}</SelectItem>
                   {CATEGORIES.map(category => (
                     <SelectItem key={category} value={category}>
                       {category.charAt(0) + category.slice(1).toLowerCase()}
@@ -319,14 +317,14 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
 
             {/* Price Range Filter */}
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Price Range</Label>
+              <Label className="text-sm font-medium">{t('pages.products.filters.priceRange')}</Label>
               <div className="flex gap-2 items-end">
                 <div className="flex-1">
                   <Label
                     htmlFor="min-price"
                     className="text-xs text-muted-foreground mb-1 block"
                   >
-                    Min
+                    {t('pages.products.filters.min')}
                   </Label>
                   <Input
                     id="min-price"
@@ -343,7 +341,7 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
                     htmlFor="max-price"
                     className="text-xs text-muted-foreground mb-1 block"
                   >
-                    Max
+                    {t('pages.products.filters.max')}
                   </Label>
                   <Input
                     id="max-price"
@@ -360,14 +358,14 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
             {/* Seller Rating Filter */}
             <div className="space-y-2">
               <Label htmlFor="rating" className="text-sm font-medium">
-                Seller Rating
+                {t('pages.products.filters.sellerRating')}
               </Label>
               <Select
                 value={(filters.minRating ?? 0).toString()}
                 onValueChange={handleRatingChange}
               >
                 <SelectTrigger id="rating">
-                  <SelectValue placeholder="All Ratings" />
+                  <SelectValue placeholder={t('pages.products.filters.allRatings')} />
                 </SelectTrigger>
                 <SelectContent>
                   {RATING_OPTIONS.map(option => (
@@ -386,17 +384,17 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
             {countries.length > 0 && (
               <div className="space-y-2">
                 <Label htmlFor="country" className="text-sm font-medium">
-                  Country
+                  {t('pages.products.filters.country')}
                 </Label>
                 <Select
                   value={filters.country || 'ALL'}
                   onValueChange={handleCountryChange}
                 >
                   <SelectTrigger id="country">
-                    <SelectValue placeholder="All Countries" />
+                    <SelectValue placeholder={t('pages.products.filters.allCountries')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ALL">All Countries</SelectItem>
+                    <SelectItem value="ALL">{t('pages.products.filters.allCountries')}</SelectItem>
                     {countries.map(country => (
                       <SelectItem key={country} value={country}>
                         {country}
@@ -410,17 +408,17 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
             {/* Sort By Filter */}
             <div className="space-y-2">
               <Label htmlFor="sort" className="text-sm font-medium">
-                Sort By
+                {t('pages.products.filters.sortBy')}
               </Label>
               <Select
                 value={filters.sortBy || 'NONE'}
                 onValueChange={handleSortChange}
               >
                 <SelectTrigger id="sort">
-                  <SelectValue placeholder="Sort by..." />
+                  <SelectValue placeholder={t('pages.products.filters.sortByPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="NONE">None</SelectItem>
+                  <SelectItem value="NONE">{t('pages.products.filters.none')}</SelectItem>
                   {SORT_OPTIONS.map(option => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
@@ -434,14 +432,14 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
             {hasActiveFilters && (
               <div className="space-y-3 pt-2">
                 <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Active Filters</Label>
+                  <Label className="text-sm font-medium">{t('pages.products.filters.activeFilters')}</Label>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleClearFilters}
                     className="text-xs text-muted-foreground hover:text-foreground"
                   >
-                    Clear All
+                    {t('pages.products.filters.clearAll')}
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -451,7 +449,7 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
                       className="gap-1 cursor-pointer hover:bg-secondary/80"
                       onClick={() => handleCategoryChange('ALL')}
                     >
-                      {filters.category.charAt(0) +
+                      {t('pages.products.filters.badges.category')} {filters.category.charAt(0) +
                         filters.category.slice(1).toLowerCase()}
                       <X className="w-3 h-3" />
                     </Badge>
@@ -464,7 +462,7 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
                         handleFilterChange({ ...filters, minPrice: undefined })
                       }
                     >
-                      Min: ${filters.minPrice}
+                      {t('pages.products.filters.badges.priceMin')} ${filters.minPrice}
                       <X className="w-3 h-3" />
                     </Badge>
                   )}
@@ -476,7 +474,7 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
                         handleFilterChange({ ...filters, maxPrice: undefined })
                       }
                     >
-                      Max: ${filters.maxPrice}
+                      {t('pages.products.filters.badges.priceMax')} ${filters.maxPrice}
                       <X className="w-3 h-3" />
                     </Badge>
                   )}
@@ -488,7 +486,7 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
                         handleFilterChange({ ...filters, minRating: undefined })
                       }
                     >
-                      {filters.minRating}+ Stars
+                      {t('pages.products.filters.badges.rating')} {filters.minRating}+
                       <X className="w-3 h-3" />
                     </Badge>
                   )}
@@ -498,7 +496,7 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
                       className="gap-1 cursor-pointer hover:bg-secondary/80"
                       onClick={() => handleCountryChange('ALL')}
                     >
-                      {filters.country}
+                      {t('pages.products.filters.badges.country')} {filters.country}
                       <X className="w-3 h-3" />
                     </Badge>
                   )}
@@ -508,7 +506,7 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
                       className="gap-1 cursor-pointer hover:bg-secondary/80"
                       onClick={() => handleSortChange('NONE')}
                     >
-                      Sort: {SORT_OPTIONS.find(o => o.value === filters.sortBy)?.label}
+                      {t('pages.products.filters.badges.sort')} {SORT_OPTIONS.find(o => o.value === filters.sortBy)?.label}
                       <X className="w-3 h-3" />
                     </Badge>
                   )}

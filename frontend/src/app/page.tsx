@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,8 +14,10 @@ import {
   MapPin,
   Users
 } from "lucide-react";
+import { useTranslations } from "@/contexts/TranslationsContext";
 
 export default function Home() {
+  const { t } = useTranslations();
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -21,22 +25,21 @@ export default function Home() {
         <div className="container px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-6">
-              International Delivery
-              <span className="text-blue-600"> Made Simple</span>
+              {t('landing.hero.title')}
+              <span className="text-blue-600">{t('landing.hero.titleHighlight')}</span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Connect with sellers worldwide and get products delivered internationally.
-              Fast, secure, and accessible for everyone.
+              {t('landing.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild>
                 <Link href="/products">
-                  Browse Products
+                  {t('landing.hero.browseProducts')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link href="/sellers">View Sellers</Link>
+                <Link href="/sellers">{t('landing.hero.viewSellers')}</Link>
               </Button>
             </div>
 
@@ -44,15 +47,15 @@ export default function Home() {
             <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
               <div>
                 <div className="text-3xl font-bold text-blue-600">50+</div>
-                <div className="text-sm text-muted-foreground">Countries</div>
+                <div className="text-sm text-muted-foreground">{t('landing.hero.stats.countries')}</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-blue-600">1000+</div>
-                <div className="text-sm text-muted-foreground">Products</div>
+                <div className="text-sm text-muted-foreground">{t('landing.hero.stats.products')}</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-blue-600">500+</div>
-                <div className="text-sm text-muted-foreground">Sellers</div>
+                <div className="text-sm text-muted-foreground">{t('landing.hero.stats.sellers')}</div>
               </div>
             </div>
           </div>
@@ -63,9 +66,9 @@ export default function Home() {
       <section className="py-20 md:py-32">
         <div className="container px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">How It Works</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('landing.howItWorks.title')}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Simple process to get products from anywhere in the world
+              {t('landing.howItWorks.subtitle')}
             </p>
           </div>
 
@@ -75,9 +78,9 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
                   <MapPin className="h-6 w-6" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">1. Find Sellers</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('landing.howItWorks.step1.title')}</h3>
                 <p className="text-muted-foreground">
-                  Browse our interactive map to find sellers from around the world
+                  {t('landing.howItWorks.step1.description')}
                 </p>
               </CardContent>
             </Card>
@@ -87,9 +90,9 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
                   <Package className="h-6 w-6" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">2. Place Order</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('landing.howItWorks.step2.title')}</h3>
                 <p className="text-muted-foreground">
-                  Choose products or create custom orders with specific requirements
+                  {t('landing.howItWorks.step2.description')}
                 </p>
               </CardContent>
             </Card>
@@ -99,9 +102,9 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
                   <Globe2 className="h-6 w-6" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">3. Get Delivered</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('landing.howItWorks.step3.title')}</h3>
                 <p className="text-muted-foreground">
-                  Track your order and receive it at your doorstep anywhere in the world
+                  {t('landing.howItWorks.step3.description')}
                 </p>
               </CardContent>
             </Card>
@@ -113,9 +116,9 @@ export default function Home() {
       <section className="py-20 md:py-32 bg-muted/50">
         <div className="container px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Why Choose Pluribus</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('landing.features.title')}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              We make international delivery accessible and secure for everyone
+              {t('landing.features.subtitle')}
             </p>
           </div>
 
@@ -125,9 +128,9 @@ export default function Home() {
                 <Globe2 className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Global Network</h3>
+                <h3 className="font-semibold mb-2">{t('landing.features.globalNetwork.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Access sellers from over 50 countries worldwide
+                  {t('landing.features.globalNetwork.description')}
                 </p>
               </div>
             </div>
@@ -137,9 +140,9 @@ export default function Home() {
                 <CreditCard className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Secure Payments</h3>
+                <h3 className="font-semibold mb-2">{t('landing.features.securePayments.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Stripe integration with escrow protection for your safety
+                  {t('landing.features.securePayments.description')}
                 </p>
               </div>
             </div>
@@ -149,9 +152,9 @@ export default function Home() {
                 <MessageSquare className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Real-time Chat</h3>
+                <h3 className="font-semibold mb-2">{t('landing.features.realTimeChat.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Communicate directly with sellers for custom requests
+                  {t('landing.features.realTimeChat.description')}
                 </p>
               </div>
             </div>
@@ -161,9 +164,9 @@ export default function Home() {
                 <Star className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Verified Ratings</h3>
+                <h3 className="font-semibold mb-2">{t('landing.features.verifiedRatings.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Transparent reviews from real buyers and sellers
+                  {t('landing.features.verifiedRatings.description')}
                 </p>
               </div>
             </div>
@@ -173,9 +176,9 @@ export default function Home() {
                 <Shield className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Safe & Secure</h3>
+                <h3 className="font-semibold mb-2">{t('landing.features.safeSecure.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Your data and transactions are fully protected
+                  {t('landing.features.safeSecure.description')}
                 </p>
               </div>
             </div>
@@ -185,9 +188,9 @@ export default function Home() {
                 <Users className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Community Driven</h3>
+                <h3 className="font-semibold mb-2">{t('landing.features.communityDriven.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Join thousands of satisfied buyers and sellers
+                  {t('landing.features.communityDriven.description')}
                 </p>
               </div>
             </div>
@@ -201,14 +204,14 @@ export default function Home() {
           <Card className="bg-gradient-to-r from-blue-600 to-blue-700 text-white border-0">
             <CardContent className="p-12 text-center">
               <h2 className="text-3xl font-bold mb-4">
-                Ready to Start Your Global Shopping Experience?
+                {t('landing.cta.title')}
               </h2>
               <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-                Join Pluribus today and discover products from around the world
+                {t('landing.cta.subtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" variant="secondary" asChild>
-                  <Link href="/register">Get Started Free</Link>
+                  <Link href="/register">{t('landing.cta.getStarted')}</Link>
                 </Button>
                 <Button
                   size="lg"
@@ -216,7 +219,7 @@ export default function Home() {
                   className="bg-transparent border-white text-white hover:bg-white/10"
                   asChild
                 >
-                  <Link href="/how-it-works">Learn More</Link>
+                  <Link href="/how-it-works">{t('landing.cta.learnMore')}</Link>
                 </Button>
               </div>
             </CardContent>

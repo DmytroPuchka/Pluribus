@@ -21,29 +21,31 @@ import {
   FormDescription,
 } from '@/components/ui/form'
 import { Lock, Eye, EyeOff, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react'
-
-// Validation schema
-const resetPasswordSchema = z.object({
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number')
-    .min(1, 'Password is required'),
-  confirmPassword: z
-    .string()
-    .min(1, 'Please confirm your password'),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword'],
-})
-
-type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>
+import { useTranslations } from '@/contexts/TranslationsContext'
 
 type TokenStatus = 'loading' | 'valid' | 'invalid' | 'expired'
 
 export default function ResetPasswordPage() {
+  const { t } = useTranslations()
+
+  // Validation schema
+  const resetPasswordSchema = z.object({
+    password: z
+      .string()
+      .min(8, t('auth.resetPassword.validation.passwordMinLength'))
+      .regex(/[A-Z]/, t('auth.resetPassword.validation.passwordUppercase'))
+      .regex(/[a-z]/, t('auth.resetPassword.validation.passwordLowercase'))
+      .regex(/[0-9]/, t('auth.resetPassword.validation.passwordNumber'))
+      .min(1, t('auth.resetPassword.validation.passwordRequired')),
+    confirmPassword: z
+      .string()
+      .min(1, t('auth.resetPassword.validation.confirmPasswordRequired')),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('auth.resetPassword.validation.passwordMismatch'),
+    path: ['confirmPassword'],
+  })
+
+  type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>
   const params = useParams()
   const token = params.token as string
 
@@ -77,14 +79,14 @@ export default function ResetPasswordPage() {
       } catch (err) {
         console.error('Token validation error:', err)
         setTokenStatus('invalid')
-        setError('Invalid or expired reset link. Please request a new one.')
+        setError(t('auth.resetPassword.errors.invalidToken'))
       }
     }
 
     if (token) {
       validateToken()
     }
-  }, [token])
+  }, [token, t])
 
   async function onSubmit(values: ResetPasswordFormValues) {
     try {
@@ -107,8 +109,8 @@ export default function ResetPasswordPage() {
       setIsSubmitted(true)
     } catch (err) {
       console.error('Password reset error:', err)
-      setError('Failed to reset password. Please try again.')
-      form.setError('root', { message: 'Failed to reset password. Please try again.' })
+      setError(t('auth.resetPassword.errors.failedToReset'))
+      form.setError('root', { message: t('auth.resetPassword.errors.failedToReset') })
     } finally {
       setIsLoading(false)
     }
@@ -141,7 +143,7 @@ export default function ResetPasswordPage() {
           className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to login
+          {t('auth.resetPassword.backToLogin')}
         </Link>
 
         {/* Header with Logo */}
@@ -149,11 +151,11 @@ export default function ResetPasswordPage() {
           <div className="mb-6 flex justify-center">
             <Logo size="lg" href="/" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Create New Password</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('auth.resetPassword.title')}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {isSubmitted
-              ? 'Your password has been reset successfully'
-              : 'Enter a new password for your account'}
+              ? t('auth.resetPassword.subtitleSuccess')
+              : t('auth.resetPassword.subtitle')}
           </p>
         </div>
 
@@ -170,9 +172,9 @@ export default function ResetPasswordPage() {
                 </div>
 
                 <div className="space-y-2 text-center">
-                  <h2 className="text-lg font-semibold text-foreground">Invalid Link</h2>
+                  <h2 className="text-lg font-semibold text-foreground">{t('auth.resetPassword.invalidToken.title')}</h2>
                   <p className="text-sm text-muted-foreground">
-                    The password reset link has expired or is invalid. Please request a new one.
+                    {t('auth.resetPassword.invalidToken.message')}
                   </p>
                 </div>
 
@@ -182,7 +184,7 @@ export default function ResetPasswordPage() {
                   size="lg"
                 >
                   <Link href="/forgot-password">
-                    Request New Reset Link
+                    {t('auth.resetPassword.invalidToken.requestNew')}
                   </Link>
                 </Button>
 
@@ -193,7 +195,7 @@ export default function ResetPasswordPage() {
                   size="lg"
                 >
                   <Link href="/login">
-                    Back to Login
+                    {t('auth.resetPassword.backToLoginButton')}
                   </Link>
                 </Button>
               </div>
@@ -207,9 +209,9 @@ export default function ResetPasswordPage() {
                 </div>
 
                 <div className="space-y-2 text-center">
-                  <h2 className="text-lg font-semibold text-foreground">Password Reset Successfully</h2>
+                  <h2 className="text-lg font-semibold text-foreground">{t('auth.resetPassword.success.title')}</h2>
                   <p className="text-sm text-muted-foreground">
-                    Your password has been updated. You can now sign in with your new password.
+                    {t('auth.resetPassword.success.message')}
                   </p>
                 </div>
 
@@ -219,7 +221,7 @@ export default function ResetPasswordPage() {
                   size="lg"
                 >
                   <Link href="/login">
-                    Sign In
+                    {t('auth.resetPassword.success.signIn')}
                   </Link>
                 </Button>
               </div>
@@ -229,12 +231,12 @@ export default function ResetPasswordPage() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   {/* Password Requirements */}
                   <div className="rounded-lg bg-blue-50/50 p-3 text-sm text-muted-foreground space-y-1">
-                    <p className="font-medium text-foreground">Password requirements:</p>
+                    <p className="font-medium text-foreground">{t('auth.resetPassword.requirements.title')}</p>
                     <ul className="list-disc list-inside space-y-1 text-xs">
-                      <li>At least 8 characters</li>
-                      <li>One uppercase letter</li>
-                      <li>One lowercase letter</li>
-                      <li>One number</li>
+                      <li>{t('auth.resetPassword.requirements.minLength')}</li>
+                      <li>{t('auth.resetPassword.requirements.uppercase')}</li>
+                      <li>{t('auth.resetPassword.requirements.lowercase')}</li>
+                      <li>{t('auth.resetPassword.requirements.number')}</li>
                     </ul>
                   </div>
 
@@ -244,13 +246,13 @@ export default function ResetPasswordPage() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="password">New Password</FormLabel>
+                        <FormLabel htmlFor="password">{t('auth.resetPassword.password')}</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                             <Input
                               id="password"
-                              placeholder="Enter your new password"
+                              placeholder={t('auth.resetPassword.placeholders.password')}
                               type={showPassword ? 'text' : 'password'}
                               autoComplete="new-password"
                               className="pl-10 pr-10"
@@ -282,13 +284,13 @@ export default function ResetPasswordPage() {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
+                        <FormLabel htmlFor="confirmPassword">{t('auth.resetPassword.confirmPassword')}</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                             <Input
                               id="confirmPassword"
-                              placeholder="Confirm your new password"
+                              placeholder={t('auth.resetPassword.placeholders.confirmPassword')}
                               type={showConfirmPassword ? 'text' : 'password'}
                               autoComplete="new-password"
                               className="pl-10 pr-10"
@@ -328,7 +330,7 @@ export default function ResetPasswordPage() {
                     className="w-full"
                     size="lg"
                   >
-                    {isLoading ? 'Resetting password...' : 'Reset Password'}
+                    {isLoading ? t('auth.resetPassword.submitting') : t('auth.resetPassword.submit')}
                   </Button>
 
                   {/* Root Error Message */}
@@ -346,9 +348,9 @@ export default function ResetPasswordPage() {
         {/* Help Link */}
         <div className="mt-6 text-center text-sm text-muted-foreground">
           <p>
-            Having trouble?{' '}
+            {t('auth.resetPassword.help.trouble')}{' '}
             <Link href="/contact-support" className="text-primary hover:underline">
-              Contact support
+              {t('auth.resetPassword.help.contactSupport')}
             </Link>
           </p>
         </div>

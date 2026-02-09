@@ -1,25 +1,9 @@
-import type { Metadata } from "next";
+'use client';
+
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Terms of Service - Pluribus",
-  description:
-    "Read our comprehensive Terms of Service for Pluribus marketplace. Learn about user obligations, payment processing, disputes, and more.",
-  keywords: [
-    "terms of service",
-    "terms and conditions",
-    "user agreement",
-    "legal",
-  ],
-  openGraph: {
-    title: "Terms of Service - Pluribus",
-    description:
-      "Read our comprehensive Terms of Service for Pluribus marketplace.",
-    type: "website",
-  },
-};
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 interface TableOfContentsItem {
   title: string;
@@ -43,6 +27,7 @@ const tableOfContents: TableOfContentsItem[] = [
 ];
 
 export default function TermsOfService() {
+  const { t } = useTranslations();
   const lastUpdatedDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -56,14 +41,13 @@ export default function TermsOfService() {
         <div className="container px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-6">
-              Terms of Service
+              {t('pages.terms.hero.title')}
             </h1>
             <p className="text-lg text-muted-foreground mb-4">
-              Please read these terms carefully before using the Pluribus
-              platform
+              {t('pages.terms.hero.subtitle')}
             </p>
             <p className="text-sm text-muted-foreground">
-              Last Updated: {lastUpdatedDate}
+              {t('pages.terms.hero.lastUpdated')}: {lastUpdatedDate}
             </p>
           </div>
         </div>
@@ -78,14 +62,10 @@ export default function TermsOfService() {
                 <AlertCircle className="h-6 w-6 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <h3 className="font-semibold text-amber-900 mb-2">
-                    Legal Disclaimer
+                    {t('pages.terms.disclaimer.title')}
                   </h3>
                   <p className="text-sm text-amber-800">
-                    This Terms of Service is a template and should be reviewed
-                    by legal counsel before deployment in a production
-                    environment. It may require customization based on your
-                    specific business requirements, jurisdictional regulations,
-                    and operational practices.
+                    {t('pages.terms.disclaimer.description')}
                   </p>
                 </div>
               </div>
@@ -851,16 +831,15 @@ export default function TermsOfService() {
       <section className="py-12 md:py-20 bg-muted/50 border-t">
         <div className="container px-4">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl font-bold mb-4">Have Questions?</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('pages.terms.cta.title')}</h2>
             <p className="text-muted-foreground mb-6">
-              If you have any questions about these Terms of Service, please
-              reach out to our support team. We're here to help.
+              {t('pages.terms.cta.description')}
             </p>
             <Link
               href="mailto:support@pluribus.com"
               className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Contact Support
+              {t('pages.terms.cta.button')}
             </Link>
           </div>
         </div>

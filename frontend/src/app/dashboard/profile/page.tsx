@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { profileFormSchema, changePasswordSchema, type ProfileFormData, type ChangePasswordData } from "./schema"
+import { useTranslations } from '@/contexts/TranslationsContext'
 
 const COUNTRIES = [
   { value: "us", label: "United States" },
@@ -83,6 +84,7 @@ const MOCK_USER: MockUserData = {
 }
 
 export default function ProfilePage() {
+  const { t } = useTranslations()
   const [user, setUser] = useState<MockUserData>(MOCK_USER)
   const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null)
   const [isPasswordOpen, setIsPasswordOpen] = useState(false)
@@ -168,9 +170,9 @@ export default function ProfilePage() {
     <div className="container py-8 md:py-12">
       <div className="max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Profile Settings</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('pages.dashboard.profile.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your account information and preferences
+            {t('pages.dashboard.profile.subtitle')}
           </p>
         </div>
 
@@ -178,9 +180,9 @@ export default function ProfilePage() {
           {/* Profile Photo Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Profile Photo</CardTitle>
+              <CardTitle>{t('pages.dashboard.profile.photo.title')}</CardTitle>
               <CardDescription>
-                Upload a profile picture to help other users identify you
+                {t('pages.dashboard.profile.photo.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -194,7 +196,7 @@ export default function ProfilePage() {
 
                 <div className="flex-1">
                   <Label htmlFor="profile-photo" className="block mb-2">
-                    Upload new photo
+                    {t('pages.dashboard.profile.photo.upload')}
                   </Label>
                   <div className="flex items-center gap-3">
                     <Input
@@ -212,7 +214,7 @@ export default function ProfilePage() {
                         onClick={() => setProfilePhotoPreview(null)}
                       >
                         <X className="h-4 w-4 mr-2" />
-                        Clear
+                        {t('pages.dashboard.profile.photo.clear')}
                       </Button>
                     )}
                   </div>
@@ -224,9 +226,9 @@ export default function ProfilePage() {
           {/* Edit Profile Form */}
           <Card>
             <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
+              <CardTitle>{t('pages.dashboard.profile.personalInfo.title')}</CardTitle>
               <CardDescription>
-                Update your basic profile information
+                {t('pages.dashboard.profile.personalInfo.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -238,9 +240,9 @@ export default function ProfilePage() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FormLabel>{t('pages.dashboard.profile.personalInfo.name')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="John Doe" {...field} />
+                          <Input placeholder={t('pages.dashboard.profile.personalInfo.namePlaceholder')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -253,12 +255,12 @@ export default function ProfilePage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email Address</FormLabel>
+                        <FormLabel>{t('pages.dashboard.profile.personalInfo.email')}</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="john@example.com" {...field} />
+                          <Input type="email" placeholder={t('pages.dashboard.profile.personalInfo.emailPlaceholder')} {...field} />
                         </FormControl>
                         <FormDescription>
-                          Your email address is used for account recovery and notifications
+                          {t('pages.dashboard.profile.personalInfo.emailDescription')}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -271,11 +273,11 @@ export default function ProfilePage() {
                     name="country"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Country</FormLabel>
+                        <FormLabel>{t('pages.dashboard.profile.personalInfo.country')}</FormLabel>
                         <Select value={field.value} onValueChange={field.onChange}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a country" />
+                              <SelectValue placeholder={t('pages.dashboard.profile.personalInfo.countryPlaceholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -297,11 +299,11 @@ export default function ProfilePage() {
                     name="city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>City</FormLabel>
+                        <FormLabel>{t('pages.dashboard.profile.personalInfo.city')}</FormLabel>
                         <Select value={field.value} onValueChange={field.onChange}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a city" />
+                              <SelectValue placeholder={t('pages.dashboard.profile.personalInfo.cityPlaceholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -323,16 +325,16 @@ export default function ProfilePage() {
                     name="bio"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Bio</FormLabel>
+                        <FormLabel>{t('pages.dashboard.profile.personalInfo.bio')}</FormLabel>
                         <FormControl>
                           <textarea
-                            placeholder="Tell us about yourself..."
+                            placeholder={t('pages.dashboard.profile.personalInfo.bioPlaceholder')}
                             className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input min-h-[100px] w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none resize-vertical disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
                             {...field}
                           />
                         </FormControl>
                         <FormDescription>
-                          Max 500 characters. This will be displayed on your profile.
+                          {t('pages.dashboard.profile.personalInfo.bioDescription')}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -345,21 +347,21 @@ export default function ProfilePage() {
                     name="role"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Account Type</FormLabel>
+                        <FormLabel>{t('pages.dashboard.profile.personalInfo.role')}</FormLabel>
                         <Select value={field.value} onValueChange={field.onChange}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select your account type" />
+                              <SelectValue placeholder={t('pages.dashboard.profile.personalInfo.rolePlaceholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="buyer">Buyer</SelectItem>
-                            <SelectItem value="seller">Seller</SelectItem>
-                            <SelectItem value="both">Buyer & Seller</SelectItem>
+                            <SelectItem value="buyer">{t('pages.dashboard.profile.personalInfo.roleBuyer')}</SelectItem>
+                            <SelectItem value="seller">{t('pages.dashboard.profile.personalInfo.roleSeller')}</SelectItem>
+                            <SelectItem value="both">{t('pages.dashboard.profile.personalInfo.roleBoth')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>
-                          Choose whether you want to buy, sell, or do both on Pluribus
+                          {t('pages.dashboard.profile.personalInfo.roleDescription')}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -367,7 +369,7 @@ export default function ProfilePage() {
                   />
 
                   <Button type="submit" disabled={isSaving}>
-                    {isSaving ? "Saving..." : "Save Changes"}
+                    {isSaving ? t('pages.dashboard.profile.personalInfo.saving') : t('pages.dashboard.profile.personalInfo.saveChanges')}
                   </Button>
                 </form>
               </Form>
@@ -377,9 +379,9 @@ export default function ProfilePage() {
           {/* Verification Status */}
           <Card>
             <CardHeader>
-              <CardTitle>Verification Status</CardTitle>
+              <CardTitle>{t('pages.dashboard.profile.verification.title')}</CardTitle>
               <CardDescription>
-                Complete verification to increase trust and access more features
+                {t('pages.dashboard.profile.verification.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -396,15 +398,15 @@ export default function ProfilePage() {
                       </div>
                     )}
                     <div>
-                      <p className="font-medium">Email Verification</p>
+                      <p className="font-medium">{t('pages.dashboard.profile.verification.email')}</p>
                       <p className="text-sm text-muted-foreground">
-                        {user.emailVerified ? "Verified" : "Not verified"}
+                        {user.emailVerified ? t('pages.dashboard.profile.verification.verified') : t('pages.dashboard.profile.verification.notVerified')}
                       </p>
                     </div>
                   </div>
                   {!user.emailVerified && (
                     <Button variant="outline" size="sm">
-                      Verify
+                      {t('pages.dashboard.profile.verification.verify')}
                     </Button>
                   )}
                 </div>
@@ -421,15 +423,15 @@ export default function ProfilePage() {
                       </div>
                     )}
                     <div>
-                      <p className="font-medium">Phone Verification</p>
+                      <p className="font-medium">{t('pages.dashboard.profile.verification.phone')}</p>
                       <p className="text-sm text-muted-foreground">
-                        {user.phoneVerified ? "Verified" : "Not verified"}
+                        {user.phoneVerified ? t('pages.dashboard.profile.verification.verified') : t('pages.dashboard.profile.verification.notVerified')}
                       </p>
                     </div>
                   </div>
                   {!user.phoneVerified && (
                     <Button variant="outline" size="sm">
-                      Verify
+                      {t('pages.dashboard.profile.verification.verify')}
                     </Button>
                   )}
                 </div>
@@ -446,15 +448,15 @@ export default function ProfilePage() {
                       </div>
                     )}
                     <div>
-                      <p className="font-medium">ID Verification</p>
+                      <p className="font-medium">{t('pages.dashboard.profile.verification.id')}</p>
                       <p className="text-sm text-muted-foreground">
-                        {user.idVerified ? "Verified" : "Not verified"}
+                        {user.idVerified ? t('pages.dashboard.profile.verification.verified') : t('pages.dashboard.profile.verification.notVerified')}
                       </p>
                     </div>
                   </div>
                   {!user.idVerified && (
                     <Button variant="outline" size="sm">
-                      Verify
+                      {t('pages.dashboard.profile.verification.verify')}
                     </Button>
                   )}
                 </div>
@@ -465,9 +467,9 @@ export default function ProfilePage() {
           {/* Change Password Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Security</CardTitle>
+              <CardTitle>{t('pages.dashboard.profile.security.title')}</CardTitle>
               <CardDescription>
-                Manage your password and security settings
+                {t('pages.dashboard.profile.security.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -476,7 +478,7 @@ export default function ProfilePage() {
                   variant="outline"
                   onClick={() => setIsPasswordOpen(true)}
                 >
-                  Change Password
+                  {t('pages.dashboard.profile.security.changePassword')}
                 </Button>
               ) : (
                 <Form {...passwordForm}>
@@ -489,11 +491,11 @@ export default function ProfilePage() {
                       name="currentPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Current Password</FormLabel>
+                          <FormLabel>{t('pages.dashboard.profile.security.currentPassword')}</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
-                              placeholder="Enter your current password"
+                              placeholder={t('pages.dashboard.profile.security.currentPasswordPlaceholder')}
                               {...field}
                             />
                           </FormControl>
@@ -507,16 +509,16 @@ export default function ProfilePage() {
                       name="newPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>New Password</FormLabel>
+                          <FormLabel>{t('pages.dashboard.profile.security.newPassword')}</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
-                              placeholder="Enter a new password"
+                              placeholder={t('pages.dashboard.profile.security.newPasswordPlaceholder')}
                               {...field}
                             />
                           </FormControl>
                           <FormDescription>
-                            Must be at least 8 characters long
+                            {t('pages.dashboard.profile.security.newPasswordDescription')}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -528,11 +530,11 @@ export default function ProfilePage() {
                       name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Confirm New Password</FormLabel>
+                          <FormLabel>{t('pages.dashboard.profile.security.confirmPassword')}</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
-                              placeholder="Confirm your new password"
+                              placeholder={t('pages.dashboard.profile.security.confirmPasswordPlaceholder')}
                               {...field}
                             />
                           </FormControl>
@@ -546,7 +548,7 @@ export default function ProfilePage() {
                         type="submit"
                         disabled={isPasswordChanging}
                       >
-                        {isPasswordChanging ? "Updating..." : "Update Password"}
+                        {isPasswordChanging ? t('pages.dashboard.profile.security.updating') : t('pages.dashboard.profile.security.updatePassword')}
                       </Button>
                       <Button
                         type="button"
@@ -557,7 +559,7 @@ export default function ProfilePage() {
                         }}
                         disabled={isPasswordChanging}
                       >
-                        Cancel
+                        {t('pages.dashboard.profile.security.cancel')}
                       </Button>
                     </div>
                   </form>

@@ -10,7 +10,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
-import { Menu, X, User, Globe } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 import { Logo } from '@/components/common/Logo';
 import { SearchBar } from '@/components/common/SearchBar';
 import { Button } from '@/components/ui/button';
@@ -21,32 +21,31 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 interface HeaderProps {
   className?: string;
 }
 
-const navigation = [
-  { name: 'Products', href: '/products' },
-  { name: 'Sellers', href: '/sellers' },
-  { name: 'About', href: '/about' },
-  { name: 'How it works', href: '/how-it-works' },
-];
-
 const languages = [
-  { code: 'en', name: 'English' },
-  { code: 'ru', name: 'Русский' },
-  { code: 'es', name: 'Español' },
-  { code: 'zh', name: '中文' },
+  { code: 'uk' as const, flag: '🇺🇦', name: 'Українська' },
+  { code: 'en' as const, flag: '🇬🇧', name: 'English' },
 ];
 
 export const Header: FC<HeaderProps> = ({ className }) => {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState('en');
+  const { t, language, setLanguage } = useTranslations();
 
   // TODO: Replace with actual auth state
   const isAuthenticated = false;
+
+  const navigation = [
+    { name: t('common.navigation.products'), href: '/products' },
+    { name: t('common.navigation.sellers'), href: '/sellers' },
+    { name: t('common.navigation.about'), href: '/about' },
+    { name: t('common.navigation.howItWorks'), href: '/how-it-works' },
+  ];
 
   const handleSearch = (query: string) => {
     router.push(`/products?search=${encodeURIComponent(query)}`);
@@ -74,7 +73,7 @@ export const Header: FC<HeaderProps> = ({ className }) => {
         {/* Search Bar - Desktop Only */}
         <div className="hidden md:flex flex-1 max-w-md mx-4">
           <SearchBar
-            placeholder="Search products..."
+            placeholder={t('header.search.placeholder')}
             onSearch={handleSearch}
             showSearchButton={false}
             className="w-full"
@@ -86,20 +85,22 @@ export const Header: FC<HeaderProps> = ({ className }) => {
           {/* Language Selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="hidden md:flex">
-                <Globe className="h-5 w-5" />
+              <Button variant="ghost" size="sm" className="hidden md:flex gap-2">
+                <span className="text-lg">{languages.find(l => l.code === language)?.flag}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {languages.map((lang) => (
                 <DropdownMenuItem
                   key={lang.code}
-                  onClick={() => setCurrentLang(lang.code)}
+                  onClick={() => setLanguage(lang.code)}
                   className={cn(
-                    currentLang === lang.code && 'bg-accent'
+                    language === lang.code && 'bg-accent',
+                    'flex items-center gap-2'
                   )}
                 >
-                  {lang.name}
+                  <span className="text-lg">{lang.flag}</span>
+                  <span>{lang.name}</span>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -115,24 +116,24 @@ export const Header: FC<HeaderProps> = ({ className }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard">Dashboard</Link>
+                  <Link href="/dashboard">{t('header.nav.dashboard')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/profile">Profile</Link>
+                  <Link href="/dashboard/profile">{t('header.user.profile')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/orders">Orders</Link>
+                  <Link href="/dashboard/orders">{t('header.user.orders')}</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem>{t('header.user.logout')}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="hidden md:flex items-center gap-2">
               <Button variant="ghost" asChild>
-                <Link href="/login">Login</Link>
+                <Link href="/login">{t('common.buttons.login')}</Link>
               </Button>
               <Button asChild>
-                <Link href="/register">Sign Up</Link>
+                <Link href="/register">{t('common.buttons.signup')}</Link>
               </Button>
             </div>
           )}
@@ -160,7 +161,7 @@ export const Header: FC<HeaderProps> = ({ className }) => {
             {/* Mobile Search Bar */}
             <div className="pb-2">
               <SearchBar
-                placeholder="Search products..."
+                placeholder={t('header.search.placeholder')}
                 onSearch={(query) => {
                   handleSearch(query);
                   setMobileMenuOpen(false);
@@ -185,19 +186,19 @@ export const Header: FC<HeaderProps> = ({ className }) => {
               {isAuthenticated ? (
                 <>
                   <Button variant="outline" className="w-full" asChild>
-                    <Link href="/dashboard">Dashboard</Link>
+                    <Link href="/dashboard">{t('header.nav.dashboard')}</Link>
                   </Button>
                   <Button variant="ghost" className="w-full">
-                    Logout
+                    {t('header.user.logout')}
                   </Button>
                 </>
               ) : (
                 <>
                   <Button variant="outline" className="w-full" asChild>
-                    <Link href="/login">Login</Link>
+                    <Link href="/login">{t('common.buttons.login')}</Link>
                   </Button>
                   <Button className="w-full" asChild>
-                    <Link href="/register">Sign Up</Link>
+                    <Link href="/register">{t('common.buttons.signup')}</Link>
                   </Button>
                 </>
               )}

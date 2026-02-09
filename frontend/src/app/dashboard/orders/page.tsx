@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { OrderCard } from '@/components/features/OrderCard';
 import { Pagination } from '@/components/common/Pagination';
 import { Order, OrderStatus } from '@/types';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 // Mock data for development
 const getMockOrders = (): Order[] => [
@@ -512,6 +513,7 @@ interface OrdersPageProps {
 }
 
 export default function OrdersPage({ searchParams }: OrdersPageProps) {
+  const { t } = useTranslations();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<OrderStatusTab>(
     (searchParams.tab as OrderStatusTab) || 'all'
@@ -580,9 +582,9 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
     <div className="container px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">My Orders</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('pages.dashboard.orders.title')}</h1>
         <p className="text-muted-foreground">
-          View and manage your orders across all transactions
+          {t('pages.dashboard.orders.subtitle')}
         </p>
       </div>
 
@@ -591,7 +593,7 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search by order number, product, or seller..."
+            placeholder={t('pages.dashboard.orders.searchPlaceholder')}
             className="pl-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -599,7 +601,7 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
         </div>
         <Button variant="outline" size="default" className="gap-2">
           <Filter className="w-4 h-4" />
-          Filters
+          {t('pages.dashboard.orders.filters')}
         </Button>
       </div>
 
@@ -611,25 +613,25 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
       >
         <TabsList className="grid w-full grid-cols-4 lg:w-auto">
           <TabsTrigger value="all">
-            All
+            {t('pages.dashboard.orders.tabs.all')}
             <span className="ml-2 text-xs">
               {orders.length}
             </span>
           </TabsTrigger>
           <TabsTrigger value="pending">
-            Pending
+            {t('pages.dashboard.orders.tabs.pending')}
             <span className="ml-2 text-xs">
               {orders.filter((o) => o.status === 'PENDING').length}
             </span>
           </TabsTrigger>
           <TabsTrigger value="completed">
-            Completed
+            {t('pages.dashboard.orders.tabs.completed')}
             <span className="ml-2 text-xs">
               {orders.filter((o) => ['COMPLETED', 'DELIVERED'].includes(o.status)).length}
             </span>
           </TabsTrigger>
           <TabsTrigger value="cancelled">
-            Cancelled
+            {t('pages.dashboard.orders.tabs.cancelled')}
             <span className="ml-2 text-xs">
               {orders.filter((o) => o.status === 'CANCELLED').length}
             </span>
@@ -642,7 +644,7 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
           {filteredOrders.length > 0 && (
             <div className="mb-4">
               <p className="text-sm text-muted-foreground">
-                Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} orders
+                {t('pages.dashboard.orders.showing')} {startIndex + 1}-{Math.min(endIndex, totalItems)} {t('pages.dashboard.orders.of')} {totalItems} {t('pages.dashboard.orders.orders')}
               </p>
             </div>
           )}
@@ -654,14 +656,14 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground mb-2">
-                {searchQuery ? 'No orders found matching your search' : 'No orders in this category'}
+                {searchQuery ? t('pages.dashboard.orders.empty.noResults') : t('pages.dashboard.orders.empty.noSearch')}
               </p>
               {searchQuery && (
                 <Button
                   variant="outline"
                   onClick={() => setSearchQuery('')}
                 >
-                  Clear search
+                  {t('pages.dashboard.orders.empty.clearSearch')}
                 </Button>
               )}
             </div>

@@ -5,7 +5,8 @@
  * Route: /sellers/[id]
  */
 
-import { Metadata } from 'next';
+'use client';
+
 import Image from 'next/image';
 import { MapPin, Clock, MessageCircle, Shield, TrendingUp } from 'lucide-react';
 import { ProductGrid } from '@/components/features/ProductGrid';
@@ -14,6 +15,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from '@/components/ui/button';
 import { User, Product, Review } from '@/types';
 import Link from 'next/link';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 interface SellerPageProps {
   params: {
@@ -353,25 +355,8 @@ const getMockSellerReviews = (sellerId: string): Review[] => {
   return reviewsByCommonSeller[sellerId] || [];
 };
 
-export async function generateMetadata({ params }: SellerPageProps): Promise<Metadata> {
-  // Simulate API call to fetch seller
-  const seller = getMockSeller(params.id);
-
-  return {
-    title: `${seller.name} - Seller Profile | Pluribus`,
-    description: `Shop from ${seller.name} in ${seller.city}, ${seller.country}. Rating: ${seller.rating}/5 from ${seller.reviewCount} reviews. Browse their products on Pluribus.`,
-    openGraph: {
-      title: `${seller.name} - Seller on Pluribus`,
-      description: `${seller.name} is a trusted seller with ${seller.reviewCount} positive reviews.`,
-      url: `/sellers/${params.id}`,
-      type: 'profile',
-    },
-  };
-}
-
-export default async function SellerPage({ params }: SellerPageProps) {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 300));
+export default function SellerPage({ params }: SellerPageProps) {
+  const { t } = useTranslations();
 
   const seller = getMockSeller(params.id);
   const products = getMockSellerProducts(params.id);
@@ -410,7 +395,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
             {seller.idVerified && (
               <div
                 className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-2 shadow-lg"
-                title="ID Verified"
+                title={t('pages.sellerProfile.header.idVerified')}
               >
                 <Shield className="w-5 h-5" />
               </div>
@@ -431,7 +416,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
             <div className="flex items-center gap-3 mb-4">
               <Rating value={seller.rating || 0} size="lg" showValue />
               <span className="text-sm text-muted-foreground">
-                ({seller.reviewCount} {seller.reviewCount === 1 ? 'review' : 'reviews'})
+                ({seller.reviewCount} {seller.reviewCount === 1 ? t('pages.sellerProfile.header.review') : t('pages.sellerProfile.header.reviews')})
               </span>
             </div>
 
@@ -439,17 +424,17 @@ export default async function SellerPage({ params }: SellerPageProps) {
             <div className="flex flex-wrap gap-2 mb-4">
               {seller.emailVerified && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
-                  ✓ Email Verified
+                  ✓ {t('pages.sellerProfile.badges.emailVerified')}
                 </span>
               )}
               {seller.phoneVerified && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
-                  ✓ Phone Verified
+                  ✓ {t('pages.sellerProfile.badges.phoneVerified')}
                 </span>
               )}
               {seller.idVerified && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">
-                  ✓ ID Verified
+                  ✓ {t('pages.sellerProfile.badges.idVerified')}
                 </span>
               )}
             </div>
@@ -458,7 +443,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
             <Button asChild>
               <Link href={`/sellers/${seller.id}/contact`}>
                 <MessageCircle className="w-4 h-4" />
-                Contact Seller
+                {t('pages.sellerProfile.buttons.contactSeller')}
               </Link>
             </Button>
           </div>
@@ -471,7 +456,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-600 mb-2">{totalOrders}</div>
-              <p className="text-sm text-muted-foreground">Total Orders</p>
+              <p className="text-sm text-muted-foreground">{t('pages.sellerProfile.stats.totalOrders')}</p>
             </div>
           </CardContent>
         </Card>
@@ -480,7 +465,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-green-600 mb-2">{seller.reviewCount}</div>
-              <p className="text-sm text-muted-foreground">Positive Reviews</p>
+              <p className="text-sm text-muted-foreground">{t('pages.sellerProfile.stats.positiveReviews')}</p>
             </div>
           </CardContent>
         </Card>
@@ -490,7 +475,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
             <div className="text-center flex flex-col items-center">
               <Clock className="w-6 h-6 text-orange-600 mb-2" />
               <p className="text-sm font-semibold">{responseTime}</p>
-              <p className="text-xs text-muted-foreground">Response Time</p>
+              <p className="text-xs text-muted-foreground">{t('pages.sellerProfile.stats.responseTime')}</p>
             </div>
           </CardContent>
         </Card>
@@ -499,8 +484,8 @@ export default async function SellerPage({ params }: SellerPageProps) {
           <CardContent className="pt-6">
             <div className="text-center flex flex-col items-center">
               <TrendingUp className="w-6 h-6 text-purple-600 mb-2" />
-              <p className="text-sm font-semibold">{yearsSelling}+ {yearsSelling === 1 ? 'year' : 'years'}</p>
-              <p className="text-xs text-muted-foreground">Selling</p>
+              <p className="text-sm font-semibold">{yearsSelling}+ {yearsSelling === 1 ? t('pages.sellerProfile.stats.year') : t('pages.sellerProfile.stats.years')}</p>
+              <p className="text-xs text-muted-foreground">{t('pages.sellerProfile.stats.selling')}</p>
             </div>
           </CardContent>
         </Card>
@@ -524,10 +509,10 @@ export default async function SellerPage({ params }: SellerPageProps) {
       <div className="space-y-4">
         <div>
           <h2 className="text-2xl font-bold mb-2">
-            Products ({products.length})
+            {t('pages.sellerProfile.products.title')} ({products.length})
           </h2>
           <p className="text-muted-foreground">
-            Browse all products from {seller.name}
+            {t('pages.sellerProfile.products.browseAll')} {seller.name}
           </p>
         </div>
         <ProductGrid products={products} />
@@ -537,10 +522,10 @@ export default async function SellerPage({ params }: SellerPageProps) {
       <div className="space-y-4">
         <div>
           <h2 className="text-2xl font-bold mb-2">
-            Customer Reviews ({reviews.length})
+            {t('pages.sellerProfile.reviews.title')} ({reviews.length})
           </h2>
           <p className="text-muted-foreground">
-            Recent feedback from buyers
+            {t('pages.sellerProfile.reviews.subtitle')}
           </p>
         </div>
 
@@ -552,7 +537,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <CardTitle className="text-base">
-                        {review.reviewer?.name || 'Anonymous Buyer'}
+                        {review.reviewer?.name || t('pages.sellerProfile.reviews.anonymousBuyer')}
                       </CardTitle>
                       <CardDescription>
                         {new Date(review.createdAt).toLocaleDateString('en-US', {
@@ -574,8 +559,8 @@ export default async function SellerPage({ params }: SellerPageProps) {
                 )}
                 <CardFooter className="text-xs text-muted-foreground border-t pt-4">
                   <div className="space-y-1">
-                    <div>Communication: <Rating value={review.communicationRating} size="sm" /></div>
-                    <div>Timeliness: <Rating value={review.timelinessRating} size="sm" /></div>
+                    <div>{t('pages.sellerProfile.reviews.communication')} <Rating value={review.communicationRating} size="sm" /></div>
+                    <div>{t('pages.sellerProfile.reviews.timeliness')} <Rating value={review.timelinessRating} size="sm" /></div>
                   </div>
                 </CardFooter>
               </Card>
@@ -583,7 +568,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
           ) : (
             <Card>
               <CardContent className="pt-6 text-center">
-                <p className="text-muted-foreground">No reviews yet. Be the first to review this seller!</p>
+                <p className="text-muted-foreground">{t('pages.sellerProfile.reviews.noReviews')}</p>
               </CardContent>
             </Card>
           )}

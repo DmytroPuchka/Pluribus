@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
   Search,
@@ -29,6 +28,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 interface FAQItem {
   id: string;
@@ -242,6 +242,7 @@ const popularTopics = [
 const categories = ['Getting Started', 'Buying', 'Selling', 'Payments', 'Shipping', 'Safety', 'Account'];
 
 export default function HelpPage() {
+  const { t } = useTranslations();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -273,10 +274,10 @@ export default function HelpPage() {
         <div className="container px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">
-              How Can We <span className="text-blue-600">Help?</span>
+              {t('pages.help.hero.title')} <span className="text-blue-600">{t('pages.help.hero.titleHighlight')}</span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Find answers to common questions about Pluribus. Browse our FAQ or contact our support team.
+              {t('pages.help.hero.subtitle')}
             </p>
 
             {/* Search Bar */}
@@ -284,7 +285,7 @@ export default function HelpPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search FAQ..."
+                placeholder={t('pages.help.hero.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 h-12 text-base"
@@ -301,14 +302,14 @@ export default function HelpPage() {
             {/* Sidebar */}
             <div className="lg:col-span-1">
               <div className="sticky top-8">
-                <h3 className="font-semibold mb-4 text-lg">Categories</h3>
+                <h3 className="font-semibold mb-4 text-lg">{t('pages.help.categories.title')}</h3>
                 <div className="space-y-2">
                   <Button
                     variant={selectedCategory === null ? 'default' : 'outline'}
                     className="w-full justify-start"
                     onClick={() => setSelectedCategory(null)}
                   >
-                    All Topics
+                    {t('pages.help.categories.allTopics')}
                   </Button>
                   {categories.map((category) => (
                     <Button
@@ -468,9 +469,9 @@ export default function HelpPage() {
       <section className="py-16 md:py-24">
         <div className="container px-4">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold mb-4 text-center">Still Need Help?</h2>
+            <h2 className="text-3xl font-bold mb-4 text-center">{t('pages.help.support.title')}</h2>
             <p className="text-center text-muted-foreground mb-12">
-              Didn't find the answer you were looking for? Our support team is here to help.
+              {t('pages.help.support.subtitle')}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -478,15 +479,15 @@ export default function HelpPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
                     <Mail className="w-5 h-5 text-blue-600" />
-                    Email Support
+                    {t('pages.help.support.email.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Get a response within 24 hours
+                    {t('pages.help.support.email.description')}
                   </p>
                   <Button asChild variant="outline" className="w-full">
-                    <a href="mailto:support@pluribus.io">Send Email</a>
+                    <a href="mailto:support@pluribus.io">{t('pages.help.support.email.button')}</a>
                   </Button>
                 </CardContent>
               </Card>
@@ -495,15 +496,15 @@ export default function HelpPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
                     <MessageSquare className="w-5 h-5 text-blue-600" />
-                    Live Chat
+                    {t('pages.help.support.chat.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Chat with our team (9am-5pm UTC)
+                    {t('pages.help.support.chat.description')}
                   </p>
                   <Button asChild className="w-full">
-                    <a href="#chat">Start Chat</a>
+                    <a href="#chat">{t('pages.help.support.chat.button')}</a>
                   </Button>
                 </CardContent>
               </Card>
@@ -512,15 +513,15 @@ export default function HelpPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
                     <Phone className="w-5 h-5 text-blue-600" />
-                    Call Us
+                    {t('pages.help.support.phone.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Phone support available 9am-5pm UTC
+                    {t('pages.help.support.phone.description')}
                   </p>
                   <Button asChild variant="outline" className="w-full">
-                    <a href="tel:+1234567890">Call Support</a>
+                    <a href="tel:+1234567890">{t('pages.help.support.phone.button')}</a>
                   </Button>
                 </CardContent>
               </Card>

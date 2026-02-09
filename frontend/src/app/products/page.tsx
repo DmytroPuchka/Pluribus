@@ -12,6 +12,7 @@ import { ProductGrid } from '@/components/features/ProductGrid';
 import { ProductFilters } from '@/components/features/ProductFilters';
 import { Pagination } from '@/components/common/Pagination';
 import { Product, ProductFiltersState } from '@/types';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 // Mock data for development
 // TODO: Replace with actual API call
@@ -207,6 +208,7 @@ const getMockProducts = (): Product[] => {
 };
 
 export default function ProductsPage() {
+  const { t } = useTranslations();
   const allProducts = useMemo(() => getMockProducts(), []);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
   const [activeFilters, setActiveFilters] = useState<ProductFiltersState>({});
@@ -246,9 +248,9 @@ export default function ProductsPage() {
     <div className="container px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Browse Products</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('pages.products.title')}</h1>
         <p className="text-muted-foreground">
-          Discover products from sellers worldwide
+          {t('pages.products.subtitle')}
         </p>
       </div>
 
@@ -267,7 +269,7 @@ export default function ProductsPage() {
           {/* Results Info */}
           <div className="mb-6">
             <p className="text-sm text-muted-foreground">
-              Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} products
+              {t('pages.products.showing')} {startIndex + 1}-{Math.min(endIndex, totalItems)} {t('pages.products.of')} {totalItems} {t('pages.products.products')}
             </p>
           </div>
 
