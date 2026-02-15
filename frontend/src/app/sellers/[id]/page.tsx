@@ -7,6 +7,7 @@
 
 'use client';
 
+import { use } from 'react';
 import Image from 'next/image';
 import { MapPin, Clock, MessageCircle, Shield, TrendingUp } from 'lucide-react';
 import { ProductGrid } from '@/components/features/ProductGrid';
@@ -18,9 +19,9 @@ import Link from 'next/link';
 import { useTranslations } from '@/contexts/TranslationsContext';
 
 interface SellerPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Mock seller data generator
@@ -357,10 +358,11 @@ const getMockSellerReviews = (sellerId: string): Review[] => {
 
 export default function SellerPage({ params }: SellerPageProps) {
   const { t } = useTranslations();
+  const { id } = use(params);
 
-  const seller = getMockSeller(params.id);
-  const products = getMockSellerProducts(params.id);
-  const reviews = getMockSellerReviews(params.id);
+  const seller = getMockSeller(id);
+  const products = getMockSellerProducts(id);
+  const reviews = getMockSellerReviews(id);
 
   // Calculate statistics
   const totalOrders = Math.floor((seller.reviewCount ?? 0) * 1.2);

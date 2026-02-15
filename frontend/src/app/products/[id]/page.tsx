@@ -7,6 +7,7 @@
  * Route: /products/[id]
  */
 
+import { use } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, ShoppingCart, Heart, Share2, Check, AlertCircle } from 'lucide-react';
@@ -192,16 +193,17 @@ const getMockReviews = () => [
 
 
 interface ProductDetailsPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function ProductDetailsPage({ params }: ProductDetailsPageProps) {
   const { t } = useTranslations();
+  const { id } = use(params);
 
   const products = getMockProducts();
-  const product = products.find(p => p.id === params.id);
+  const product = products.find(p => p.id === id);
 
   if (!product) {
     return (
