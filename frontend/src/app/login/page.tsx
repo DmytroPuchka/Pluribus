@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -18,26 +19,34 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, UserCircle } from 'lucide-react'
 import { useTranslations } from '@/contexts/TranslationsContext'
+import { useAuth } from '@/contexts/AuthContext'
+import { TEST_ACCOUNTS, getMockUserByCredentials } from '@/data/mockUsers'
+import { toast } from 'sonner'
+
+type LoginFormValues = z.infer<ReturnType<typeof createLoginSchema>>;
+
+const createLoginSchema = (t: any) => z.object({
+  email: z
+    .string()
+    .email(t('auth.login.validation.emailInvalid'))
+    .min(1, t('auth.login.validation.emailRequired')),
+  password: z
+    .string()
+    .min(6, t('auth.login.validation.passwordMinLength'))
+    .min(1, t('auth.login.validation.passwordRequired')),
+  rememberMe: z.boolean(),
+});
 
 export default function LoginPage() {
   const { t } = useTranslations()
-
-  // Validation schema
-  const loginSchema = z.object({
-    email: z
-      .string()
-      .email(t('auth.login.validation.emailInvalid'))
-      .min(1, t('auth.login.validation.emailRequired')),
-    password: z
-      .string()
-      .min(6, t('auth.login.validation.passwordMinLength'))
-      .min(1, t('auth.login.validation.passwordRequired')),
-    rememberMe: z.boolean(),
-  })
+  const { login } = useAuth()
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  const loginSchema = createLoginSchema(t)
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -51,22 +60,45 @@ export default function LoginPage() {
   async function onSubmit(values: LoginFormValues) {
     try {
       setIsLoading(true)
-      // TODO: Implement actual login API call
-      console.log('Login attempt:', values)
-      // Example: const response = await fetch('/api/auth/login', { method: 'POST', body: JSON.stringify(values) })
 
-      // Mock success for demonstration
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      alert(t('auth.login.messages.success'))
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500))
 
-      // Clear form on successful submission
-      form.reset()
+      // Authenticate with mock data
+      const user = getMockUserByCredentials(values.email, values.password)
+
+      if (!user) {
+        toast.error(t('auth.login.messages.failed'), {
+          description: 'Invalid email or password',
+        })
+        return
+      }
+
+      // Login successful
+      login(user)
+      toast.success(t('auth.login.messages.success'), {
+        description: `Welcome back, ${user.name}!`,
+      })
+
+      // Redirect to dashboard or home
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 500)
     } catch (error) {
       console.error('Login error:', error)
-      alert(t('auth.login.messages.failed'))
+      toast.error(t('auth.login.messages.failed'), {
+        description: 'Something went wrong',
+      })
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Quick login with test account
+  const handleQuickLogin = async (email: string, password: string) => {
+    form.setValue('email', email)
+    form.setValue('password', password)
+    await form.handleSubmit(onSubmit)()
   }
 
   return (
@@ -207,6 +239,45 @@ export default function LoginPage() {
                 {t('auth.login.forgotPassword')}
               </Link>
             </p>
+          </CardContent>
+        </Card>
+
+        {/* Test Accounts - For Development */}
+        <Card className="mt-6 border-dashed border-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <UserCircle className="w-4 h-4" />
+              Test Accounts (Development)
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Click to quickly login with test accounts
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {TEST_ACCOUNTS.map((account) => (
+              <Button
+                key={account.id}
+                variant="outline"
+                className="w-full justify-start text-left h-auto py-3"
+                onClick={() => handleQuickLogin(account.email, account.password)}
+                disabled={isLoading}
+              >
+                <div className="flex flex-col items-start gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">{account.name}</span>
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary">
+                      {account.role}
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {account.email} / {account.password}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {account.description}
+                  </div>
+                </div>
+              </Button>
+            ))}
           </CardContent>
         </Card>
 

@@ -10,18 +10,23 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
-import { Menu, X, User } from 'lucide-react';
+import { Menu, X, User, LogOut, LayoutDashboard, ShoppingBag, UserCircle } from 'lucide-react';
 import { Logo } from '@/components/common/Logo';
 import { SearchBar } from '@/components/common/SearchBar';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useTranslations } from '@/contexts/TranslationsContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface HeaderProps {
   className?: string;
@@ -36,9 +41,13 @@ export const Header: FC<HeaderProps> = ({ className }) => {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t, language, setLanguage } = useTranslations();
+  const { user, isAuthenticated, logout } = useAuth();
 
-  // TODO: Replace with actual auth state
-  const isAuthenticated = false;
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully');
+    router.push('/');
+  };
 
   const navigation = [
     { name: t('common.navigation.products'), href: '/products' },
@@ -107,24 +116,52 @@ export const Header: FC<HeaderProps> = ({ className }) => {
           </DropdownMenu>
 
           {/* Auth Actions */}
-          {isAuthenticated ? (
+          {isAuthenticated && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                        {user.role}
+                      </span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard">{t('header.nav.dashboard')}</Link>
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    <LayoutDashboard className="h-4 w-4" />
+                    {t('header.nav.dashboard')}
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/profile">{t('header.user.profile')}</Link>
+                  <Link href="/dashboard/profile" className="flex items-center gap-2">
+                    <UserCircle className="h-4 w-4" />
+                    {t('header.user.profile')}
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/orders">{t('header.user.orders')}</Link>
+                  <Link href="/dashboard/orders" className="flex items-center gap-2">
+                    <ShoppingBag className="h-4 w-4" />
+                    {t('header.user.orders')}
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>{t('header.user.logout')}</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-600 focus:text-red-600">
+                  <LogOut className="h-4 w-4" />
+                  {t('header.user.logout')}
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
@@ -183,12 +220,19 @@ export const Header: FC<HeaderProps> = ({ className }) => {
             ))}
 
             <div className="pt-4 border-t space-y-2">
-              {isAuthenticated ? (
+              {isAuthenticated && user ? (
                 <>
+                  <div className="px-2 py-3 text-sm">
+                    <p className="font-medium">{user.name}</p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                      {user.role}
+                    </span>
+                  </div>
                   <Button variant="outline" className="w-full" asChild>
                     <Link href="/dashboard">{t('header.nav.dashboard')}</Link>
                   </Button>
-                  <Button variant="ghost" className="w-full">
+                  <Button variant="ghost" className="w-full text-red-600" onClick={handleLogout}>
                     {t('header.user.logout')}
                   </Button>
                 </>
