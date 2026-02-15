@@ -13,6 +13,7 @@ export interface User {
   role: UserRole;
   country: string;
   city: string;
+  deliveryCountries?: string[]; // List of country codes where seller can deliver (only for sellers)
   rating?: number;
   reviewCount?: number;
   emailVerified: boolean;
@@ -86,28 +87,53 @@ export interface Order {
 
 // Custom Order types
 export type CustomOrderStatus =
-  | 'PENDING'
+  | 'PENDING_SELLER_RESPONSE'
   | 'ACCEPTED'
   | 'DECLINED'
-  | 'COMPLETED'
+  | 'CLARIFICATION_NEEDED'
+  | 'CONVERTED_TO_ORDER'
   | 'CANCELLED';
+
+export interface CustomOrderMessage {
+  id: string;
+  customOrderId: string;
+  senderId: string;
+  sender?: User;
+  message: string;
+  attachments?: string[];
+  createdAt: Date;
+}
+
+export interface CustomOrderItem {
+  id: string;
+  text: string;
+  isCompleted: boolean;
+  completedBy?: string; // sellerId who marked it as completed
+  completedAt?: Date;
+}
 
 export interface CustomOrder {
   id: string;
   buyerId: string;
   buyer?: User;
-  sellerId?: string;
+  sellerId: string;
   seller?: User;
   title: string;
   description: string;
   photos: string[];
-  maxPrice?: number;
+  items?: CustomOrderItem[]; // Optional list of items (Google Keep style)
+  maxPrice: number;
   currency: string;
   deliveryDeadline?: Date;
-  isAsap: boolean;
+  deliveryType: 'asap' | 'date'; // 'asap' for as soon as possible, 'date' for specific date
+  deliveryAddress: string;
   status: CustomOrderStatus;
+  rejectionReason?: string;
+  notes?: string;
+  messages: CustomOrderMessage[];
   createdAt: Date;
   updatedAt: Date;
+  expiresAt: Date;
 }
 
 // Review types
@@ -196,6 +222,7 @@ export interface ProductFiltersState {
   minPrice?: number;
   maxPrice?: number;
   minRating?: number;
-  country?: string;
+  country?: string; // Seller's country
+  deliveryCountry?: string; // Country where buyer wants delivery
   sortBy?: 'newest' | 'price-low-high' | 'price-high-low' | 'rating';
 }

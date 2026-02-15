@@ -13,6 +13,7 @@ import {
   X,
   LogOut,
   ChevronDown,
+  ClipboardList,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { User as UserType } from '@/types';
@@ -49,6 +50,11 @@ export function DashboardSidebar({
       href: '/dashboard/orders',
       label: 'Orders',
       icon: ShoppingCart,
+    },
+    {
+      href: '/dashboard/custom-orders',
+      label: 'Custom Orders',
+      icon: ClipboardList,
     },
     {
       href: '/dashboard/products',

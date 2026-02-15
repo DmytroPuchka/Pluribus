@@ -10,7 +10,7 @@
 import { use } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, ShoppingCart, Heart, Share2, Check, AlertCircle } from 'lucide-react';
+import { MapPin, ShoppingCart, Heart, Share2, Check, AlertCircle, Globe } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -70,6 +70,7 @@ const getMockProducts = (): Product[] => {
         role: 'SELLER',
         country: 'Spain',
         city: 'Barcelona',
+        deliveryCountries: ['Spain', 'Portugal', 'France', 'Italy', 'Germany', 'Netherlands', 'Belgium', 'United Kingdom'],
         rating: 4.9,
         reviewCount: 89,
         emailVerified: true,
@@ -105,6 +106,7 @@ const getMockProducts = (): Product[] => {
         role: 'SELLER',
         country: 'Japan',
         city: 'Tokyo',
+        deliveryCountries: ['Japan', 'South Korea', 'China', 'Taiwan', 'Singapore', 'United States', 'Canada', 'Australia'],
         rating: 5.0,
         reviewCount: 234,
         emailVerified: true,
@@ -139,6 +141,7 @@ const getMockProducts = (): Product[] => {
         role: 'SELLER',
         country: 'United States',
         city: 'New York',
+        deliveryCountries: ['United States', 'Canada', 'Mexico', 'United Kingdom', 'Germany', 'France'],
         rating: 4.8,
         reviewCount: 125,
         emailVerified: true,
@@ -416,6 +419,26 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                 </div>
               </div>
             </div>
+
+            {/* Delivery Countries */}
+            {product.seller.deliveryCountries && product.seller.deliveryCountries.length > 0 && (
+              <div className="mt-6 pt-6 border-t">
+                <div className="flex items-center gap-2 mb-3">
+                  <Globe className="w-4 h-4 text-primary" />
+                  <h4 className="font-semibold text-sm">{t('pages.productDetail.seller.deliveryCountries')}</h4>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {product.seller.deliveryCountries.map((country) => (
+                    <span
+                      key={country}
+                      className="inline-flex items-center px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium"
+                    >
+                      {country}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <Button variant="outline" asChild className="mt-4 w-full">
               <Link href={`/sellers/${product.seller.id}`}>{t('pages.productDetail.seller.viewAllProducts')}</Link>

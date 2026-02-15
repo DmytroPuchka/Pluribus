@@ -7,16 +7,18 @@
 
 'use client';
 
-import { use } from 'react';
+import { use, useState } from 'react';
 import Image from 'next/image';
-import { MapPin, Clock, MessageCircle, Shield, TrendingUp } from 'lucide-react';
-import { ProductGrid } from '@/components/features/ProductGrid';
+import { MapPin, Clock, MessageCircle, Shield, TrendingUp, ClipboardList, X, Globe } from 'lucide-react';
+import { ProductCard } from '@/components/features/ProductCard';
+import { CustomOrderPromptCard } from '@/components/features/CustomOrderPromptCard';
 import { Rating } from '@/components/common/Rating';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Product, Review } from '@/types';
 import Link from 'next/link';
 import { useTranslations } from '@/contexts/TranslationsContext';
+import { CustomOrderForm } from '@/components/features/CustomOrderForm';
 
 interface SellerPageProps {
   params: Promise<{
@@ -34,6 +36,7 @@ const getMockSeller = (id: string): User => {
       role: 'SELLER',
       country: 'United States',
       city: 'New York',
+      deliveryCountries: ['United States', 'Canada', 'Mexico', 'United Kingdom', 'Germany', 'France'],
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop',
       rating: 4.8,
       reviewCount: 125,
@@ -51,6 +54,7 @@ const getMockSeller = (id: string): User => {
       role: 'SELLER',
       country: 'Spain',
       city: 'Barcelona',
+      deliveryCountries: ['Spain', 'Portugal', 'France', 'Italy', 'Germany', 'Netherlands', 'Belgium', 'United Kingdom'],
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop',
       rating: 4.9,
       reviewCount: 89,
@@ -68,6 +72,7 @@ const getMockSeller = (id: string): User => {
       role: 'SELLER',
       country: 'Japan',
       city: 'Tokyo',
+      deliveryCountries: ['Japan', 'South Korea', 'China', 'Taiwan', 'Singapore', 'United States', 'Canada', 'Australia'],
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
       rating: 5.0,
       reviewCount: 234,
@@ -359,6 +364,7 @@ const getMockSellerReviews = (sellerId: string): Review[] => {
 export default function SellerPage({ params }: SellerPageProps) {
   const { t } = useTranslations();
   const { id } = use(params);
+  const [isCustomOrderModalOpen, setIsCustomOrderModalOpen] = useState(false);
 
   const seller = getMockSeller(id);
   const products = getMockSellerProducts(id);
@@ -441,13 +447,23 @@ export default function SellerPage({ params }: SellerPageProps) {
               )}
             </div>
 
-            {/* Contact Button */}
-            <Button asChild>
-              <Link href={`/sellers/${seller.id}/contact`}>
-                <MessageCircle className="w-4 h-4" />
-                {t('pages.sellerProfile.buttons.contactSeller')}
-              </Link>
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button asChild variant="default" className="gap-2">
+                <Link href={`/sellers/${seller.id}/contact`}>
+                  <MessageCircle className="w-4 h-4" />
+                  {t('pages.sellerProfile.buttons.contactSeller')}
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setIsCustomOrderModalOpen(true)}
+                className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                <ClipboardList className="w-4 h-4" />
+                {t('pages.sellerProfile.buttons.customOrder')}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -507,6 +523,30 @@ export default function SellerPage({ params }: SellerPageProps) {
         </CardContent>
       </Card>
 
+      {/* Delivery Countries Section */}
+      {seller.deliveryCountries && seller.deliveryCountries.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-primary" />
+              {t('pages.sellerProfile.deliveryCountries.title')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {seller.deliveryCountries.map((country) => (
+                <span
+                  key={country}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium"
+                >
+                  {country}
+                </span>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Products Section */}
       <div className="space-y-4">
         <div>
@@ -517,7 +557,21 @@ export default function SellerPage({ params }: SellerPageProps) {
             {t('pages.sellerProfile.products.browseAll')} {seller.name}
           </p>
         </div>
-        <ProductGrid products={products} />
+
+        {/* Products Grid with Custom Order Card */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {/* Custom Order Prompt Card - First Item */}
+          <CustomOrderPromptCard
+            sellerId={seller.id}
+            sellerName={seller.name}
+            onClick={() => setIsCustomOrderModalOpen(true)}
+          />
+
+          {/* Regular Products */}
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
       </div>
 
       {/* Reviews Section */}
@@ -576,6 +630,41 @@ export default function SellerPage({ params }: SellerPageProps) {
           )}
         </div>
       </div>
+
+      {/* Custom Order Modal */}
+      {isCustomOrderModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-background rounded-lg shadow-lg">
+            {/* Close Button */}
+            <button
+              onClick={() => setIsCustomOrderModalOpen(false)}
+              className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-muted transition-colors"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-6">
+                {t('pages.customOrders.createOrder.title')}
+              </h2>
+              <CustomOrderForm
+                sellerId={seller.id}
+                sellerName={seller.name}
+                onSuccess={(orderId) => {
+                  console.log('Custom order created:', orderId);
+                  setIsCustomOrderModalOpen(false);
+                  // Optional: Show success toast or redirect
+                }}
+                onError={(error) => {
+                  console.error('Error creating custom order:', error);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

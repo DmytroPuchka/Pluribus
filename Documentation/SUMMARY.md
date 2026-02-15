@@ -139,6 +139,7 @@ pluribus/
 
 #### Users
 - id, email, password_hash, name, role, country, city, avatar
+- delivery_countries[] (for sellers - list of countries where they can deliver)
 - email_verified, phone_verified, id_verified
 - is_active, created_at, updated_at
 
@@ -154,7 +155,8 @@ pluribus/
 
 #### Custom_Orders
 - id, buyer_id, seller_id, title, description, photos[]
-- max_price, currency, delivery_deadline, is_asap
+- items[] (optional Google Keep-style checklist for order items)
+- max_price, currency, delivery_deadline, delivery_type ('asap' | 'date')
 - status, created_at, updated_at
 
 #### Reviews

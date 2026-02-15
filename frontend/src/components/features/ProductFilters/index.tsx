@@ -46,7 +46,8 @@ export interface ProductFiltersState {
   minPrice?: number;
   maxPrice?: number;
   minRating?: number;
-  country?: string;
+  country?: string; // Seller's country
+  deliveryCountry?: string; // Country where buyer wants delivery
   sortBy?: 'newest' | 'price-low-high' | 'price-high-low' | 'rating';
 }
 
@@ -73,13 +74,26 @@ interface ProductFiltersProps {
 }
 
 /**
- * Extract unique countries from products
+ * Extract unique seller countries from products
  */
 const getCountriesFromProducts = (products: Product[]): string[] => {
   const countries = new Set<string>();
   products.forEach(product => {
     if (product.seller?.country) {
       countries.add(product.seller.country);
+    }
+  });
+  return Array.from(countries).sort();
+};
+
+/**
+ * Extract unique delivery countries from products
+ */
+const getDeliveryCountriesFromProducts = (products: Product[]): string[] => {
+  const countries = new Set<string>();
+  products.forEach(product => {
+    if (product.seller?.deliveryCountries) {
+      product.seller.deliveryCountries.forEach(country => countries.add(country));
     }
   });
   return Array.from(countries).sort();
@@ -114,9 +128,16 @@ const applyFilters = (
     );
   }
 
-  // Filter by country
+  // Filter by seller country
   if (filters.country) {
     filtered = filtered.filter(p => p.seller?.country === filters.country);
+  }
+
+  // Filter by delivery country
+  if (filters.deliveryCountry) {
+    filtered = filtered.filter(p =>
+      p.seller?.deliveryCountries?.includes(filters.deliveryCountry!)
+    );
   }
 
   // Sort results
@@ -170,8 +191,9 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
     { label: t('pages.products.filters.ratingOptions.5stars'), value: 5 },
   ], [t]);
 
-  // Get available countries
+  // Get available countries (seller countries and delivery countries)
   const countries = useMemo(() => getCountriesFromProducts(products), [products]);
+  const deliveryCountries = useMemo(() => getDeliveryCountriesFromProducts(products), [products]);
 
   // Get price range from products
   const priceRange = useMemo(() => {
@@ -229,12 +251,21 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
     });
   };
 
-  // Handle country change
+  // Handle seller country change
   const handleCountryChange = (country: string) => {
     const newCountry = country === 'ALL' ? undefined : country;
     handleFilterChange({
       ...filters,
       country: newCountry,
+    });
+  };
+
+  // Handle delivery country change
+  const handleDeliveryCountryChange = (country: string) => {
+    const newCountry = country === 'ALL' ? undefined : country;
+    handleFilterChange({
+      ...filters,
+      deliveryCountry: newCountry,
     });
   };
 
@@ -380,7 +411,7 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
               </Select>
             </div>
 
-            {/* Country Filter */}
+            {/* Seller Country Filter */}
             {countries.length > 0 && (
               <div className="space-y-2">
                 <Label htmlFor="country" className="text-sm font-medium">
@@ -396,6 +427,31 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
                   <SelectContent>
                     <SelectItem value="ALL">{t('pages.products.filters.allCountries')}</SelectItem>
                     {countries.map(country => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Delivery Country Filter */}
+            {deliveryCountries.length > 0 && (
+              <div className="space-y-2">
+                <Label htmlFor="delivery-country" className="text-sm font-medium">
+                  {t('pages.products.filters.deliveryCountry')}
+                </Label>
+                <Select
+                  value={filters.deliveryCountry || 'ALL'}
+                  onValueChange={handleDeliveryCountryChange}
+                >
+                  <SelectTrigger id="delivery-country">
+                    <SelectValue placeholder={t('pages.products.filters.allDeliveryCountries')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">{t('pages.products.filters.allDeliveryCountries')}</SelectItem>
+                    {deliveryCountries.map(country => (
                       <SelectItem key={country} value={country}>
                         {country}
                       </SelectItem>
@@ -497,6 +553,16 @@ export const ProductFilters: FC<ProductFiltersProps> = ({
                       onClick={() => handleCountryChange('ALL')}
                     >
                       {t('pages.products.filters.badges.country')} {filters.country}
+                      <X className="w-3 h-3" />
+                    </Badge>
+                  )}
+                  {filters.deliveryCountry && (
+                    <Badge
+                      variant="secondary"
+                      className="gap-1 cursor-pointer hover:bg-secondary/80"
+                      onClick={() => handleDeliveryCountryChange('ALL')}
+                    >
+                      {t('pages.products.filters.badges.deliveryCountry')} {filters.deliveryCountry}
                       <X className="w-3 h-3" />
                     </Badge>
                   )}

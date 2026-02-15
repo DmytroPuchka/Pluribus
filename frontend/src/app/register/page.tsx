@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -19,7 +20,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Logo } from '@/components/common/Logo';
-import { Mail, Lock, User, Globe, MapPin, UserCheck } from 'lucide-react';
+import { Mail, Lock, User, Globe, MapPin, UserCheck, Truck } from 'lucide-react';
 import { useTranslations } from '@/contexts/TranslationsContext';
 
 const countries = [
@@ -31,6 +32,8 @@ const countries = [
   'France',
   'Italy',
   'Spain',
+  'Ukraine',
+  'Poland',
   'Japan',
   'China',
   'India',
@@ -38,6 +41,10 @@ const countries = [
   'Mexico',
   'South Korea',
   'Netherlands',
+  'Belgium',
+  'Portugal',
+  'Singapore',
+  'Taiwan',
   'Other',
 ];
 
@@ -64,9 +71,19 @@ export default function RegisterPage() {
     role: z.enum(['buyer', 'seller', 'both'], {
       message: t('auth.signup.validation.roleRequired'),
     }),
+    deliveryCountries: z.array(z.string()).optional(),
   }).refine((data) => data.password === data.confirmPassword, {
     message: t('auth.signup.validation.passwordMismatch'),
     path: ['confirmPassword'],
+  }).refine((data) => {
+    // Delivery countries required for sellers
+    if (data.role === 'seller' || data.role === 'both') {
+      return data.deliveryCountries && data.deliveryCountries.length > 0;
+    }
+    return true;
+  }, {
+    message: t('auth.signup.validation.deliveryCountriesRequired'),
+    path: ['deliveryCountries'],
   });
 
   type RegistrationFormValues = z.infer<typeof registrationSchema>;
@@ -83,8 +100,12 @@ export default function RegisterPage() {
       country: '',
       city: '',
       role: 'buyer',
+      deliveryCountries: [],
     },
   });
+
+  // Watch the role field to show/hide delivery countries
+  const selectedRole = form.watch('role');
 
   async function onSubmit(values: RegistrationFormValues) {
     setIsLoading(true);
@@ -348,6 +369,62 @@ export default function RegisterPage() {
                     </FormItem>
                   )}
                 />
+
+                {/* Delivery Countries Field - Only for Sellers */}
+                {(selectedRole === 'seller' || selectedRole === 'both') && (
+                  <FormField
+                    control={form.control}
+                    name="deliveryCountries"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Truck className="w-4 h-4" />
+                          {t('auth.signup.deliveryCountries')}
+                        </FormLabel>
+                        <FormDescription className="text-xs mb-3">
+                          {t('auth.signup.deliveryCountriesDescription')}
+                        </FormDescription>
+                        <div className="border rounded-md p-4 max-h-60 overflow-y-auto space-y-3">
+                          {countries.map((country) => (
+                            <FormField
+                              key={country}
+                              control={form.control}
+                              name="deliveryCountries"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem
+                                    key={country}
+                                    className="flex flex-row items-center space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(country)}
+                                        onCheckedChange={(checked) => {
+                                          return checked
+                                            ? field.onChange([...(field.value || []), country])
+                                            : field.onChange(
+                                                field.value?.filter(
+                                                  (value) => value !== country
+                                                )
+                                              );
+                                        }}
+                                        disabled={isLoading}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal cursor-pointer">
+                                      {country}
+                                    </FormLabel>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 {/* Submit Button */}
                 <Button

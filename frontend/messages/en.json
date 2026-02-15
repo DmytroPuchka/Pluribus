@@ -231,6 +231,8 @@
         "both": "Both Buyer & Seller"
       },
       "roleDescription": "You can change this later in your profile settings",
+      "deliveryCountries": "Countries I can deliver to",
+      "deliveryCountriesDescription": "Select all countries where you can ship products (required for sellers)",
       "passwordDescription": "At least 8 characters for security",
       "acceptTerms": "I accept the {terms} and {privacy}",
       "terms": "Terms of Service",
@@ -264,7 +266,8 @@
         "countryRequired": "Please select a country.",
         "cityRequired": "City is required",
         "cityMinLength": "City must be at least 2 characters.",
-        "roleRequired": "Please select a role."
+        "roleRequired": "Please select a role.",
+        "deliveryCountriesRequired": "Please select at least one delivery country."
       },
       "errors": {
         "emailExists": "This email is already registered",
@@ -581,8 +584,10 @@
         "max": "Max",
         "sellerRating": "Seller Rating",
         "allRatings": "All Ratings",
-        "country": "Country",
+        "country": "Seller Country",
         "allCountries": "All Countries",
+        "deliveryCountry": "Delivery Country",
+        "allDeliveryCountries": "All Delivery Countries",
         "sortBy": "Sort By",
         "sortByPlaceholder": "Sort by...",
         "none": "None",
@@ -607,7 +612,8 @@
           "priceMin": "Min:",
           "priceMax": "Max:",
           "rating": "Rating:",
-          "country": "Country:",
+          "country": "Seller Country:",
+          "deliveryCountry": "Delivers To:",
           "sort": "Sort:"
         }
       }
@@ -687,6 +693,7 @@
         "emailVerified": "Email Verified",
         "phoneVerified": "Phone Verified",
         "idVerified": "ID Verified",
+        "deliveryCountries": "Delivery Countries",
         "viewAllProducts": "View All Products"
       },
       "customerReviews": {
@@ -716,7 +723,8 @@
         "idVerified": "ID Verified"
       },
       "buttons": {
-        "contactSeller": "Contact Seller"
+        "contactSeller": "Contact Seller",
+        "customOrder": "Create Order"
       },
       "stats": {
         "totalOrders": "Total Orders",
@@ -728,6 +736,9 @@
       },
       "about": {
         "title": "About"
+      },
+      "deliveryCountries": {
+        "title": "This seller can deliver to the following countries"
       },
       "products": {
         "title": "Products",
@@ -938,6 +949,19 @@
     "customOrders": {
       "title": "Custom Orders",
       "subtitle": "Create personalized orders or respond to buyer requests",
+      "badge": {
+        "custom": "Custom"
+      },
+      "promptCard": {
+        "title": "Can't Find What You Need?",
+        "description": "Create a custom order request and the seller will help you find exactly what you're looking for",
+        "descriptionWithSeller": "Request a custom order from {sellerName} for exactly what you need",
+        "feature1": "Describe what you need",
+        "feature2": "Set your budget & deadline",
+        "feature3": "Get personalized offers",
+        "priceText": "Set your own budget",
+        "button": "Create Custom Order"
+      },
       "dashboard": {
         "title": "Custom Orders",
         "subtitle": "Manage your custom order requests and submissions",
@@ -967,6 +991,12 @@
           "description": "Description",
           "descriptionPlaceholder": "Provide detailed specifications and requirements...",
           "descriptionDescription": "Be as specific as possible to help sellers understand your needs",
+          "items": "Order Items (Optional)",
+          "itemsDescription": "Add specific items you need (great for shopping lists)",
+          "itemPlaceholder": "Add an item...",
+          "addItem": "Add item",
+          "removeItem": "Remove item",
+          "itemToggle": "Toggle item: {text}",
           "category": "Category",
           "categoryPlaceholder": "Select a category",
           "budget": "Budget",
@@ -989,7 +1019,25 @@
           "notes": "Additional Notes",
           "notesPlaceholder": "Any other details sellers should know...",
           "allowOffers": "Allow sellers to send offers",
-          "allowOffersDescription": "Sellers can submit their best prices and proposals"
+          "allowOffersDescription": "Sellers can submit their best prices and proposals",
+          "photos": "Reference Photos",
+          "photosDescription": "Upload up to 5 photos (JPEG, PNG, WebP). Max 5MB per photo.",
+          "photosPlaceholder": "Upload Photos ({count}/5)",
+          "removePhoto": "Remove photo {number}",
+          "currency": "Currency",
+          "currencyPlaceholder": "Select currency",
+          "maxPriceDescription": "Your budget for this order",
+          "maxPricePlaceholder": "1000",
+          "deliveryTypeLabel": "When do you need this?",
+          "asapOption": "As soon as possible",
+          "dateOption": "Specify the date until the order is valid",
+          "deliveryTypeDescription": "Choose whether you need this urgently or have a specific deadline",
+          "specificDate": "Select delivery date",
+          "specificDateDescription": "Choose a date when you need the order delivered",
+          "addressDescription": "Provide the complete address where you want the order delivered",
+          "cardTitle": "Create Custom Order Request",
+          "cardDescription": "Describe what you're looking for and the seller will review your request",
+          "cardDescriptionWithSeller": "Send a custom order request to {sellerName}"
         },
         "validation": {
           "titleRequired": "Order title is required",
@@ -1006,18 +1054,31 @@
           "addressRequired": "Delivery address is required",
           "countryRequired": "Please select a country",
           "cityRequired": "City is required",
-          "phoneInvalid": "Please enter a valid phone number"
+          "phoneInvalid": "Please enter a valid phone number",
+          "addressMinLength": "Delivery address must be at least 10 characters",
+          "addressMaxLength": "Delivery address must not exceed 500 characters",
+          "priceRequired": "Please enter a valid price",
+          "pricePositive": "Price must be greater than 0",
+          "priceMaxExceeded": "Price must not exceed 1,000,000",
+          "currencyRequired": "Please select a currency",
+          "photosMinCount": "Please upload at least one photo",
+          "photosMaxCount": "You can upload up to 5 photos",
+          "photoSizeExceeded": "Each photo must be less than 5MB",
+          "photoTypeInvalid": "Only JPEG, PNG, and WebP images are supported",
+          "deadlineOrAsapRequired": "Please either select ASAP or specify a delivery deadline",
+          "deadlinePastDate": "Delivery deadline must be today or in the future"
         },
         "buttons": {
-          "submit": "Create Order",
-          "submitting": "Creating Order...",
+          "submit": "Send Custom Order Request",
+          "submitting": "Sending Request...",
           "draft": "Save as Draft",
           "cancel": "Cancel",
           "preview": "Preview"
         },
         "success": {
-          "title": "Order Created Successfully",
-          "message": "Your custom order has been created. Sellers can now view and submit offers for your request."
+          "title": "Custom Order Request Sent!",
+          "message": "Your custom order request has been sent to the seller. They will review your request and respond within 24-48 hours.",
+          "messageWithSeller": "Your custom order request has been sent to {sellerName}. They will review your request and respond within 24-48 hours."
         }
       },
       "orderDetail": {
@@ -1120,6 +1181,7 @@
           "orderCancelled": "Order has been cancelled"
         },
         "error": {
+          "failedToSubmit": "Failed to submit custom order",
           "failedToCreate": "Failed to create custom order. Please try again.",
           "failedToUpdate": "Failed to update order. Please try again.",
           "failedToDelete": "Failed to delete order. Please try again.",
