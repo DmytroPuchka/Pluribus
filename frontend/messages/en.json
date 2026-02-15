@@ -934,6 +934,305 @@
           "delete": "Delete"
         }
       }
+    },
+    "customOrders": {
+      "title": "Custom Orders",
+      "subtitle": "Create personalized orders or respond to buyer requests",
+      "dashboard": {
+        "title": "Custom Orders",
+        "subtitle": "Manage your custom order requests and submissions",
+        "tabs": {
+          "received": "Received Requests",
+          "created": "My Orders",
+          "history": "History"
+        },
+        "stats": {
+          "pending": "Pending Requests",
+          "accepted": "Accepted",
+          "completed": "Completed",
+          "declined": "Declined"
+        },
+        "empty": {
+          "noRequests": "No custom order requests yet",
+          "noOrders": "You haven't created any custom orders yet"
+        }
+      },
+      "createOrder": {
+        "title": "Create Custom Order",
+        "subtitle": "Submit a request for a custom product or service",
+        "form": {
+          "title": "Order Title",
+          "titlePlaceholder": "What do you need?",
+          "titleDescription": "Give your order a clear, descriptive title",
+          "description": "Description",
+          "descriptionPlaceholder": "Provide detailed specifications and requirements...",
+          "descriptionDescription": "Be as specific as possible to help sellers understand your needs",
+          "category": "Category",
+          "categoryPlaceholder": "Select a category",
+          "budget": "Budget",
+          "budgetPlaceholder": "Enter your budget range",
+          "minPrice": "Minimum Price",
+          "maxPrice": "Maximum Price",
+          "deadline": "Delivery Deadline",
+          "deadlineDescription": "When do you need this completed?",
+          "address": "Delivery Address",
+          "addressPlaceholder": "Full address where order should be delivered",
+          "country": "Country",
+          "countryPlaceholder": "Select country",
+          "city": "City",
+          "cityPlaceholder": "Enter city",
+          "postalCode": "Postal Code",
+          "phone": "Contact Phone Number",
+          "phoneDescription": "Sellers may need to contact you",
+          "attachments": "Attachments",
+          "attachDescription": "Upload reference images, documents, or specifications (optional)",
+          "notes": "Additional Notes",
+          "notesPlaceholder": "Any other details sellers should know...",
+          "allowOffers": "Allow sellers to send offers",
+          "allowOffersDescription": "Sellers can submit their best prices and proposals"
+        },
+        "validation": {
+          "titleRequired": "Order title is required",
+          "titleMinLength": "Title must be at least 5 characters",
+          "titleMaxLength": "Title must be no more than 100 characters",
+          "descriptionRequired": "Description is required",
+          "descriptionMinLength": "Description must be at least 20 characters",
+          "descriptionMaxLength": "Description must be no more than 5000 characters",
+          "categoryRequired": "Please select a category",
+          "budgetRequired": "Budget is required",
+          "budgetInvalid": "Please enter a valid budget",
+          "deadlineRequired": "Delivery deadline is required",
+          "deadlineInvalid": "Deadline must be in the future",
+          "addressRequired": "Delivery address is required",
+          "countryRequired": "Please select a country",
+          "cityRequired": "City is required",
+          "phoneInvalid": "Please enter a valid phone number"
+        },
+        "buttons": {
+          "submit": "Create Order",
+          "submitting": "Creating Order...",
+          "draft": "Save as Draft",
+          "cancel": "Cancel",
+          "preview": "Preview"
+        },
+        "success": {
+          "title": "Order Created Successfully",
+          "message": "Your custom order has been created. Sellers can now view and submit offers for your request."
+        }
+      },
+      "orderDetail": {
+        "header": {
+          "created": "Created",
+          "deadline": "Deadline",
+          "budget": "Budget",
+          "category": "Category",
+          "status": "Status"
+        },
+        "sections": {
+          "details": "Order Details",
+          "offers": "Offers & Proposals",
+          "messages": "Messages",
+          "timeline": "Timeline",
+          "deliveryInfo": "Delivery Information"
+        },
+        "actions": {
+          "edit": "Edit Order",
+          "delete": "Delete Order",
+          "acceptOffer": "Accept Offer",
+          "declineOffer": "Decline Offer",
+          "requestClarification": "Request Clarification",
+          "cancelOrder": "Cancel Order",
+          "markComplete": "Mark as Complete",
+          "leaveReview": "Leave Review"
+        },
+        "offers": {
+          "title": "Offers from Sellers",
+          "noOffers": "No offers yet",
+          "offersReceived": "{count} offer(s) received",
+          "compareOffers": "Compare offers",
+          "sellerInfo": "Seller Information",
+          "proposedPrice": "Proposed Price",
+          "deliveryTime": "Delivery Time",
+          "rating": "Seller Rating",
+          "totalOrders": "Total Orders",
+          "responseTime": "Response Time"
+        }
+      },
+      "offerCard": {
+        "from": "From",
+        "price": "Price",
+        "deliveryTime": "Delivery in",
+        "rating": "Rating",
+        "details": "View Details",
+        "accept": "Accept",
+        "decline": "Decline",
+        "message": "Message Seller",
+        "days": "days"
+      },
+      "status": {
+        "pending": "Pending",
+        "pendingDescription": "Waiting for seller offers",
+        "accepted": "Accepted",
+        "acceptedDescription": "You've accepted an offer",
+        "declined": "Declined",
+        "declinedDescription": "Offer declined",
+        "inProgress": "In Progress",
+        "inProgressDescription": "Order is being prepared",
+        "completed": "Completed",
+        "completedDescription": "Order has been delivered",
+        "cancelled": "Cancelled",
+        "cancelledDescription": "Order has been cancelled",
+        "clarificationNeeded": "Clarification Needed",
+        "clarificationDescription": "Waiting for more details"
+      },
+      "buttons": {
+        "createOrder": "Create Custom Order",
+        "acceptOffer": "Accept Offer",
+        "declineOffer": "Decline Offer",
+        "requestClarification": "Request Clarification",
+        "cancelOrder": "Cancel Order",
+        "viewOffers": "View Offers",
+        "submitOffer": "Submit Offer",
+        "editOrder": "Edit Order",
+        "deleteOrder": "Delete Order",
+        "saveChanges": "Save Changes",
+        "backToDashboard": "Back to Dashboard",
+        "browseSellers": "Browse Sellers"
+      },
+      "validation": {
+        "errors": {
+          "orderNotFound": "Order not found",
+          "notAuthorized": "You don't have permission to access this order",
+          "invalidOffer": "Invalid offer",
+          "orderAlreadyAccepted": "An offer has already been accepted for this order",
+          "cannotModifyOrder": "This order cannot be modified in its current state",
+          "cannotCancelOrder": "This order cannot be cancelled"
+        }
+      },
+      "messages": {
+        "success": {
+          "orderCreated": "Custom order created successfully",
+          "orderUpdated": "Order updated successfully",
+          "orderDeleted": "Order has been deleted",
+          "offerAccepted": "Offer accepted successfully",
+          "offerDeclined": "Offer declined",
+          "clarificationRequested": "Clarification request sent to seller",
+          "orderCancelled": "Order has been cancelled"
+        },
+        "error": {
+          "failedToCreate": "Failed to create custom order. Please try again.",
+          "failedToUpdate": "Failed to update order. Please try again.",
+          "failedToDelete": "Failed to delete order. Please try again.",
+          "failedToAcceptOffer": "Failed to accept offer. Please try again.",
+          "failedToDeclineOffer": "Failed to decline offer. Please try again.",
+          "somethingWentWrong": "Something went wrong. Please try again."
+        }
+      },
+      "timeline": {
+        "orderCreated": "Order created",
+        "offerReceived": "Offer received",
+        "clarificationRequested": "Clarification requested",
+        "offerAccepted": "Offer accepted",
+        "offerDeclined": "Offer declined",
+        "orderStarted": "Order started",
+        "orderCompleted": "Order completed",
+        "orderCancelled": "Order cancelled",
+        "reviewLeft": "Review submitted"
+      },
+      "responses": {
+        "title": "Respond to Custom Orders",
+        "subtitle": "View and respond to buyer requests",
+        "noResponses": "No custom order requests",
+        "received": "Received",
+        "budget": "Budget",
+        "deadline": "Deadline",
+        "viewDetails": "View Details",
+        "submitOffer": "Submit Offer",
+        "offerForm": {
+          "title": "Submit Your Offer",
+          "price": "Your Price",
+          "priceDescription": "How much will you charge for this order?",
+          "deliveryTime": "Delivery Time (days)",
+          "deliveryTimeDescription": "How many days to complete this order?",
+          "notes": "Your Proposal",
+          "notesPlaceholder": "Explain your approach, timeline, and any special details...",
+          "attachments": "Portfolio or Supporting Files",
+          "submit": "Submit Offer",
+          "submitting": "Submitting...",
+          "cancel": "Cancel"
+        },
+        "validation": {
+          "priceRequired": "Price is required",
+          "priceInvalid": "Please enter a valid price",
+          "priceOutOfBudget": "Your price exceeds the buyer's budget",
+          "deliveryTimeRequired": "Delivery time is required",
+          "deliveryTimeInvalid": "Please enter a valid number of days",
+          "notesRequired": "Please provide details about your proposal",
+          "notesMinLength": "Proposal must be at least 20 characters"
+        }
+      },
+      "filters": {
+        "status": "Status",
+        "category": "Category",
+        "priceRange": "Price Range",
+        "deadline": "Deadline",
+        "sortBy": "Sort By",
+        "sortOptions": {
+          "newest": "Newest First",
+          "oldest": "Oldest First",
+          "priceLowest": "Price: Low to High",
+          "priceHighest": "Price: High to Low",
+          "deadlineSoon": "Deadline: Soonest",
+          "deadlineLatest": "Deadline: Latest"
+        }
+      },
+      "search": {
+        "placeholder": "Search custom orders...",
+        "noResults": "No custom orders match your search"
+      },
+      "clarification": {
+        "title": "Request Clarification",
+        "subtitle": "Ask the seller for more details",
+        "message": "Your Question",
+        "messagePlaceholder": "What would you like to know?",
+        "send": "Send",
+        "sending": "Sending...",
+        "cancel": "Cancel",
+        "success": "Clarification request sent",
+        "questions": "Clarification Questions"
+      },
+      "review": {
+        "title": "Leave a Review",
+        "subtitle": "Share your experience with this seller",
+        "rating": "Rating",
+        "comment": "Your Review",
+        "commentPlaceholder": "Tell others about your experience...",
+        "qualityOfWork": "Quality of Work",
+        "communication": "Communication",
+        "timeliness": "Timeliness",
+        "submit": "Submit Review",
+        "submitting": "Submitting...",
+        "success": "Review submitted successfully"
+      },
+      "tooltips": {
+        "budget": "The price range you're willing to pay",
+        "deadline": "The date by which you need the order completed",
+        "attachments": "Upload images, documents, or files to help sellers understand your needs",
+        "allowOffers": "When enabled, sellers can submit their best prices and proposals",
+        "deliveryTime": "The estimated number of days to complete the order"
+      },
+      "labels": {
+        "customOrder": "Custom Order",
+        "customOrderRequest": "Custom Order Request",
+        "offerReceived": "Offer Received",
+        "offerAccepted": "Offer Accepted",
+        "orderInProgress": "Order In Progress",
+        "orderCompleted": "Order Completed",
+        "pendingApproval": "Pending Approval",
+        "awaitingPayment": "Awaiting Payment",
+        "shipped": "Shipped",
+        "delivered": "Delivered"
+      }
     }
   }
 }
