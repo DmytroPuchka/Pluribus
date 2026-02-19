@@ -18,9 +18,14 @@ import {
   ArrowRight,
   Plus,
   Eye,
+  Users,
+  History,
+  Repeat,
 } from 'lucide-react';
 import { Order, Product, User } from '@/types';
 import { useTranslations } from '@/contexts/TranslationsContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRole } from '@/contexts/RoleContext';
 
 // Mock data
 const MOCK_USER: User = {
@@ -158,6 +163,7 @@ function StatCard({
 }
 
 function OrderStatusBadge({ status }: { status: string }) {
+  const { t } = useTranslations();
   const variants: Record<string, string> = {
     PENDING: 'bg-yellow-100 text-yellow-800',
     ACCEPTED: 'bg-blue-100 text-blue-800',
@@ -171,23 +177,30 @@ function OrderStatusBadge({ status }: { status: string }) {
 
   return (
     <Badge className={`${variants[status] || 'bg-gray-100 text-gray-800'}`}>
-      {status}
+      {t(`pages.dashboard.orderStatus.${status}`)}
     </Badge>
   );
 }
 
 export default function DashboardPage() {
   const { t } = useTranslations();
+  const { user } = useAuth();
+  const { currentRole } = useRole();
+
   const totalRevenue = MOCK_PRODUCTS.reduce(
     (sum, product) => sum + product.price * (product.stockQuantity || 1),
     0
   );
 
+  // Determine capabilities based on current role
+  const canBuy = currentRole === 'BUYER' || currentRole === 'BOTH';
+  const canSell = currentRole === 'SELLER' || currentRole === 'BOTH';
+
   return (
     <div className="p-6 md:p-8 space-y-8">
       {/* Welcome Header */}
       <div>
-        <h1 className="text-3xl font-bold mb-2">{t('pages.dashboard.welcome')}, {MOCK_USER.name}!</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('pages.dashboard.welcome')}, {user?.name || MOCK_USER.name}!</h1>
         <p className="text-muted-foreground">
           {t('pages.dashboard.subtitle')}
         </p>
@@ -280,18 +293,26 @@ export default function DashboardPage() {
               <CardTitle className="text-lg">{t('pages.dashboard.quickActions.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button className="w-full justify-start" asChild>
-                <Link href="/dashboard/orders/new">
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t('pages.dashboard.quickActions.placeOrder')}
-                </Link>
-              </Button>
-              <Button className="w-full justify-start" variant="outline" asChild>
-                <Link href="/dashboard/products/new">
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t('pages.dashboard.quickActions.addProduct')}
-                </Link>
-              </Button>
+              {/* Place Order - Only for BUYER and BOTH */}
+              {canBuy && (
+                <Button className="w-full justify-start" asChild>
+                  <Link href="/sellers">
+                    <Users className="mr-2 h-4 w-4" />
+                    {t('pages.dashboard.quickActions.placeOrder')}
+                  </Link>
+                </Button>
+              )}
+
+              {/* Add Product - Only for SELLER and BOTH */}
+              {canSell && (
+                <Button className="w-full justify-start" variant={canBuy ? "outline" : "default"} asChild>
+                  <Link href="/dashboard/products/new">
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t('pages.dashboard.quickActions.addProduct')}
+                  </Link>
+                </Button>
+              )}
+
               <Button className="w-full justify-start" variant="outline" asChild>
                 <Link href="/dashboard/profile">
                   {t('pages.dashboard.quickActions.viewProfile')}
@@ -302,6 +323,42 @@ export default function DashboardPage() {
                   {t('pages.dashboard.quickActions.settings')}
                 </Link>
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* Order History Links */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">{t('pages.dashboard.orderHistory.title')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {/* Buyer's Order History */}
+              {canBuy && (
+                <>
+                  <Button className="w-full justify-start" variant="outline" asChild>
+                    <Link href="/dashboard/orders?role=buyer">
+                      <History className="mr-2 h-4 w-4" />
+                      {t('pages.dashboard.orderHistory.myOrders')}
+                    </Link>
+                  </Button>
+                  <Button className="w-full justify-start" variant="ghost" asChild>
+                    <Link href="/dashboard/orders?role=buyer&reorder=true">
+                      <Repeat className="mr-2 h-4 w-4" />
+                      {t('pages.dashboard.orderHistory.reorder')}
+                    </Link>
+                  </Button>
+                </>
+              )}
+
+              {/* Seller's Order History */}
+              {canSell && (
+                <Button className="w-full justify-start" variant="outline" asChild>
+                  <Link href="/dashboard/orders?role=seller">
+                    <Package className="mr-2 h-4 w-4" />
+                    {t('pages.dashboard.orderHistory.completedOrders')}
+                  </Link>
+                </Button>
+              )}
             </CardContent>
           </Card>
 

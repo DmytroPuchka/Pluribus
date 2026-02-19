@@ -376,6 +376,23 @@
       "resend": "Надіслати лист підтвердження ще раз",
       "success": "Електронну адресу успішно підтверджено!",
       "error": "Недійсне або прострочене посилання для підтвердження"
+    },
+    "logout": {
+      "success": "Ви успішно вийшли з системи"
+    }
+  },
+  "dashboard": {
+    "sidebar": {
+      "overview": "Огляд",
+      "orders": "Замовлення",
+      "customOrders": "Індивідуальні замовлення",
+      "products": "Товари",
+      "profile": "Профіль",
+      "settings": "Налаштування",
+      "currentRole": "Поточна роль",
+      "roleBuyer": "Покупець",
+      "roleSeller": "Продавець",
+      "roleBoth": "Покупець і продавець"
     }
   },
   "pages": {
@@ -573,6 +590,17 @@
       "showing": "Показано",
       "of": "з",
       "products": "товарів",
+      "categories": {
+        "electronics": "Електроніка",
+        "clothing": "Одяг",
+        "food": "Їжа",
+        "beauty": "Краса",
+        "books": "Книги",
+        "toys": "Іграшки",
+        "sports": "Спорт",
+        "home": "Дім",
+        "other": "Інше"
+      },
       "filters": {
         "title": "Фільтри",
         "applied": "фільтр застосовано",
@@ -616,6 +644,56 @@
           "deliveryCountry": "Доставка до:",
           "sort": "Сортування:"
         }
+      }
+    },
+    "productForm": {
+      "createTitle": "Додати новий товар",
+      "editTitle": "Редагувати товар",
+      "createDescription": "Заповніть форму, щоб додати новий товар до вашого магазину",
+      "editDescription": "Оновіть інформацію про товар",
+      "form": {
+        "title": "Назва товару",
+        "titlePlaceholder": "Введіть назву товару",
+        "titleDescription": "Дайте вашому товару чітку описову назву (5-100 символів)",
+        "description": "Опис",
+        "descriptionPlaceholder": "Надайте детальний опис товару...",
+        "descriptionDescription": "Опишіть характеристики, матеріали та переваги вашого товару (20-2000 символів)",
+        "photos": "Фотографії товару",
+        "photosPlaceholder": "Завантажити фото ({count}/5)",
+        "photosDescription": "Завантажте до 5 фотографій. Підтримуються JPEG, PNG, WebP. Максимум 5 МБ на фото.",
+        "removePhoto": "Видалити фото {number}",
+        "price": "Ціна",
+        "currency": "Валюта",
+        "currencyPlaceholder": "Виберіть валюту",
+        "category": "Категорія",
+        "categoryPlaceholder": "Виберіть категорію",
+        "stockQuantity": "Кількість на складі",
+        "tags": "Теги (опціонально)",
+        "tagsPlaceholder": "напр. handmade, vintage, eco-friendly",
+        "tagsDescription": "Додайте теги через кому для кращого пошуку (необов'язково)",
+        "submit": "Додати товар"
+      },
+      "validation": {
+        "titleMinLength": "Назва має містити щонайменше 5 символів",
+        "titleMaxLength": "Назва має містити не більше 100 символів",
+        "descriptionMinLength": "Опис має містити щонайменше 20 символів",
+        "descriptionMaxLength": "Опис має містити не більше 2000 символів",
+        "priceRequired": "Ціна обов'язкова",
+        "pricePositive": "Ціна має бути більше 0",
+        "priceMaxExceeded": "Ціна не повинна перевищувати 1,000,000",
+        "currencyRequired": "Будь ласка, виберіть валюту",
+        "categoryRequired": "Будь ласка, виберіть категорію",
+        "tagsRequired": "Будь ласка, додайте хоча б один тег",
+        "stockRequired": "Кількість на складі обов'язкова",
+        "stockMinValue": "Кількість на складі не може бути від'ємною",
+        "photosMaxCount": "Ви можете завантажити максимум 5 фотографій",
+        "photoSizeExceeded": "Кожна фотографія має бути менше 5 МБ"
+      },
+      "messages": {
+        "createSuccess": "Товар успішно створено!",
+        "createError": "Не вдалося створити товар. Будь ласка, спробуйте ще раз.",
+        "updateSuccess": "Товар успішно оновлено!",
+        "updateError": "Не вдалося оновити товар. Будь ласка, спробуйте ще раз."
       }
     },
     "sellers": {
@@ -802,6 +880,18 @@
     "dashboard": {
       "welcome": "Ласкаво просимо",
       "subtitle": "Ось огляд вашої панелі Pluribus",
+      "sidebar": {
+        "overview": "Огляд",
+        "orders": "Замовлення",
+        "customOrders": "Індивідуальні замовлення",
+        "products": "Товари",
+        "profile": "Профіль",
+        "settings": "Налаштування",
+        "currentRole": "Поточна роль",
+        "roleBuyer": "Покупець",
+        "roleSeller": "Продавець",
+        "roleBoth": "Покупець і продавець"
+      },
       "stats": {
         "totalOrders": "Всього замовлень",
         "activeProducts": "Активні продукти",
@@ -812,20 +902,36 @@
       "recentOrders": {
         "title": "Останні замовлення",
         "subtitle": "Ваші останні {count} замовлень",
-        "items": "товар(ів)",
+        "items": "товарів",
         "viewAll": "Переглянути всі",
         "view": "Переглянути"
       },
       "quickActions": {
         "title": "Швидкі дії",
         "placeOrder": "Зробити нове замовлення",
-        "addProduct": "Додати продукт",
+        "addProduct": "Додати товар",
         "viewProfile": "Переглянути профіль",
         "settings": "Налаштування"
+      },
+      "orderHistory": {
+        "title": "Історія замовлень",
+        "myOrders": "Мої замовлення",
+        "reorder": "Повторити замовлення",
+        "completedOrders": "Виконані замовлення"
       },
       "activeProducts": {
         "title": "Активні продукти",
         "stock": "Залишок"
+      },
+      "orderStatus": {
+        "PENDING": "Очікується",
+        "ACCEPTED": "Прийнято",
+        "PAID": "Оплачено",
+        "SHIPPED": "Відправлено",
+        "DELIVERED": "Доставлено",
+        "COMPLETED": "Завершено",
+        "CANCELLED": "Скасовано",
+        "DISPUTED": "Оспорюється"
       },
       "profile": {
         "title": "Налаштування профілю",

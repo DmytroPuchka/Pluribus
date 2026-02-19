@@ -71,11 +71,11 @@ interface CustomOrderDetailsProps {
 
 const getStatusVariant = (status: CustomOrderStatus): 'default' | 'secondary' | 'destructive' | 'outline' => {
   switch (status) {
-    case 'PENDING':
+    case 'PENDING_SELLER_RESPONSE':
       return 'secondary';
     case 'ACCEPTED':
       return 'default';
-    case 'COMPLETED':
+    case 'CONVERTED_TO_ORDER':
       return 'default';
     case 'DECLINED':
       return 'destructive';
@@ -88,11 +88,11 @@ const getStatusVariant = (status: CustomOrderStatus): 'default' | 'secondary' | 
 
 const getStatusLabel = (status: CustomOrderStatus): string => {
   switch (status) {
-    case 'PENDING':
+    case 'PENDING_SELLER_RESPONSE':
       return 'Pending';
     case 'ACCEPTED':
       return 'Accepted';
-    case 'COMPLETED':
+    case 'CONVERTED_TO_ORDER':
       return 'Completed';
     case 'DECLINED':
       return 'Declined';
@@ -120,9 +120,9 @@ export const CustomOrderDetails: FC<CustomOrderDetailsProps> = ({
 
   const isSeller = userRole === 'SELLER' || userRole === 'BOTH';
   const isBuyer = userRole === 'BUYER' || userRole === 'BOTH';
-  const showSellerActions = isSeller && order.status === 'PENDING';
+  const showSellerActions = isSeller && order.status === 'PENDING_SELLER_RESPONSE';
   const showCompleteAction = isSeller && order.status === 'ACCEPTED';
-  const showCancelAction = isBuyer && order.status === 'PENDING';
+  const showCancelAction = isBuyer && order.status === 'PENDING_SELLER_RESPONSE';
 
   const otherUser = isSeller ? order.buyer : order.seller;
   const otherUserLabel = isSeller ? 'Buyer' : 'Seller';
@@ -379,8 +379,7 @@ export const CustomOrderDetails: FC<CustomOrderDetailsProps> = ({
                     )}
                   </p>
                 </div>
-                </div>
-              )}
+              </div>
 
               {/* Posted Date */}
               <div className="flex items-start gap-3">
@@ -509,9 +508,9 @@ export const CustomOrderDetails: FC<CustomOrderDetailsProps> = ({
                         >
                           {change.status === 'ACCEPTED' && <Check className="w-4 h-4" />}
                           {change.status === 'DECLINED' && <X className="w-4 h-4" />}
-                          {change.status === 'COMPLETED' && <Package className="w-4 h-4" />}
+                          {change.status === 'CONVERTED_TO_ORDER' && <Package className="w-4 h-4" />}
                           {change.status === 'CANCELLED' && <X className="w-4 h-4" />}
-                          {change.status === 'PENDING' && <Clock className="w-4 h-4" />}
+                          {change.status === 'PENDING_SELLER_RESPONSE' && <Clock className="w-4 h-4" />}
                         </div>
                         {index < statusHistory.length - 1 && (
                           <div className="absolute left-1/2 top-8 w-0.5 h-8 -translate-x-1/2 bg-border" />

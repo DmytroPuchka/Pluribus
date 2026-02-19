@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
@@ -79,7 +80,7 @@ export function CustomOrderForm({
         z.object({
           id: z.string(),
           text: z.string().min(1),
-          isCompleted: z.boolean().default(false),
+          isCompleted: z.boolean(),
         })
       )
       .optional(),
@@ -99,7 +100,7 @@ export function CustomOrderForm({
         { message: t('pages.customOrders.createOrder.validation.photoTypeInvalid') }
       ),
     maxPrice: z
-      .number({ invalid_type_error: t('pages.customOrders.createOrder.validation.priceRequired') })
+      .number({ message: t('pages.customOrders.createOrder.validation.priceRequired') })
       .positive({ message: t('pages.customOrders.createOrder.validation.pricePositive') })
       .max(1000000, { message: t('pages.customOrders.createOrder.validation.priceMaxExceeded') }),
     currency: z.string().min(1, { message: t('pages.customOrders.createOrder.validation.currencyRequired') }),
@@ -486,7 +487,7 @@ export function CustomOrderForm({
             <FormField
               control={form.control}
               name="photos"
-              render={({ field: { ...fieldProps } }) => (
+              render={({ field: { value, onChange, ...fieldProps } }) => (
                 <FormItem>
                   <FormLabel>{t('pages.customOrders.createOrder.form.photos')}</FormLabel>
                   <FormControl>

@@ -41,9 +41,12 @@ const ExampleSellerView = () => {
     currency: 'USD',
     deliveryDeadline: new Date('2024-03-15'),
     deliveryType: 'date' as const,
-    status: 'PENDING',
+    deliveryAddress: '123 Main St, New York, NY 10001',
+    status: 'PENDING_SELLER_RESPONSE',
+    messages: [],
     createdAt: new Date('2024-02-10'),
     updatedAt: new Date('2024-02-10'),
+    expiresAt: new Date('2024-03-10'),
   };
 
   const handleAccept = (orderId: string) => {
@@ -101,9 +104,12 @@ const ExampleBuyerView = () => {
     maxPrice: 120.00,
     currency: 'USD',
     deliveryType: 'asap' as const,
+    deliveryAddress: '456 Baker Street, London, UK',
     status: 'ACCEPTED',
+    messages: [],
     createdAt: new Date('2024-02-12'),
     updatedAt: new Date('2024-02-13'),
+    expiresAt: new Date('2024-03-12'),
   };
 
   const handleClick = () => {

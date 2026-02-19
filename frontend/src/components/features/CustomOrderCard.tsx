@@ -87,7 +87,7 @@ export const CustomOrderCard: FC<CustomOrderCardProps> = ({
   const otherUserLabel = isSeller ? 'Buyer' : 'Seller';
 
   const primaryImage = order.photos && order.photos.length > 0 ? order.photos[0] : null;
-  const hasDeadline = order.deliveryDeadline || order.isAsap;
+  const hasDeadline = order.deliveryDeadline || order.deliveryType === 'asap';
 
   const handleCardClick = (e: React.MouseEvent) => {
     if (onClick && !(e.target as HTMLElement).closest('button')) {
@@ -184,7 +184,7 @@ export const CustomOrderCard: FC<CustomOrderCardProps> = ({
                   <div>
                     <p className="text-muted-foreground">Deadline</p>
                     <p className="font-medium">
-                      {order.isAsap ? 'ASAP' : formatDate(order.deliveryDeadline!)}
+                      {order.deliveryType === 'asap' ? 'ASAP' : formatDate(order.deliveryDeadline!)}
                     </p>
                   </div>
                 </div>
@@ -222,7 +222,7 @@ export const CustomOrderCard: FC<CustomOrderCardProps> = ({
 
           {/* Right Side - Quick Status Indicator */}
           <div className="flex flex-col items-end justify-start gap-2">
-            {order.status === 'PENDING' && (
+            {order.status === 'PENDING_SELLER_RESPONSE' && (
               <div className="flex items-center gap-1 text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
                 <MessageSquare className="w-3 h-3" />
                 <span>Awaiting</span>

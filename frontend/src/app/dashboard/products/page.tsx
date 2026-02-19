@@ -2,6 +2,7 @@
 
 import { FC, useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Plus,
   Edit,
@@ -413,6 +414,7 @@ const EmptyState: FC = () => (
 // Main Dashboard Products Page
 const DashboardProductsPage: FC = () => {
   const { t } = useTranslations();
+  const router = useRouter();
   const [products] = useState<Product[]>(MOCK_SELLER_PRODUCTS);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -455,9 +457,7 @@ const DashboardProductsPage: FC = () => {
   ).length;
 
   const handleEdit = (product: Product) => {
-    // TODO: Navigate to edit product page
-    console.log('Edit product:', product);
-    // window.location.href = `/dashboard/products/${product.id}/edit`;
+    router.push(`/dashboard/products/${product.id}/edit`);
   };
 
   const handleDelete = (productId: string) => {

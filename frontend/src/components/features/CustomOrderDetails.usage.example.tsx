@@ -50,10 +50,13 @@ Please let me know if you can deliver this by March 15th.`,
     maxPrice: 75.00,
     currency: 'USD',
     deliveryDeadline: new Date('2024-03-15'),
-    isAsap: false,
-    status: 'PENDING',
+    deliveryType: 'date',
+    deliveryAddress: '123 Main St, New York, NY 10001',
+    status: 'PENDING_SELLER_RESPONSE',
+    messages: [],
     createdAt: new Date('2024-02-10'),
     updatedAt: new Date('2024-02-10'),
+    expiresAt: new Date('2024-03-10'),
   };
 
   const messages = [
@@ -76,7 +79,7 @@ Please let me know if you can deliver this by March 15th.`,
   const statusHistory = [
     {
       id: 'status-1',
-      status: 'PENDING' as const,
+      status: 'PENDING_SELLER_RESPONSE' as const,
       timestamp: new Date('2024-02-10T09:00:00'),
       note: 'Order created',
     },
@@ -148,11 +151,14 @@ Details:
     ],
     maxPrice: 120.00,
     currency: 'USD',
-    isAsap: false,
+    deliveryType: 'date',
     deliveryDeadline: new Date('2024-06-01'),
+    deliveryAddress: '456 Oak Avenue, Chicago, IL 60614',
     status: 'ACCEPTED',
+    messages: [],
     createdAt: new Date('2024-02-12'),
     updatedAt: new Date('2024-02-13'),
+    expiresAt: new Date('2024-05-15'),
   };
 
   const messages = [
@@ -182,7 +188,7 @@ Details:
   const statusHistory = [
     {
       id: 'status-1',
-      status: 'PENDING' as const,
+      status: 'PENDING_SELLER_RESPONSE' as const,
       timestamp: new Date('2024-02-12T14:00:00'),
       note: 'Order created',
     },
@@ -259,11 +265,14 @@ const ExampleCompletedOrderView = () => {
     photos: ['/images/max-photo.jpg'],
     maxPrice: 150.00,
     currency: 'USD',
-    isAsap: false,
+    deliveryType: 'date',
     deliveryDeadline: new Date('2024-02-20'),
-    status: 'COMPLETED',
+    deliveryAddress: '789 Maple Drive, Toronto, ON M5H 2N2',
+    status: 'CONVERTED_TO_ORDER',
+    messages: [],
     createdAt: new Date('2024-01-20'),
     updatedAt: new Date('2024-02-18'),
+    expiresAt: new Date('2024-02-15'),
   };
 
   const messages = [
@@ -300,7 +309,7 @@ const ExampleCompletedOrderView = () => {
   const statusHistory = [
     {
       id: 'status-1',
-      status: 'PENDING' as const,
+      status: 'PENDING_SELLER_RESPONSE' as const,
       timestamp: new Date('2024-01-20T10:00:00'),
       note: 'Order created',
     },
@@ -312,7 +321,7 @@ const ExampleCompletedOrderView = () => {
     },
     {
       id: 'status-3',
-      status: 'COMPLETED' as const,
+      status: 'CONVERTED_TO_ORDER' as const,
       timestamp: new Date('2024-02-18T14:00:00'),
       note: 'Portrait completed and shipped',
     },

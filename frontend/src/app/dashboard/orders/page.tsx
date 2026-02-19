@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, use } from 'react';
 import { Search, Filter } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -507,16 +507,17 @@ const getMockOrders = (): Order[] => [
 type OrderStatusTab = 'all' | 'pending' | 'completed' | 'cancelled';
 
 interface OrdersPageProps {
-  searchParams: {
+  searchParams: Promise<{
     tab?: OrderStatusTab;
-  };
+  }>;
 }
 
 export default function OrdersPage({ searchParams }: OrdersPageProps) {
   const { t } = useTranslations();
+  const params = use(searchParams);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<OrderStatusTab>(
-    (searchParams.tab as OrderStatusTab) || 'all'
+    (params.tab as OrderStatusTab) || 'all'
   );
 
   // Pagination state

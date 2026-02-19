@@ -376,6 +376,23 @@
       "resend": "Resend verification email",
       "success": "Email verified successfully!",
       "error": "Invalid or expired verification link"
+    },
+    "logout": {
+      "success": "You have successfully logged out"
+    }
+  },
+  "dashboard": {
+    "sidebar": {
+      "overview": "Overview",
+      "orders": "Orders",
+      "customOrders": "Custom Orders",
+      "products": "Products",
+      "profile": "Profile",
+      "settings": "Settings",
+      "currentRole": "Current Role",
+      "roleBuyer": "Buyer",
+      "roleSeller": "Seller",
+      "roleBoth": "Buyer & Seller"
     }
   },
   "pages": {
@@ -573,6 +590,17 @@
       "showing": "Showing",
       "of": "of",
       "products": "products",
+      "categories": {
+        "electronics": "Electronics",
+        "clothing": "Clothing",
+        "food": "Food",
+        "beauty": "Beauty",
+        "books": "Books",
+        "toys": "Toys",
+        "sports": "Sports",
+        "home": "Home",
+        "other": "Other"
+      },
       "filters": {
         "title": "Filters",
         "applied": "filter applied",
@@ -616,6 +644,56 @@
           "deliveryCountry": "Delivers To:",
           "sort": "Sort:"
         }
+      }
+    },
+    "productForm": {
+      "createTitle": "Add New Product",
+      "editTitle": "Edit Product",
+      "createDescription": "Fill out the form to add a new product to your store",
+      "editDescription": "Update your product information",
+      "form": {
+        "title": "Product Title",
+        "titlePlaceholder": "Enter product title",
+        "titleDescription": "Give your product a clear, descriptive title (5-100 characters)",
+        "description": "Description",
+        "descriptionPlaceholder": "Provide a detailed product description...",
+        "descriptionDescription": "Describe features, materials, and benefits of your product (20-2000 characters)",
+        "photos": "Product Photos",
+        "photosPlaceholder": "Upload Photos ({count}/5)",
+        "photosDescription": "Upload up to 5 photos. Supported formats: JPEG, PNG, WebP. Max 5MB per photo.",
+        "removePhoto": "Remove photo {number}",
+        "price": "Price",
+        "currency": "Currency",
+        "currencyPlaceholder": "Select currency",
+        "category": "Category",
+        "categoryPlaceholder": "Select a category",
+        "stockQuantity": "Stock Quantity",
+        "tags": "Tags (optional)",
+        "tagsPlaceholder": "e.g. handmade, vintage, eco-friendly",
+        "tagsDescription": "Add comma-separated tags for better searchability (optional)",
+        "submit": "Add Product"
+      },
+      "validation": {
+        "titleMinLength": "Title must be at least 5 characters",
+        "titleMaxLength": "Title must be no more than 100 characters",
+        "descriptionMinLength": "Description must be at least 20 characters",
+        "descriptionMaxLength": "Description must be no more than 2000 characters",
+        "priceRequired": "Price is required",
+        "pricePositive": "Price must be greater than 0",
+        "priceMaxExceeded": "Price must not exceed 1,000,000",
+        "currencyRequired": "Please select a currency",
+        "categoryRequired": "Please select a category",
+        "tagsRequired": "Please add at least one tag",
+        "stockRequired": "Stock quantity is required",
+        "stockMinValue": "Stock quantity cannot be negative",
+        "photosMaxCount": "You can upload maximum 5 photos",
+        "photoSizeExceeded": "Each photo must be less than 5MB"
+      },
+      "messages": {
+        "createSuccess": "Product created successfully!",
+        "createError": "Failed to create product. Please try again.",
+        "updateSuccess": "Product updated successfully!",
+        "updateError": "Failed to update product. Please try again."
       }
     },
     "sellers": {
@@ -802,6 +880,18 @@
     "dashboard": {
       "welcome": "Welcome back",
       "subtitle": "Here's an overview of your Pluribus dashboard",
+      "sidebar": {
+        "overview": "Overview",
+        "orders": "Orders",
+        "customOrders": "Custom Orders",
+        "products": "Products",
+        "profile": "Profile",
+        "settings": "Settings",
+        "currentRole": "Current Role",
+        "roleBuyer": "Buyer",
+        "roleSeller": "Seller",
+        "roleBoth": "Buyer & Seller"
+      },
       "stats": {
         "totalOrders": "Total Orders",
         "activeProducts": "Active Products",
@@ -812,7 +902,7 @@
       "recentOrders": {
         "title": "Recent Orders",
         "subtitle": "Your latest {count} orders",
-        "items": "item(s)",
+        "items": "items",
         "viewAll": "View All",
         "view": "View"
       },
@@ -823,9 +913,25 @@
         "viewProfile": "View Profile",
         "settings": "Settings"
       },
+      "orderHistory": {
+        "title": "Order History",
+        "myOrders": "My Orders",
+        "reorder": "Reorder",
+        "completedOrders": "Completed Orders"
+      },
       "activeProducts": {
         "title": "Active Products",
         "stock": "Stock"
+      },
+      "orderStatus": {
+        "PENDING": "Pending",
+        "ACCEPTED": "Accepted",
+        "PAID": "Paid",
+        "SHIPPED": "Shipped",
+        "DELIVERED": "Delivered",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled",
+        "DISPUTED": "Disputed"
       },
       "profile": {
         "title": "Profile Settings",

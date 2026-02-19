@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -16,7 +16,7 @@ import {
   ClipboardList,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { User as UserType } from '@/types';
+import { User as UserType, UserRole } from '@/types';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,11 +24,14 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTranslations } from '@/contexts/TranslationsContext';
+import { toast } from 'sonner';
 
 interface DashboardSidebarProps {
   user: UserType;
-  onRoleSwitch?: (role: 'BUYER' | 'SELLER') => void;
-  currentRole?: 'BUYER' | 'SELLER';
+  onRoleSwitch?: (role: UserRole) => void;
+  currentRole?: UserRole;
 }
 
 export function DashboardSidebar({
@@ -38,40 +41,62 @@ export function DashboardSidebar({
 }: DashboardSidebarProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
+  const { t } = useTranslations();
 
   const navItems = [
     {
       href: '/dashboard',
-      label: 'Overview',
+      label: t('dashboard.sidebar.overview'),
       icon: LayoutDashboard,
       exact: true,
     },
     {
       href: '/dashboard/orders',
-      label: 'Orders',
+      label: t('dashboard.sidebar.orders'),
       icon: ShoppingCart,
     },
     {
       href: '/dashboard/custom-orders',
-      label: 'Custom Orders',
+      label: t('dashboard.sidebar.customOrders'),
       icon: ClipboardList,
     },
     {
       href: '/dashboard/products',
-      label: 'Products',
+      label: t('dashboard.sidebar.products'),
       icon: Package,
     },
     {
       href: '/dashboard/profile',
-      label: 'Profile',
+      label: t('dashboard.sidebar.profile'),
       icon: User,
     },
     {
       href: '/dashboard/settings',
-      label: 'Settings',
+      label: t('dashboard.sidebar.settings'),
       icon: Settings,
     },
   ];
+
+  const handleLogout = () => {
+    logout();
+    toast.success(t('auth.logout.success'));
+    router.push('/');
+  };
+
+  const getRoleLabel = (role: UserRole) => {
+    switch (role) {
+      case 'BUYER':
+        return `🛍️ ${t('dashboard.sidebar.roleBuyer')}`;
+      case 'SELLER':
+        return `🏪 ${t('dashboard.sidebar.roleSeller')}`;
+      case 'BOTH':
+        return `🔄 ${t('dashboard.sidebar.roleBoth')}`;
+      default:
+        return role;
+    }
+  };
 
   const isActive = (href: string, exact: boolean = false) => {
     if (exact) {
@@ -99,10 +124,10 @@ export function DashboardSidebar({
       </div>
 
       {/* Role Switcher */}
-      {user.role === 'BOTH' && onRoleSwitch && (
+      {onRoleSwitch && (
         <div className="mb-6 rounded-lg bg-muted p-3">
           <p className="text-xs font-medium text-muted-foreground mb-2">
-            Current Role
+            {t('dashboard.sidebar.currentRole')}
           </p>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -111,17 +136,29 @@ export function DashboardSidebar({
                 size="sm"
                 className="w-full justify-between"
               >
-                <span>{currentRole === 'BUYER' ? '🛍️ Buyer' : '🏪 Seller'}</span>
+                <span>{getRoleLabel(currentRole)}</span>
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-40">
-              <DropdownMenuItem onClick={() => onRoleSwitch('BUYER')}>
-                <span>🛍️ Buyer</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onRoleSwitch('SELLER')}>
-                <span>🏪 Seller</span>
-              </DropdownMenuItem>
+            <DropdownMenuContent align="start" className="w-48">
+              {(user.role === 'BUYER' || user.role === 'BOTH') && (
+                <DropdownMenuItem onClick={() => onRoleSwitch('BUYER')}>
+                  <span>🛍️ {t('dashboard.sidebar.roleBuyer')}</span>
+                </DropdownMenuItem>
+              )}
+              {(user.role === 'SELLER' || user.role === 'BOTH') && (
+                <DropdownMenuItem onClick={() => onRoleSwitch('SELLER')}>
+                  <span>🏪 {t('dashboard.sidebar.roleSeller')}</span>
+                </DropdownMenuItem>
+              )}
+              {user.role === 'BOTH' && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => onRoleSwitch('BOTH')}>
+                    <span>🔄 {t('dashboard.sidebar.roleBoth')}</span>
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -155,11 +192,14 @@ export function DashboardSidebar({
       <Button
         variant="outline"
         size="sm"
-        className="w-full justify-start"
-        onClick={() => setIsMobileOpen(false)}
+        className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+        onClick={() => {
+          setIsMobileOpen(false);
+          handleLogout();
+        }}
       >
         <LogOut className="h-4 w-4 mr-2" />
-        Logout
+        {t('header.user.logout')}
       </Button>
     </>
   );
