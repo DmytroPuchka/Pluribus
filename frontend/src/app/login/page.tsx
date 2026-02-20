@@ -22,7 +22,7 @@ import {
 import { Mail, Lock, Eye, EyeOff, UserCircle } from 'lucide-react'
 import { useTranslations } from '@/contexts/TranslationsContext'
 import { useAuth } from '@/contexts/AuthContext'
-import { TEST_ACCOUNTS, getMockUserByCredentials } from '@/data/mockUsers'
+import { TEST_ACCOUNTS } from '@/data/mockUsers'
 import { toast } from 'sonner'
 
 type LoginFormValues = z.infer<ReturnType<typeof createLoginSchema>>;
@@ -61,33 +61,26 @@ export default function LoginPage() {
     try {
       setIsLoading(true)
 
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500))
-
-      // Authenticate with mock data
-      const user = getMockUserByCredentials(values.email, values.password)
-
-      if (!user) {
-        toast.error(t('auth.login.messages.failed'), {
-          description: 'Invalid email or password',
-        })
-        return
-      }
+      // Authenticate with real API
+      await login({
+        email: values.email,
+        password: values.password,
+      })
 
       // Login successful
-      login(user)
       toast.success(t('auth.login.messages.success'), {
-        description: `Welcome back, ${user.name}!`,
+        description: `Welcome back!`,
       })
 
       // Redirect to dashboard or home
       setTimeout(() => {
         router.push('/dashboard')
-      }, 500)
-    } catch (error) {
+      }, 300)
+    } catch (error: any) {
       console.error('Login error:', error)
+      const errorMessage = error?.response?.data?.error || 'Invalid email or password'
       toast.error(t('auth.login.messages.failed'), {
-        description: 'Something went wrong',
+        description: errorMessage,
       })
     } finally {
       setIsLoading(false)

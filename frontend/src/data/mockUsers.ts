@@ -65,7 +65,7 @@ export const TEST_ACCOUNTS = [
   {
     id: 'buyer-1',
     email: 'buyer@test.com',
-    password: 'test123',
+    password: 'password123',
     name: 'Anna Buyer',
     role: 'BUYER',
     description: 'Test account - Buyer only',
@@ -73,7 +73,7 @@ export const TEST_ACCOUNTS = [
   {
     id: 'seller-1',
     email: 'seller@test.com',
-    password: 'test123',
+    password: 'password123',
     name: 'John Seller',
     role: 'SELLER',
     description: 'Test account - Seller only',
@@ -81,7 +81,7 @@ export const TEST_ACCOUNTS = [
   {
     id: 'both-1',
     email: 'both@test.com',
-    password: 'test123',
+    password: 'password123',
     name: 'Maria Martinez',
     role: 'BOTH',
     description: 'Test account - Buyer & Seller',

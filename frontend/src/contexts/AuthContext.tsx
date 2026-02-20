@@ -2,19 +2,20 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
-import { getMockUserById } from '@/data/mockUsers';
+import { authService, usersService, getAccessToken, clearTokens } from '@/lib/api';
+import type { LoginRequest, RegisterRequest } from '@/lib/api';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (user: User) => void;
-  logout: () => void;
+  login: (credentials: LoginRequest) => Promise<void>;
+  register: (data: RegisterRequest) => Promise<void>;
+  logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const AUTH_STORAGE_KEY = 'pluribus_auth_user';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -24,41 +25,65 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user from localStorage on mount
+  // Load user from API on mount if token exists
   useEffect(() => {
-    try {
-      const storedUserId = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (storedUserId) {
-        const storedUser = getMockUserById(storedUserId);
-        if (storedUser) {
-          setUser(storedUser);
-        } else {
-          // Invalid stored user, clear storage
-          localStorage.removeItem(AUTH_STORAGE_KEY);
+    const loadUser = async () => {
+      try {
+        const token = getAccessToken();
+        if (token) {
+          // Fetch current user from API
+          const currentUser = await usersService.getCurrentUser();
+          setUser(currentUser);
         }
+      } catch (error) {
+        console.error('Error loading user from API:', error);
+        // Token might be invalid, clear it
+        clearTokens();
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error loading user from storage:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    };
+
+    loadUser();
   }, []);
 
-  const login = (user: User) => {
-    setUser(user);
+  const login = async (credentials: LoginRequest) => {
     try {
-      localStorage.setItem(AUTH_STORAGE_KEY, user.id);
+      const authResponse = await authService.login(credentials);
+      setUser(authResponse.user);
     } catch (error) {
-      console.error('Error saving user to storage:', error);
+      console.error('Login error:', error);
+      throw error;
     }
   };
 
-  const logout = () => {
-    setUser(null);
+  const register = async (data: RegisterRequest) => {
     try {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
+      const authResponse = await authService.register(data);
+      setUser(authResponse.user);
     } catch (error) {
-      console.error('Error removing user from storage:', error);
+      console.error('Registration error:', error);
+      throw error;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+    }
+  };
+
+  const refreshUser = async () => {
+    try {
+      const currentUser = await usersService.getCurrentUser();
+      setUser(currentUser);
+    } catch (error) {
+      console.error('Error refreshing user:', error);
+      throw error;
     }
   };
 
@@ -66,7 +91,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     isAuthenticated: !!user,
     login,
+    register,
     logout,
+    refreshUser,
     isLoading,
   };
 
