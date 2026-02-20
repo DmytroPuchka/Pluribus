@@ -1,0 +1,374 @@
+// Prisma Schema for Pluribus Platform
+// Database: PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// User Management
+// ============================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(BUYER)
+
+  // Profile information
+  avatar          String?
+  bio             String?
+  phone           String?
+  country         String
+  city            String
+  address         String?
+  deliveryCountries String[] // For sellers - countries they can deliver to
+
+  // Verification status
+  emailVerified   Boolean  @default(false)
+  phoneVerified   Boolean  @default(false)
+  idVerified      Boolean  @default(false)
+
+  // Account status
+  isActive        Boolean  @default(true)
+  isSuspended     Boolean  @default(false)
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  lastLoginAt     DateTime?
+
+  // Relations
+  productsAsSeller    Product[]       @relation("SellerProducts")
+  ordersAsBuyer       Order[]         @relation("BuyerOrders")
+  ordersAsSeller      Order[]         @relation("SellerOrders")
+  customOrdersAsBuyer CustomOrder[]   @relation("BuyerCustomOrders")
+  customOrdersAsSeller CustomOrder[]  @relation("SellerCustomOrders")
+  reviewsGiven        Review[]        @relation("ReviewerReviews")
+  reviewsReceived     Review[]        @relation("RevieweeReviews")
+  messagesSent        Message[]       @relation("SenderMessages")
+  conversationsAsUser1 Conversation[] @relation("User1Conversations")
+  conversationsAsUser2 Conversation[] @relation("User2Conversations")
+  notifications       Notification[]
+  refreshTokens       RefreshToken[]
+
+  @@index([email])
+  @@index([role])
+  @@index([country, city])
+  @@map("users")
+}
+
+enum UserRole {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+// ============================================
+// Products
+// ============================================
+
+model Product {
+  id          String   @id @default(uuid())
+  sellerId    String
+
+  // Product details
+  title       String
+  description String   @db.Text
+  photos      String[] // Array of image URLs
+  price       Decimal  @db.Decimal(10, 2)
+  currency    String   @default("USD")
+  category    ProductCategory
+  tags        String[]
+
+  // Stock management
+  stockQuantity Int     @default(0)
+  isAvailable   Boolean @default(true)
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  seller      User    @relation("SellerProducts", fields: [sellerId], references: [id], onDelete: Cascade)
+  orders      Order[]
+
+  @@index([sellerId])
+  @@index([category])
+  @@index([isAvailable])
+  @@map("products")
+}
+
+enum ProductCategory {
+  ELECTRONICS
+  FASHION
+  HOME
+  BEAUTY
+  SPORTS
+  BOOKS
+  TOYS
+  FOOD
+  OTHER
+}
+
+// ============================================
+// Orders
+// ============================================
+
+model Order {
+  id          String      @id @default(uuid())
+  buyerId     String
+  sellerId    String
+  productId   String?
+  customOrderId String?   @unique
+
+  // Order details
+  status          OrderStatus @default(PENDING)
+  price           Decimal     @db.Decimal(10, 2)
+  currency        String      @default("USD")
+  deliveryAddress String      @db.Text
+  trackingNumber  String?
+
+  // Payment info
+  stripePaymentId String?
+  paidAt          DateTime?
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  acceptedAt      DateTime?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+
+  // Relations
+  buyer       User         @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller      User         @relation("SellerOrders", fields: [sellerId], references: [id], onDelete: Cascade)
+  product     Product?     @relation(fields: [productId], references: [id], onDelete: SetNull)
+  customOrder CustomOrder? @relation(fields: [customOrderId], references: [id], onDelete: SetNull)
+  review      Review?
+
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+// ============================================
+// Custom Orders
+// ============================================
+
+model CustomOrder {
+  id          String   @id @default(uuid())
+  buyerId     String
+  sellerId    String?
+
+  // Order details
+  title       String
+  description String   @db.Text
+  photos      String[] // Array of image URLs
+  items       Json?    // Optional checklist of items (Google Keep style)
+  maxPrice    Decimal  @db.Decimal(10, 2)
+  currency    String   @default("USD")
+
+  // Delivery
+  deliveryDeadline DateTime?
+  deliveryType     DeliveryType @default(ASAP)
+
+  // Status
+  status      CustomOrderStatus @default(PENDING)
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  acceptedAt  DateTime?
+  declinedAt  DateTime?
+  completedAt DateTime?
+
+  // Relations
+  buyer       User    @relation("BuyerCustomOrders", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller      User?   @relation("SellerCustomOrders", fields: [sellerId], references: [id], onDelete: SetNull)
+  order       Order?
+
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("custom_orders")
+}
+
+enum CustomOrderStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  COMPLETED
+  CANCELLED
+}
+
+enum DeliveryType {
+  ASAP
+  DATE
+}
+
+// ============================================
+// Reviews & Ratings
+// ============================================
+
+model Review {
+  id          String   @id @default(uuid())
+  orderId     String   @unique
+  reviewerId  String
+  revieweeId  String
+
+  // Ratings (1-5 scale)
+  overallRating       Int // Overall rating
+  communicationRating Int // Communication quality
+  timelinessRating    Int // Delivery timeliness
+
+  // Review content
+  comment     String?  @db.Text
+
+  // Timestamp
+  createdAt   DateTime @default(now())
+
+  // Relations
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  reviewer    User     @relation("ReviewerReviews", fields: [reviewerId], references: [id], onDelete: Cascade)
+  reviewee    User     @relation("RevieweeReviews", fields: [revieweeId], references: [id], onDelete: Cascade)
+
+  @@index([revieweeId])
+  @@index([createdAt])
+  @@map("reviews")
+}
+
+// ============================================
+// Messaging System
+// ============================================
+
+model Conversation {
+  id          String   @id @default(uuid())
+  user1Id     String
+  user2Id     String
+
+  // Metadata
+  lastMessageAt DateTime @default(now())
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user1       User     @relation("User1Conversations", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2       User     @relation("User2Conversations", fields: [user2Id], references: [id], onDelete: Cascade)
+  messages    Message[]
+
+  @@unique([user1Id, user2Id])
+  @@index([user1Id])
+  @@index([user2Id])
+  @@index([lastMessageAt])
+  @@map("conversations")
+}
+
+model Message {
+  id             String   @id @default(uuid())
+  conversationId String
+  senderId       String
+
+  // Message content
+  content        String   @db.Text
+  isRead         Boolean  @default(false)
+
+  // Timestamp
+  createdAt      DateTime @default(now())
+
+  // Relations
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation("SenderMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+// ============================================
+// Notifications
+// ============================================
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+
+  // Notification details
+  type        NotificationType
+  title       String
+  message     String   @db.Text
+  link        String?  // Optional link to related resource
+
+  // Status
+  isRead      Boolean  @default(false)
+
+  // Timestamp
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  ORDER_CREATED
+  ORDER_ACCEPTED
+  ORDER_SHIPPED
+  ORDER_DELIVERED
+  CUSTOM_ORDER_RECEIVED
+  CUSTOM_ORDER_ACCEPTED
+  MESSAGE_RECEIVED
+  REVIEW_RECEIVED
+  PAYMENT_RECEIVED
+}
+
+// ============================================
+// Authentication
+// ============================================
+
+model RefreshToken {
+  id          String   @id @default(uuid())
+  userId      String
+  token       String   @unique
+
+  // Expiration
+  expiresAt   DateTime
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}

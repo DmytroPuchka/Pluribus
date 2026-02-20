@@ -1,0 +1,84 @@
+import { Request, Response, NextFunction } from 'express';
+import { verifyAccessToken } from '../utils/jwt';
+import { UnauthorizedError, ForbiddenError } from './errorHandler';
+import { JwtPayload, UserRole } from '../types';
+
+// Extend Express Request type to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: JwtPayload;
+    }
+  }
+}
+
+/**
+ * Authenticate user via JWT token
+ */
+export const authenticate = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    // Get token from header
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedError('No token provided');
+    }
+
+    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+
+    // Verify token
+    const payload = verifyAccessToken(token);
+
+    // Attach user to request
+    req.user = payload;
+
+    next();
+  } catch (error) {
+    next(new UnauthorizedError('Invalid or expired token'));
+  }
+};
+
+/**
+ * Authorize user by role
+ */
+export const authorize = (...allowedRoles: UserRole[]) => {
+  return (req: Request, _res: Response, next: NextFunction): void => {
+    if (!req.user) {
+      throw new UnauthorizedError('Authentication required');
+    }
+
+    if (!allowedRoles.includes(req.user.role as UserRole)) {
+      throw new ForbiddenError('Insufficient permissions');
+    }
+
+    next();
+  };
+};
+
+/**
+ * Optional authentication - doesn't fail if no token
+ */
+export const optionalAuth = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const payload = verifyAccessToken(token);
+      req.user = payload;
+    }
+
+    next();
+  } catch (error) {
+    // Continue without authentication
+    next();
+  }
+};
