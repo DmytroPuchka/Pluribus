@@ -25,6 +25,9 @@ cd backend && npm run dev
 # Frontend
 cd frontend && npm run dev
 
+# Admin Frontend
+cd admin-frontend && npm run dev
+
 # Prisma Studio
 cd backend && npx prisma studio
 ```
@@ -33,10 +36,17 @@ cd backend && npx prisma studio
 
 ## 🔐 Тестовые аккаунты
 
+**Frontend (все роли):**
 ```
-buyer@test.com    | password123 | BUYER
-seller@test.com   | password123 | SELLER
-both@test.com     | password123 | SELLER
+buyer@test.com       | password123 | BUYER
+seller@test.com      | password123 | SELLER
+both@test.com        | password123 | SELLER
+admin@pluribus.com   | password123 | ADMIN
+```
+
+**Admin Panel (только ADMIN):**
+```
+admin@pluribus.com   | password123 | ADMIN ⭐
 ```
 
 ---
@@ -44,10 +54,40 @@ both@test.com     | password123 | SELLER
 ## 🌐 URL сервисов
 
 ```
-http://localhost:3000       # Frontend
-http://localhost:5001       # Backend API
+http://localhost:3000        # Frontend (Main Site)
+http://localhost:3001        # Admin Panel ⭐ NEW!
+http://localhost:5001        # Backend API
 http://localhost:5001/health # Health check
-http://localhost:5555       # Prisma Studio
+http://localhost:5555        # Prisma Studio
+```
+
+---
+
+## 🛡️ Admin Panel
+
+**Setup (первый запуск):**
+```bash
+cd admin-frontend
+./setup.sh
+```
+
+**Доступ:**
+- URL: http://localhost:3001
+- Требуется роль: ADMIN (не seller, не buyer)
+- Email: admin@pluribus.com
+- Password: password123
+
+**Возможности:**
+- Dashboard - статистика платформы
+- Users Management - управление пользователями
+- Products Management - управление продуктами
+- User activation/deactivation
+- Product activation/deactivation
+- Delete users/products
+
+**Логи:**
+```bash
+tail -f /tmp/pluribus-admin.log
 ```
 
 ---

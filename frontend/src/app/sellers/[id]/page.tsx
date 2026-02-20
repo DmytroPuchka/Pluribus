@@ -7,7 +7,7 @@
 
 'use client';
 
-import { use, useState } from 'react';
+import { use, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { MapPin, Clock, MessageCircle, Shield, TrendingUp, ClipboardList, X, Globe } from 'lucide-react';
 import { ProductCard } from '@/components/features/ProductCard';
@@ -15,10 +15,13 @@ import { CustomOrderPromptCard } from '@/components/features/CustomOrderPromptCa
 import { Rating } from '@/components/common/Rating';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { User, Product, Review } from '@/types';
 import Link from 'next/link';
 import { useTranslations } from '@/contexts/TranslationsContext';
 import { CustomOrderForm } from '@/components/features/CustomOrderForm';
+import { usersService, productsService, reviewsService } from '@/lib/api';
+import { toast } from 'sonner';
 
 interface SellerPageProps {
   params: Promise<{
@@ -26,349 +29,95 @@ interface SellerPageProps {
   }>;
 }
 
-// Mock seller data generator
-const getMockSeller = (id: string): User => {
-  const sellers: Record<string, User> = {
-    'seller-1': {
-      id: 'seller-1',
-      name: 'John Smith',
-      email: 'john@example.com',
-      role: 'SELLER',
-      country: 'United States',
-      city: 'New York',
-      deliveryCountries: ['United States', 'Canada', 'Mexico', 'United Kingdom', 'Germany', 'France'],
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop',
-      rating: 4.8,
-      reviewCount: 125,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date('2022-01-15'),
-      updatedAt: new Date(),
-    },
-    'seller-2': {
-      id: 'seller-2',
-      name: 'Maria Garcia',
-      email: 'maria@example.com',
-      role: 'SELLER',
-      country: 'Spain',
-      city: 'Barcelona',
-      deliveryCountries: ['Spain', 'Portugal', 'France', 'Italy', 'Germany', 'Netherlands', 'Belgium', 'United Kingdom'],
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop',
-      rating: 4.9,
-      reviewCount: 89,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date('2022-06-10'),
-      updatedAt: new Date(),
-    },
-    'seller-3': {
-      id: 'seller-3',
-      name: 'Yuki Tanaka',
-      email: 'yuki@example.com',
-      role: 'SELLER',
-      country: 'Japan',
-      city: 'Tokyo',
-      deliveryCountries: ['Japan', 'South Korea', 'China', 'Taiwan', 'Singapore', 'United States', 'Canada', 'Australia'],
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
-      rating: 5.0,
-      reviewCount: 234,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date('2021-03-20'),
-      updatedAt: new Date(),
-    },
-  };
-
-  return sellers[id] || sellers['seller-1'];
-};
-
-// Mock products by seller
-const getMockSellerProducts = (sellerId: string): Product[] => {
-  const allProducts: Record<string, Product[]> = {
-    'seller-1': [
-      {
-        id: '1',
-        sellerId: 'seller-1',
-        title: 'Apple iPhone 15 Pro Max',
-        description: 'Brand new Apple iPhone 15 Pro Max with 256GB storage. Factory unlocked, works worldwide.',
-        photos: ['https://images.unsplash.com/photo-1696446702183-cbd80e00b9c8?w=400'],
-        price: 1299,
-        currency: 'USD',
-        category: 'ELECTRONICS',
-        tags: ['smartphone', 'apple', 'iphone'],
-        stockQuantity: 5,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: '4',
-        sellerId: 'seller-1',
-        title: 'Sony WH-1000XM5 Headphones',
-        description: 'Premium noise-cancelling wireless headphones with industry-leading audio quality.',
-        photos: ['https://images.unsplash.com/photo-1545127398-14699f92334b?w=400'],
-        price: 399,
-        currency: 'USD',
-        category: 'ELECTRONICS',
-        tags: ['headphones', 'sony', 'wireless'],
-        stockQuantity: 8,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: '5',
-        sellerId: 'seller-1',
-        title: 'MacBook Pro 16-inch',
-        description: 'High-performance laptop with M3 Max chip, perfect for professionals.',
-        photos: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400'],
-        price: 2499,
-        currency: 'USD',
-        category: 'ELECTRONICS',
-        tags: ['laptop', 'apple', 'macbook'],
-        stockQuantity: 3,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
-    'seller-2': [
-      {
-        id: '2',
-        sellerId: 'seller-2',
-        title: 'Premium Leather Handbag',
-        description: 'Handcrafted leather handbag from Barcelona. Genuine Italian leather with elegant design.',
-        photos: ['https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400'],
-        price: 299,
-        currency: 'EUR',
-        category: 'CLOTHING',
-        tags: ['handbag', 'leather', 'fashion'],
-        stockQuantity: 3,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: '6',
-        sellerId: 'seller-2',
-        title: 'Wool Winter Coat',
-        description: 'Elegant wool coat perfect for winter season. Premium quality material.',
-        photos: ['https://images.unsplash.com/photo-1539533057592-4d2b7f80a865?w=400'],
-        price: 189,
-        currency: 'EUR',
-        category: 'CLOTHING',
-        tags: ['coat', 'winter', 'fashion'],
-        stockQuantity: 6,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
-    'seller-3': [
-      {
-        id: '3',
-        sellerId: 'seller-3',
-        title: 'Traditional Japanese Tea Set',
-        description: 'Authentic Japanese tea set with teapot and 4 cups. Perfect for traditional tea ceremonies.',
-        photos: ['https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400'],
-        price: 89,
-        currency: 'USD',
-        category: 'HOME',
-        tags: ['tea', 'japanese', 'traditional'],
-        stockQuantity: 10,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: '7',
-        sellerId: 'seller-3',
-        title: 'Japanese Ceramic Vase',
-        description: 'Hand-painted ceramic vase with traditional Japanese design. Unique collectible piece.',
-        photos: ['https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400'],
-        price: 125,
-        currency: 'USD',
-        category: 'HOME',
-        tags: ['ceramic', 'vase', 'japanese'],
-        stockQuantity: 2,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
-  };
-
-  return allProducts[sellerId] || [];
-};
-
-// Mock reviews by seller
-const getMockSellerReviews = (sellerId: string): Review[] => {
-  const reviewsByCommonSeller: Record<string, Review[]> = {
-    'seller-1': [
-      {
-        id: 'review-1',
-        orderId: 'order-1',
-        reviewerId: 'buyer-1',
-        reviewee: {
-          id: 'seller-1',
-          name: 'John Smith',
-          email: 'john@example.com',
-          role: 'SELLER',
-          country: 'United States',
-          city: 'New York',
-          rating: 4.8,
-          reviewCount: 125,
-          emailVerified: true,
-          phoneVerified: true,
-          idVerified: true,
-          isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        revieweeId: 'seller-1',
-        role: 'BUYER',
-        overallRating: 5,
-        communicationRating: 5,
-        timelinessRating: 5,
-        comment: 'Excellent seller! Product arrived quickly and in perfect condition. Highly recommended.',
-        createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-      },
-      {
-        id: 'review-2',
-        orderId: 'order-2',
-        reviewerId: 'buyer-2',
-        reviewee: {
-          id: 'seller-1',
-          name: 'John Smith',
-          email: 'john@example.com',
-          role: 'SELLER',
-          country: 'United States',
-          city: 'New York',
-          rating: 4.8,
-          reviewCount: 125,
-          emailVerified: true,
-          phoneVerified: true,
-          idVerified: true,
-          isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        revieweeId: 'seller-1',
-        role: 'BUYER',
-        overallRating: 5,
-        communicationRating: 4,
-        timelinessRating: 5,
-        comment: 'Great communication and fast shipping. Very satisfied with the purchase.',
-        createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
-      },
-      {
-        id: 'review-3',
-        orderId: 'order-3',
-        reviewerId: 'buyer-3',
-        reviewee: {
-          id: 'seller-1',
-          name: 'John Smith',
-          email: 'john@example.com',
-          role: 'SELLER',
-          country: 'United States',
-          city: 'New York',
-          rating: 4.8,
-          reviewCount: 125,
-          emailVerified: true,
-          phoneVerified: true,
-          idVerified: true,
-          isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        revieweeId: 'seller-1',
-        role: 'BUYER',
-        overallRating: 4,
-        communicationRating: 4,
-        timelinessRating: 4,
-        comment: 'Good product and reliable seller. Would buy again.',
-        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      },
-    ],
-    'seller-2': [
-      {
-        id: 'review-4',
-        orderId: 'order-4',
-        reviewerId: 'buyer-4',
-        reviewee: {
-          id: 'seller-2',
-          name: 'Maria Garcia',
-          email: 'maria@example.com',
-          role: 'SELLER',
-          country: 'Spain',
-          city: 'Barcelona',
-          rating: 4.9,
-          reviewCount: 89,
-          emailVerified: true,
-          phoneVerified: true,
-          idVerified: true,
-          isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        revieweeId: 'seller-2',
-        role: 'BUYER',
-        overallRating: 5,
-        communicationRating: 5,
-        timelinessRating: 5,
-        comment: 'Fantastic quality and beautiful design. Maria is a professional seller!',
-        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-      },
-    ],
-    'seller-3': [
-      {
-        id: 'review-5',
-        orderId: 'order-5',
-        reviewerId: 'buyer-5',
-        reviewee: {
-          id: 'seller-3',
-          name: 'Yuki Tanaka',
-          email: 'yuki@example.com',
-          role: 'SELLER',
-          country: 'Japan',
-          city: 'Tokyo',
-          rating: 5.0,
-          reviewCount: 234,
-          emailVerified: true,
-          phoneVerified: true,
-          idVerified: true,
-          isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        revieweeId: 'seller-3',
-        role: 'BUYER',
-        overallRating: 5,
-        communicationRating: 5,
-        timelinessRating: 5,
-        comment: 'Perfect! Authentic Japanese products with excellent craftsmanship.',
-        createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
-      },
-    ],
-  };
-
-  return reviewsByCommonSeller[sellerId] || [];
-};
-
 export default function SellerPage({ params }: SellerPageProps) {
   const { t } = useTranslations();
   const { id } = use(params);
   const [isCustomOrderModalOpen, setIsCustomOrderModalOpen] = useState(false);
 
-  const seller = getMockSeller(id);
-  const products = getMockSellerProducts(id);
-  const reviews = getMockSellerReviews(id);
+  // State for data
+  const [seller, setSeller] = useState<User | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch seller data
+  useEffect(() => {
+    const fetchSellerData = async () => {
+      setIsLoading(true);
+
+      try {
+        // Fetch seller profile
+        const sellerData = await usersService.getUserById(id);
+        const convertedSeller = {
+          ...sellerData,
+          createdAt: new Date(sellerData.createdAt),
+          updatedAt: new Date(sellerData.updatedAt),
+        };
+        setSeller(convertedSeller);
+
+        // Fetch seller's products
+        const productsData = await productsService.getProducts({
+          sellerId: id,
+          limit: 100,
+        });
+        const convertedProducts = productsData.data.map((product) => ({
+          ...product,
+          createdAt: new Date(product.createdAt),
+          updatedAt: new Date(product.updatedAt),
+        }));
+        setProducts(convertedProducts);
+
+        // Fetch seller's reviews
+        const reviewsData = await reviewsService.getUserReviews(id, {
+          limit: 100,
+        });
+        const convertedReviews = reviewsData.data.map((review) => ({
+          ...review,
+          createdAt: new Date(review.createdAt),
+        }));
+        setReviews(convertedReviews);
+      } catch (error: any) {
+        console.error('Error fetching seller data:', error);
+        const errorMessage =
+          error?.response?.data?.error || 'Failed to load seller profile';
+        toast.error('Error', {
+          description: errorMessage,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSellerData();
+  }, [id]);
+
+  // Show loading skeleton
+  if (isLoading || !seller) {
+    return (
+      <div className="container px-4 py-8 space-y-8">
+        <div className="space-y-6">
+          <Skeleton className="h-32 w-full rounded-lg" />
+          <div className="flex flex-col sm:flex-row gap-6 -mt-16 mb-6">
+            <Skeleton className="w-32 h-32 rounded-full" />
+            <div className="flex-1 space-y-4">
+              <Skeleton className="h-9 w-64" />
+              <Skeleton className="h-5 w-48" />
+              <Skeleton className="h-6 w-96" />
+              <div className="flex gap-2">
+                <Skeleton className="h-8 w-24" />
+                <Skeleton className="h-8 w-24" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-32" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   // Calculate statistics
   const totalOrders = Math.floor((seller.reviewCount ?? 0) * 1.2);

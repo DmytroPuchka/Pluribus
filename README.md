@@ -27,7 +27,10 @@ cd backend && npm run dev
 # 2. Frontend (в терминале 2)
 cd frontend && npm run dev
 
-# 3. Prisma Studio - опционально (в терминале 3)
+# 3. Admin Panel (в терминале 3) - опционально
+cd admin-frontend && npm run dev
+
+# 4. Prisma Studio (в терминале 4) - опционально
 cd backend && npx prisma studio
 ```
 
@@ -37,7 +40,8 @@ cd backend && npx prisma studio
 
 | Сервис | URL | Описание |
 |--------|-----|----------|
-| **Frontend** | http://localhost:3000 | Next.js приложение |
+| **Frontend** | http://localhost:3000 | Next.js приложение (главный сайт) |
+| **Admin Panel** ⭐ | http://localhost:3001 | Admin панель управления |
 | **Backend API** | http://localhost:5001 | REST API |
 | **API Docs** | http://localhost:5001/api/v1 | Список endpoints |
 | **Prisma Studio** | http://localhost:5555 | UI для базы данных |
@@ -46,11 +50,14 @@ cd backend && npx prisma studio
 
 ## 🔐 Тестовые аккаунты
 
-| Email | Password | Role | Описание |
-|-------|----------|------|----------|
-| `buyer@test.com` | `password123` | BUYER | Покупатель (Ukraine) |
-| `seller@test.com` | `password123` | SELLER | Продавец (USA) |
-| `both@test.com` | `password123` | SELLER | Продавец (Spain) |
+| Email | Password | Role | Доступ |
+|-------|----------|------|--------|
+| `buyer@test.com` | `password123` | BUYER | Frontend только |
+| `seller@test.com` | `password123` | SELLER | Frontend только |
+| `both@test.com` | `password123` | SELLER | Frontend только |
+| `admin@pluribus.com` | `password123` | ADMIN | Frontend + Admin Panel ⭐ |
+
+**Примечание**: Admin Panel доступен ТОЛЬКО для пользователей с ролью ADMIN
 
 ---
 
@@ -58,29 +65,39 @@ cd backend && npx prisma studio
 
 ```
 Pluribus/
-├── frontend/              # Next.js 15 Frontend
+├── frontend/              # Next.js 15 Frontend (Port 3000)
 │   ├── src/
-│   │   ├── app/          # App Router pages
-│   │   ├── components/   # React компоненты
-│   │   ├── store/        # Zustand state management
-│   │   └── data/         # Mock данные
+│   │   ├── app/          # App Router pages (22 pages)
+│   │   ├── components/   # React компоненты (38+)
+│   │   ├── lib/api/      # API services
+│   │   └── contexts/     # React contexts
 │   └── package.json
 │
-├── backend/              # Node.js + Express Backend
+├── admin-frontend/        # Admin Panel (Port 3001) ⭐ NEW!
 │   ├── src/
-│   │   ├── controllers/  # Route handlers
+│   │   ├── app/          # Admin pages (4 pages)
+│   │   ├── components/   # Admin components
+│   │   ├── lib/api/      # Admin API services
+│   │   └── contexts/     # Auth context
+│   ├── README.md         # Full documentation
+│   └── package.json
+│
+├── backend/               # Node.js + Express Backend (Port 5001)
+│   ├── src/
+│   │   ├── controllers/  # 7 controllers
 │   │   ├── services/     # Business logic
-│   │   ├── routes/       # API routes
+│   │   ├── routes/       # API routes (44 endpoints)
 │   │   ├── middleware/   # Auth, errors
 │   │   └── config/       # Configurations
 │   ├── prisma/
-│   │   └── schema.prisma # Database schema
+│   │   └── schema.prisma # 10 models, 6 enums
 │   └── package.json
 │
-├── Documentation/        # Документация проекта
-├── start.sh             # Скрипт запуска
-├── stop.sh              # Скрипт остановки
-└── START.md             # Подробная инструкция
+├── Documentation/         # Документация проекта
+├── start.sh              # Скрипт запуска (все 3 проекта)
+├── stop.sh               # Скрипт остановки
+├── CURRENT_STATUS.md     # Текущий статус (100% complete)
+└── README.md             # Этот файл
 ```
 
 ---

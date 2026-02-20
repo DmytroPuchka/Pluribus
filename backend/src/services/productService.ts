@@ -95,6 +95,7 @@ export class ProductService {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
+        { tags: { hasSome: [search] } },
       ];
     }
 

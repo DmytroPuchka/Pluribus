@@ -32,6 +32,11 @@ if [ -f /tmp/pluribus.pids ]; then
         kill $FRONTEND_PID 2>/dev/null && echo -e "${GREEN}✓${NC} Frontend остановлен" || echo -e "${YELLOW}⚠${NC}  Frontend уже остановлен"
     fi
 
+    if [ ! -z "$ADMIN_PID" ]; then
+        echo -e "Останавливаю Admin Panel (PID: $ADMIN_PID)..."
+        kill $ADMIN_PID 2>/dev/null && echo -e "${GREEN}✓${NC} Admin Panel остановлен" || echo -e "${YELLOW}⚠${NC}  Admin Panel уже остановлен"
+    fi
+
     rm /tmp/pluribus.pids
     echo ""
 fi
@@ -55,6 +60,15 @@ if lsof -Pi :3000 -sTCP:LISTEN -t >/dev/null 2>&1; then
     echo -e "${GREEN}✓${NC} Порт 3000 освобожден"
 else
     echo -e "${GREEN}✓${NC} Порт 3000 свободен"
+fi
+
+# Admin Frontend (3001)
+if lsof -Pi :3001 -sTCP:LISTEN -t >/dev/null 2>&1; then
+    echo -e "Останавливаю процесс на порту 3001..."
+    kill $(lsof -t -i:3001) 2>/dev/null
+    echo -e "${GREEN}✓${NC} Порт 3001 освобожден"
+else
+    echo -e "${GREEN}✓${NC} Порт 3001 свободен"
 fi
 
 # Prisma Studio (5555)

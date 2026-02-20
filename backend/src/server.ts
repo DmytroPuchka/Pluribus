@@ -19,6 +19,10 @@ import { connectDatabase, disconnectDatabase } from './config/database';
 import authRoutes from './routes/authRoutes';
 import userRoutes from './routes/userRoutes';
 import productRoutes from './routes/productRoutes';
+import ordersRoutes from './routes/ordersRoutes';
+import reviewsRoutes from './routes/reviewsRoutes';
+import customOrdersRoutes from './routes/customOrdersRoutes';
+import adminRoutes from './routes/adminRoutes';
 
 // Import error handler middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -61,6 +65,9 @@ app.get(`/api/${API_VERSION}`, (_req: Request, res: Response) => {
       users: `/api/${API_VERSION}/users`,
       products: `/api/${API_VERSION}/products`,
       orders: `/api/${API_VERSION}/orders`,
+      reviews: `/api/${API_VERSION}/reviews`,
+      customOrders: `/api/${API_VERSION}/custom-orders`,
+      admin: `/api/${API_VERSION}/admin`,
     },
   });
 });
@@ -69,6 +76,10 @@ app.get(`/api/${API_VERSION}`, (_req: Request, res: Response) => {
 app.use(`/api/${API_VERSION}/auth`, authRoutes);
 app.use(`/api/${API_VERSION}/users`, userRoutes);
 app.use(`/api/${API_VERSION}/products`, productRoutes);
+app.use(`/api/${API_VERSION}/orders`, ordersRoutes);
+app.use(`/api/${API_VERSION}/reviews`, reviewsRoutes);
+app.use(`/api/${API_VERSION}/custom-orders`, customOrdersRoutes);
+app.use(`/api/${API_VERSION}/admin`, adminRoutes);
 
 // Error handling middleware
 app.use(notFound); // 404 handler

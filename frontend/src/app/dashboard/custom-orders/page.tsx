@@ -8,22 +8,23 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, Filter, Plus, Package } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { CustomOrderCard } from '@/components/features/CustomOrderCard';
 import { CustomOrderDetails } from '@/components/features/CustomOrderDetails';
 import { Pagination } from '@/components/common/Pagination';
 import { CustomOrder, CustomOrderStatus, User } from '@/types';
 import { useTranslations } from '@/contexts/TranslationsContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { customOrdersService } from '@/lib/api';
+import { toast } from 'sonner';
 
-// Mock current user - in real app this would come from auth context
-const CURRENT_USER_ID = 'buyer-1';
-const CURRENT_USER_ROLE: 'BUYER' | 'SELLER' | 'BOTH' = 'BUYER'; // Can be 'BUYER', 'SELLER', or 'BOTH'
-
-// Mock data for development
-const getMockCustomOrders = (): CustomOrder[] => [
+// REMOVE Mock data - will fetch from API
+const getMockCustomOrders_DEPRECATED = (): CustomOrder[] => [
   {
     id: 'custom-order-1',
     buyerId: 'buyer-1',
@@ -289,10 +290,11 @@ type StatusFilter = 'all' | CustomOrderStatus;
 
 export default function CustomOrdersPage() {
   const { t } = useTranslations();
+  const router = useRouter();
+  const { user, isLoading: isAuthLoading } = useAuth();
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<CustomOrderTab>(
-    CURRENT_USER_ROLE === 'SELLER' ? 'incoming' : 'outgoing'
-  );
+  const [activeTab, setActiveTab] = useState<CustomOrderTab>('outgoing');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [selectedOrder, setSelectedOrder] = useState<CustomOrder | null>(null);
 
@@ -300,22 +302,58 @@ export default function CustomOrdersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const allCustomOrders = getMockCustomOrders();
+  // Custom orders state
+  const [customOrders, setCustomOrders] = useState<CustomOrder[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Filter orders based on tab (incoming/outgoing)
-  const tabFilteredOrders = useMemo(() => {
-    if (activeTab === 'outgoing') {
-      // Buyer view: orders created by current user
-      return allCustomOrders.filter((order) => order.buyerId === CURRENT_USER_ID);
-    } else {
-      // Seller view: orders where current user is the seller OR available to all sellers (no seller assigned yet)
-      return allCustomOrders.filter(
-        (order) =>
-          order.sellerId === CURRENT_USER_ID ||
-          (!order.sellerId && order.buyerId !== CURRENT_USER_ID)
-      );
+  // Auth guard
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.push('/login');
     }
-  }, [allCustomOrders, activeTab]);
+  }, [user, isAuthLoading, router]);
+
+  // Fetch custom orders
+  useEffect(() => {
+    const fetchCustomOrders = async () => {
+      if (!user) return;
+
+      setIsLoading(true);
+      try {
+        const role = activeTab === 'outgoing' ? 'buyer' : 'seller';
+        const response = await customOrdersService.getCustomOrders({
+          role,
+          page: 1,
+          limit: 1000,
+        });
+
+        const converted = response.data.map(order => ({
+          ...order,
+          createdAt: new Date(order.createdAt),
+          updatedAt: new Date(order.updatedAt),
+          deliveryDeadline: order.deliveryDeadline ? new Date(order.deliveryDeadline) : undefined,
+        }));
+
+        setCustomOrders(converted);
+      } catch (error: any) {
+        console.error('Error fetching custom orders:', error);
+        toast.error('Failed to load custom orders', {
+          description: error?.response?.data?.error || 'Please try again',
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCustomOrders();
+  }, [user, activeTab]);
+
+  const allCustomOrders = customOrders;
+
+  // Filter orders based on tab (incoming/outgoing) - API already filters by role
+  const tabFilteredOrders = useMemo(() => {
+    return allCustomOrders;
+  }, [allCustomOrders]);
 
   // Apply status and search filters
   const filteredOrders = useMemo(() => {

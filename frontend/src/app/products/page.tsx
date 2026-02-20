@@ -51,6 +51,9 @@ export default function ProductsPage() {
         if (activeFilters.maxPrice) {
           apiFilters.maxPrice = activeFilters.maxPrice;
         }
+        if (activeFilters.search) {
+          apiFilters.search = activeFilters.search;
+        }
 
         const response = await productsService.getProducts(apiFilters);
 

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,8 @@ import {
 import { Logo } from '@/components/common/Logo';
 import { Mail, Lock, User, Globe, MapPin, UserCheck, Truck } from 'lucide-react';
 import { useTranslations } from '@/contexts/TranslationsContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 const countries = [
   'United States',
@@ -50,6 +53,8 @@ const countries = [
 
 export default function RegisterPage() {
   const { t } = useTranslations();
+  const { register: registerUser } = useAuth();
+  const router = useRouter();
 
   const registrationSchema = z.object({
     name: z.string().min(2, {
@@ -58,8 +63,8 @@ export default function RegisterPage() {
     email: z.string().email({
       message: t('auth.signup.validation.emailInvalid'),
     }),
-    password: z.string().min(8, {
-      message: t('auth.signup.validation.passwordMinLength'),
+    password: z.string().min(6, {
+      message: 'Password must be at least 6 characters',
     }),
     confirmPassword: z.string(),
     country: z.string().min(1, {
@@ -68,7 +73,7 @@ export default function RegisterPage() {
     city: z.string().min(2, {
       message: t('auth.signup.validation.cityMinLength'),
     }),
-    role: z.enum(['buyer', 'seller', 'both'], {
+    role: z.enum(['BUYER', 'SELLER'], {
       message: t('auth.signup.validation.roleRequired'),
     }),
     deliveryCountries: z.array(z.string()).optional(),
@@ -77,7 +82,7 @@ export default function RegisterPage() {
     path: ['confirmPassword'],
   }).refine((data) => {
     // Delivery countries required for sellers
-    if (data.role === 'seller' || data.role === 'both') {
+    if (data.role === 'SELLER') {
       return data.deliveryCountries && data.deliveryCountries.length > 0;
     }
     return true;
@@ -99,7 +104,7 @@ export default function RegisterPage() {
       confirmPassword: '',
       country: '',
       city: '',
-      role: 'buyer',
+      role: 'BUYER',
       deliveryCountries: [],
     },
   });
@@ -110,19 +115,32 @@ export default function RegisterPage() {
   async function onSubmit(values: RegistrationFormValues) {
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call
-      console.log('Form values:', values);
+      // Register user via API
+      await registerUser({
+        email: values.email,
+        password: values.password,
+        name: values.name,
+        role: values.role,
+        country: values.country,
+        city: values.city,
+        deliveryCountries: values.role === 'SELLER' ? values.deliveryCountries : undefined,
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Show success message
+      toast.success('Registration successful!', {
+        description: `Welcome to Pluribus, ${values.name}!`,
+      });
 
-      setSuccess(true);
-      form.reset();
-
-      // Reset success message after 3 seconds
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
+      // Redirect to dashboard after short delay
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
+    } catch (error: any) {
       console.error('Registration error:', error);
+      const errorMessage = error?.response?.data?.error || 'Registration failed. Please try again.';
+      toast.error('Registration failed', {
+        description: errorMessage,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -357,9 +375,8 @@ export default function RegisterPage() {
                           className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
                           {...field}
                         >
-                          <option value="buyer">{t('auth.signup.roleOptions.buyer')}</option>
-                          <option value="seller">{t('auth.signup.roleOptions.seller')}</option>
-                          <option value="both">{t('auth.signup.roleOptions.both')}</option>
+                          <option value="BUYER">{t('auth.signup.roleOptions.buyer')}</option>
+                          <option value="SELLER">{t('auth.signup.roleOptions.seller')}</option>
                         </select>
                       </FormControl>
                       <FormDescription className="text-xs">
@@ -371,7 +388,7 @@ export default function RegisterPage() {
                 />
 
                 {/* Delivery Countries Field - Only for Sellers */}
-                {(selectedRole === 'seller' || selectedRole === 'both') && (
+                {selectedRole === 'SELLER' && (
                   <FormField
                     control={form.control}
                     name="deliveryCountries"

@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Upload, Check, X } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -28,6 +29,9 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { profileFormSchema, changePasswordSchema, type ProfileFormData, type ChangePasswordData } from "./schema"
 import { useTranslations } from '@/contexts/TranslationsContext'
+import { useAuth } from '@/contexts/AuthContext'
+import { usersService } from '@/lib/api'
+import { toast } from 'sonner'
 
 const COUNTRIES = [
   { value: "us", label: "United States" },
@@ -55,53 +59,47 @@ const CITIES_BY_COUNTRY: Record<string, string[]> = {
   br: ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador", "Fortaleza"],
 }
 
-interface MockUserData {
-  id: string
-  name: string
-  email: string
-  country: string
-  city: string
-  bio: string
-  role: "buyer" | "seller" | "both"
-  profilePhoto: string | null
-  emailVerified: boolean
-  phoneVerified: boolean
-  idVerified: boolean
-}
-
-const MOCK_USER: MockUserData = {
-  id: "user-123",
-  name: "John Doe",
-  email: "john.doe@example.com",
-  country: "us",
-  city: "New York",
-  bio: "Passionate about international shopping and quality products.",
-  role: "both",
-  profilePhoto: null,
-  emailVerified: true,
-  phoneVerified: true,
-  idVerified: false,
-}
-
 export default function ProfilePage() {
   const { t } = useTranslations()
-  const [user, setUser] = useState<MockUserData>(MOCK_USER)
+  const { user, refreshUser, isLoading: authLoading } = useAuth()
+  const router = useRouter()
   const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null)
   const [isPasswordOpen, setIsPasswordOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isPasswordChanging, setIsPasswordChanging] = useState(false)
 
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login')
+    }
+  }, [user, authLoading, router])
+
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: user.name,
-      email: user.email,
-      country: user.country,
-      city: user.city,
-      bio: user.bio,
-      role: user.role,
+      name: user?.name || '',
+      email: user?.email || '',
+      country: user?.country || '',
+      city: user?.city || '',
+      bio: user?.bio || '',
+      role: user?.role.toLowerCase() as 'buyer' | 'seller' || 'buyer',
     },
   })
+
+  // Update form when user data loads
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        name: user.name,
+        email: user.email,
+        country: user.country,
+        city: user.city,
+        bio: user.bio || '',
+        role: user.role.toLowerCase() as 'buyer' | 'seller',
+      })
+    }
+  }, [user, form])
 
   const passwordForm = useForm<ChangePasswordData>({
     resolver: zodResolver(changePasswordSchema),
@@ -132,13 +130,29 @@ export default function ProfilePage() {
   const onSubmit = async (data: ProfileFormData) => {
     setIsSaving(true)
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      setUser({
-        ...user,
-        ...data,
-        profilePhoto: profilePhotoPreview || user.profilePhoto,
+      // Update profile via API
+      await usersService.updateProfile({
+        name: data.name,
+        bio: data.bio,
+        country: data.country,
+        city: data.city,
+        // TODO: Add avatar upload with Cloudinary
       })
+
+      // Refresh user data
+      await refreshUser()
+
+      toast.success('Profile updated!', {
+        description: 'Your profile has been updated successfully.',
+      })
+
       setProfilePhotoPreview(null)
+    } catch (error: any) {
+      console.error('Profile update error:', error)
+      const errorMessage = error?.response?.data?.error || 'Failed to update profile'
+      toast.error('Update failed', {
+        description: errorMessage,
+      })
     } finally {
       setIsSaving(false)
     }
@@ -164,7 +178,31 @@ export default function ProfilePage() {
       .slice(0, 2)
   }
 
-  const displayPhoto = profilePhotoPreview || user.profilePhoto
+  const displayPhoto = profilePhotoPreview || user?.avatar
+
+  // Show loading state
+  if (authLoading || !user) {
+    return (
+      <div className="container py-8 md:py-12">
+        <div className="max-w-4xl">
+          <div className="mb-8">
+            <div className="h-8 bg-muted animate-pulse rounded w-1/3 mb-2" />
+            <div className="h-4 bg-muted animate-pulse rounded w-1/2" />
+          </div>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="h-6 bg-muted animate-pulse rounded w-1/4" />
+              </CardHeader>
+              <CardContent>
+                <div className="h-32 bg-muted animate-pulse rounded" />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="container py-8 md:py-12">

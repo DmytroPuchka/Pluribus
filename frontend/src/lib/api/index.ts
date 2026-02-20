@@ -13,3 +13,6 @@ export type * from './types';
 export * as authService from './auth';
 export * as usersService from './users';
 export * as productsService from './products';
+export * as ordersService from './orders';
+export * as reviewsService from './reviews';
+export * as customOrdersService from './customOrders';

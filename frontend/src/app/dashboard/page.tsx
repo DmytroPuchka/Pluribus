@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,25 +27,10 @@ import { Order, Product, User } from '@/types';
 import { useTranslations } from '@/contexts/TranslationsContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRole } from '@/contexts/RoleContext';
+import { usersService, productsService } from '@/lib/api';
+import { toast } from 'sonner';
 
-// Mock data
-const MOCK_USER: User = {
-  id: 'user-123',
-  email: 'john.doe@example.com',
-  name: 'John Doe',
-  role: 'BOTH',
-  country: 'United States',
-  city: 'New York',
-  rating: 4.8,
-  reviewCount: 127,
-  emailVerified: true,
-  phoneVerified: true,
-  idVerified: true,
-  isActive: true,
-  createdAt: new Date('2023-01-15'),
-  updatedAt: new Date('2024-02-08'),
-};
-
+// Mock orders data (TODO: Replace with API call when orders endpoint is ready)
 const MOCK_ORDERS: Order[] = [
   {
     id: 'order-1',
@@ -89,38 +75,6 @@ const MOCK_ORDERS: Order[] = [
   },
 ];
 
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: 'prod-1',
-    sellerId: 'user-123',
-    title: 'Vintage Camera',
-    description: 'Classic film camera in excellent condition',
-    photos: ['https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=400'],
-    price: 149.99,
-    currency: 'USD',
-    category: 'ELECTRONICS',
-    tags: ['vintage', 'camera', 'collectible'],
-    stockQuantity: 1,
-    isActive: true,
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-02-08'),
-  },
-  {
-    id: 'prod-2',
-    sellerId: 'user-123',
-    title: 'Handmade Leather Wallet',
-    description: 'Premium leather wallet with RFID protection',
-    photos: ['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400'],
-    price: 45.00,
-    currency: 'USD',
-    category: 'HOME',
-    tags: ['leather', 'handmade', 'wallet'],
-    stockQuantity: 5,
-    isActive: true,
-    createdAt: new Date('2024-01-20'),
-    updatedAt: new Date('2024-02-08'),
-  },
-];
 
 function StatCard({
   icon: Icon,
@@ -184,23 +138,101 @@ function OrderStatusBadge({ status }: { status: string }) {
 
 export default function DashboardPage() {
   const { t } = useTranslations();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { currentRole } = useRole();
+  const router = useRouter();
 
-  const totalRevenue = MOCK_PRODUCTS.reduce(
-    (sum, product) => sum + product.price * (product.stockQuantity || 1),
-    0
-  );
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    totalProducts: 0,
+    averageRating: 0,
+    totalReviews: 0,
+  });
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
   // Determine capabilities based on current role
   const canBuy = currentRole === 'BUYER' || currentRole === 'BOTH';
   const canSell = currentRole === 'SELLER' || currentRole === 'BOTH';
 
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (!user) return;
+
+      setIsLoadingData(true);
+
+      try {
+        // Fetch user stats
+        const userStats = await usersService.getUserStats();
+        setStats(userStats);
+
+        // Fetch user's products if they are a seller
+        if (canSell) {
+          const productsData = await productsService.getProducts({
+            sellerId: user.id,
+            limit: 10,
+          });
+
+          const convertedProducts = productsData.data.map(p => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            updatedAt: new Date(p.updatedAt),
+          }));
+
+          setProducts(convertedProducts);
+        }
+      } catch (error: any) {
+        console.error('Failed to fetch dashboard data:', error);
+        toast.error('Error loading dashboard', {
+          description: error?.response?.data?.error || 'Failed to load dashboard data',
+        });
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [user, canSell]);
+
+  const totalRevenue = products.reduce(
+    (sum, product) => sum + product.price * (product.stockQuantity || 1),
+    0
+  );
+
+  // Loading state
+  if (authLoading || !user) {
+    return (
+      <div className="p-6 md:p-8 space-y-8">
+        <div>
+          <div className="h-10 bg-muted animate-pulse rounded w-1/3 mb-2" />
+          <div className="h-4 bg-muted animate-pulse rounded w-1/2" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i}>
+              <CardContent className="pt-6">
+                <div className="h-24 bg-muted animate-pulse rounded" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 md:p-8 space-y-8">
       {/* Welcome Header */}
       <div>
-        <h1 className="text-3xl font-bold mb-2">{t('pages.dashboard.welcome')}, {user?.name || MOCK_USER.name}!</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('pages.dashboard.welcome')}, {user.name}!</h1>
         <p className="text-muted-foreground">
           {t('pages.dashboard.subtitle')}
         </p>
@@ -211,30 +243,22 @@ export default function DashboardPage() {
         <StatCard
           icon={ShoppingCart}
           label={t('pages.dashboard.stats.totalOrders')}
-          value={MOCK_ORDERS.length}
-          change={12}
-          trend="up"
+          value={stats.totalOrders}
         />
         <StatCard
           icon={Package}
           label={t('pages.dashboard.stats.activeProducts')}
-          value={MOCK_PRODUCTS.length}
-          change={8}
-          trend="up"
+          value={stats.totalProducts}
         />
         <StatCard
           icon={TrendingUp}
           label={t('pages.dashboard.stats.totalRevenue')}
           value={`$${totalRevenue.toFixed(2)}`}
-          change={24}
-          trend="up"
         />
         <StatCard
           icon={Eye}
           label={t('pages.dashboard.stats.profileViews')}
-          value="1,234"
-          change={5}
-          trend="up"
+          value={stats.averageRating.toFixed(1)}
         />
       </div>
 
@@ -363,45 +387,65 @@ export default function DashboardPage() {
           </Card>
 
           {/* Active Products */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{t('pages.dashboard.activeProducts.title')}</CardTitle>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/dashboard/products">
-                    {t('pages.dashboard.recentOrders.viewAll')}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {MOCK_PRODUCTS.slice(0, 2).map((product) => (
-                  <div
-                    key={product.id}
-                    className="flex gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="h-12 w-12 rounded-md bg-muted flex-shrink-0 overflow-hidden">
-                      <img
-                        src={product.photos[0]}
-                        alt={product.title}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">
-                        {product.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        ${product.price.toFixed(2)} · {t('pages.dashboard.activeProducts.stock')}: {product.stockQuantity}
-                      </p>
-                    </div>
+          {canSell && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">{t('pages.dashboard.activeProducts.title')}</CardTitle>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/dashboard/products">
+                      {t('pages.dashboard.recentOrders.viewAll')}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {isLoadingData ? (
+                  <div className="space-y-3">
+                    {[1, 2].map((i) => (
+                      <div key={i} className="h-16 bg-muted animate-pulse rounded" />
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                ) : products.length > 0 ? (
+                  <div className="space-y-3">
+                    {products.slice(0, 2).map((product) => (
+                      <div
+                        key={product.id}
+                        className="flex gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="h-12 w-12 rounded-md bg-muted flex-shrink-0 overflow-hidden">
+                          {product.photos && product.photos.length > 0 ? (
+                            <img
+                              src={product.photos[0]}
+                              alt={product.title}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center text-xs text-muted-foreground">
+                              No image
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate">
+                            {product.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            ${product.price.toFixed(2)} · {t('pages.dashboard.activeProducts.stock')}: {product.stockQuantity}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    No products yet
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

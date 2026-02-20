@@ -7,193 +7,27 @@
  * Route: /products/[id]
  */
 
-import { use } from 'react';
+import { use, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, ShoppingCart, Heart, Share2, Check, AlertCircle, Globe } from 'lucide-react';
+import { MapPin, ShoppingCart, Heart, Share2, Check, AlertCircle, Globe, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Rating } from '@/components/common/Rating';
 import { PriceDisplay } from '@/components/common/PriceDisplay';
-import { Product, User } from '@/types';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Product, User, Review } from '@/types';
 import { cn, truncate } from '@/lib/utils';
 import { ImageGallery } from './components/ImageGallery';
 import { StockStatus } from './components/StockStatus';
 import { useTranslations } from '@/contexts/TranslationsContext';
-
-// Mock data for development - same products as products page
-const getMockProducts = (): Product[] => {
-  return [
-    {
-      id: '1',
-      sellerId: 'seller-1',
-      seller: {
-        id: 'seller-1',
-        name: 'John Smith',
-        email: 'john@example.com',
-        role: 'SELLER',
-        country: 'United States',
-        city: 'New York',
-        rating: 4.8,
-        reviewCount: 125,
-        emailVerified: true,
-        phoneVerified: true,
-        idVerified: true,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      title: 'Apple iPhone 15 Pro Max',
-      description: 'Brand new Apple iPhone 15 Pro Max with 256GB storage. Factory unlocked, works worldwide. Includes original packaging and accessories. International warranty available.',
-      photos: [
-        'https://images.unsplash.com/photo-1696446702183-cbd80e00b9c8?w=800',
-        'https://images.unsplash.com/photo-1592286927505-1def25e5e020?w=800',
-        'https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=800',
-      ],
-      price: 1299,
-      currency: 'USD',
-      category: 'ELECTRONICS',
-      tags: ['smartphone', 'apple', 'iphone', 'unlocked'],
-      stockQuantity: 5,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: '2',
-      sellerId: 'seller-2',
-      seller: {
-        id: 'seller-2',
-        name: 'Maria Garcia',
-        email: 'maria@example.com',
-        role: 'SELLER',
-        country: 'Spain',
-        city: 'Barcelona',
-        deliveryCountries: ['Spain', 'Portugal', 'France', 'Italy', 'Germany', 'Netherlands', 'Belgium', 'United Kingdom'],
-        rating: 4.9,
-        reviewCount: 89,
-        emailVerified: true,
-        phoneVerified: true,
-        idVerified: true,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      title: 'Premium Leather Handbag',
-      description: 'Handcrafted leather handbag from Barcelona. Genuine Italian leather with elegant design. Perfect for both casual and formal occasions. Eco-friendly materials used.',
-      photos: [
-        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800',
-        'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800',
-        'https://images.unsplash.com/photo-1564901905551-ecf9fb9d41cd?w=800',
-      ],
-      price: 299,
-      currency: 'EUR',
-      category: 'CLOTHING',
-      tags: ['handbag', 'leather', 'fashion', 'designer'],
-      stockQuantity: 3,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: '3',
-      sellerId: 'seller-3',
-      seller: {
-        id: 'seller-3',
-        name: 'Yuki Tanaka',
-        email: 'yuki@example.com',
-        role: 'SELLER',
-        country: 'Japan',
-        city: 'Tokyo',
-        deliveryCountries: ['Japan', 'South Korea', 'China', 'Taiwan', 'Singapore', 'United States', 'Canada', 'Australia'],
-        rating: 5.0,
-        reviewCount: 234,
-        emailVerified: true,
-        phoneVerified: true,
-        idVerified: true,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      title: 'Traditional Japanese Tea Set',
-      description: 'Authentic Japanese tea set with teapot and 4 cups. Perfect for traditional tea ceremonies. Handcrafted by local artisans in Tokyo. Includes carrying box.',
-      photos: [
-        'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=800',
-        'https://images.unsplash.com/photo-1597318129655-f05fe8f88960?w=800',
-      ],
-      price: 89,
-      currency: 'USD',
-      category: 'HOME',
-      tags: ['tea', 'japanese', 'traditional', 'authentic'],
-      stockQuantity: 10,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: '4',
-      sellerId: 'seller-1',
-      seller: {
-        id: 'seller-1',
-        name: 'John Smith',
-        email: 'john@example.com',
-        role: 'SELLER',
-        country: 'United States',
-        city: 'New York',
-        deliveryCountries: ['United States', 'Canada', 'Mexico', 'United Kingdom', 'Germany', 'France'],
-        rating: 4.8,
-        reviewCount: 125,
-        emailVerified: true,
-        phoneVerified: true,
-        idVerified: true,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      title: 'Sony WH-1000XM5 Headphones',
-      description: 'Premium noise-cancelling wireless headphones with industry-leading audio quality. 30-hour battery life. Touch controls and comfortable fit for all-day wear.',
-      photos: [
-        'https://images.unsplash.com/photo-1545127398-14699f92334b?w=800',
-        'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800',
-      ],
-      price: 399,
-      currency: 'USD',
-      category: 'ELECTRONICS',
-      tags: ['headphones', 'sony', 'wireless', 'noise-cancelling'],
-      stockQuantity: 0,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
-};
-
-// Mock reviews data
-const getMockReviews = () => [
-  {
-    id: '1',
-    rating: 5,
-    author: 'Sarah Johnson',
-    date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    comment: 'Excellent product! Great quality and fast delivery. Seller was very responsive.',
-  },
-  {
-    id: '2',
-    rating: 4,
-    author: 'Michael Chen',
-    date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-    comment: 'Good value for money. As described. Would recommend.',
-  },
-  {
-    id: '3',
-    rating: 5,
-    author: 'Emma Williams',
-    date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    comment: 'Amazing! Better than expected. Will buy again.',
-  },
-];
-
+import { useAuth } from '@/contexts/AuthContext';
+import { productsService, reviewsService, ordersService } from '@/lib/api';
+import { toast } from 'sonner';
 
 interface ProductDetailsPageProps {
   params: Promise<{
@@ -203,12 +37,191 @@ interface ProductDetailsPageProps {
 
 export default function ProductDetailsPage({ params }: ProductDetailsPageProps) {
   const { t } = useTranslations();
+  const router = useRouter();
+  const { user } = useAuth();
   const { id } = use(params);
 
-  const products = getMockProducts();
-  const product = products.find(p => p.id === id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!product) {
+  // Order creation state
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [orderNotes, setOrderNotes] = useState('');
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const productData = await productsService.getProductById(id);
+
+        // Convert date strings to Date objects
+        const convertedProduct = {
+          ...productData,
+          createdAt: new Date(productData.createdAt),
+          updatedAt: new Date(productData.updatedAt),
+          seller: productData.seller ? {
+            ...productData.seller,
+            createdAt: new Date(productData.seller.createdAt),
+            updatedAt: new Date(productData.seller.updatedAt),
+          } : undefined,
+        };
+
+        setProduct(convertedProduct);
+
+        // Fetch related products (same category)
+        try {
+          const relatedData = await productsService.getProducts({
+            category: productData.category,
+            page: 1,
+            limit: 5,
+          });
+
+          // Filter out the current product and convert dates
+          const filteredRelated = relatedData.data
+            .filter(p => p.id !== id)
+            .slice(0, 4)
+            .map(p => ({
+              ...p,
+              createdAt: new Date(p.createdAt),
+              updatedAt: new Date(p.updatedAt),
+            }));
+
+          setRelatedProducts(filteredRelated);
+        } catch (relatedError) {
+          console.error('Failed to fetch related products:', relatedError);
+          // Don't show error for related products, just leave empty
+        }
+
+        // Fetch product reviews
+        try {
+          const reviewsData = await reviewsService.getProductReviews(id, {
+            limit: 100,
+          });
+
+          const convertedReviews = reviewsData.data.map((review) => ({
+            ...review,
+            createdAt: new Date(review.createdAt),
+          }));
+
+          setReviews(convertedReviews);
+        } catch (reviewsError) {
+          console.error('Failed to fetch reviews:', reviewsError);
+          // Don't show error for reviews, just leave empty
+        }
+      } catch (err: any) {
+        console.error('Failed to fetch product:', err);
+        const errorMessage = err?.response?.data?.error || 'Failed to load product';
+        setError(errorMessage);
+        toast.error('Error', {
+          description: errorMessage,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  // Handle Buy Now button click
+  const handleBuyNow = () => {
+    if (!user) {
+      toast.error('Please login', {
+        description: 'You need to be logged in to purchase products',
+      });
+      router.push('/login');
+      return;
+    }
+
+    if (user.id === product?.sellerId) {
+      toast.error('Cannot buy own product', {
+        description: 'You cannot purchase your own products',
+      });
+      return;
+    }
+
+    // Pre-fill delivery address if available
+    if (user.address) {
+      setDeliveryAddress(user.address);
+    }
+
+    setIsOrderModalOpen(true);
+  };
+
+  // Handle order creation
+  const handleCreateOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!deliveryAddress.trim()) {
+      toast.error('Delivery address required', {
+        description: 'Please enter your delivery address',
+      });
+      return;
+    }
+
+    if (!product) return;
+
+    setIsCreatingOrder(true);
+
+    try {
+      const order = await ordersService.createOrder({
+        productId: product.id,
+        price: product.price,
+        currency: product.currency,
+        deliveryAddress: deliveryAddress.trim(),
+      });
+
+      toast.success('Order created successfully!', {
+        description: `Order ${order.orderNumber || order.id} has been created`,
+      });
+
+      // Reset form
+      setIsOrderModalOpen(false);
+      setDeliveryAddress('');
+      setOrderNotes('');
+
+      // Redirect to orders page
+      router.push('/dashboard/orders');
+    } catch (error: any) {
+      console.error('Error creating order:', error);
+      const errorMessage =
+        error?.response?.data?.error || 'Failed to create order';
+      toast.error('Order creation failed', {
+        description: errorMessage,
+      });
+    } finally {
+      setIsCreatingOrder(false);
+    }
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <div className="lg:col-span-2">
+            <div className="aspect-square bg-muted animate-pulse rounded-lg" />
+          </div>
+          <div className="space-y-4">
+            <div className="h-8 bg-muted animate-pulse rounded" />
+            <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
+            <div className="h-32 bg-muted animate-pulse rounded" />
+            <div className="h-12 bg-muted animate-pulse rounded" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error or not found state
+  if (error || !product) {
     return (
       <div className="container px-4 py-16">
         <Card className="max-w-md mx-auto">
@@ -220,7 +233,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
             <h2 className="text-xl font-semibold mb-2">{t('pages.productDetail.notFound.title')}</h2>
 
             <p className="text-muted-foreground mb-6">
-              {t('pages.productDetail.notFound.description')}
+              {error || t('pages.productDetail.notFound.description')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2 justify-center">
@@ -241,9 +254,9 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
     ? `${product.seller.city}, ${product.seller.country}`
     : 'Unknown';
 
-  const reviews = getMockReviews();
-  const averageRating =
-    reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((sum, review) => sum + review.overallRating, 0) / reviews.length
+    : 0;
 
   return (
     <div className="container px-4 py-8">
@@ -305,7 +318,8 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
             <Button
               size="lg"
               className="w-full"
-              disabled={product.stockQuantity === 0}
+              disabled={product.stockQuantity === 0 || !product.isActive}
+              onClick={handleBuyNow}
             >
               <ShoppingCart className="w-4 h-4" />
               {product.stockQuantity === 0 ? t('pages.productDetail.details.outOfStock') : t('pages.productDetail.details.addToCart')}
@@ -472,40 +486,50 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
 
             {/* Individual Reviews */}
             <div className="space-y-4">
-              {reviews.map(review => (
-                <div key={review.id} className="pb-4 border-b last:border-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <p className="font-semibold">{review.author}</p>
-                      <Rating value={review.rating} size="sm" readonly />
+              {reviews.length > 0 ? (
+                reviews.map(review => (
+                  <div key={review.id} className="pb-4 border-b last:border-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <p className="font-semibold">{review.reviewer?.name || 'Anonymous'}</p>
+                        <Rating value={review.overallRating} size="sm" readonly />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {new Intl.DateTimeFormat('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        }).format(review.createdAt)}
+                      </p>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      {new Intl.DateTimeFormat('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      }).format(review.date)}
-                    </p>
+                    {review.comment && (
+                      <p className="text-sm text-muted-foreground">{review.comment}</p>
+                    )}
+                    <div className="text-xs text-muted-foreground mt-2 space-y-1">
+                      <div>Communication: <Rating value={review.communicationRating} size="sm" readonly /></div>
+                      <div>Timeliness: <Rating value={review.timelinessRating} size="sm" readonly /></div>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">{review.comment}</p>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-center text-muted-foreground py-8">
+                  {t('pages.productDetail.customerReviews.noReviews')}
+                </p>
+              )}
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Related Products Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('pages.productDetail.relatedProducts.title')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {products
-              .filter(p => p.id !== product.id)
-              .slice(0, 4)
-              .map(relatedProduct => (
+      {relatedProducts.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('pages.productDetail.relatedProducts.title')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {relatedProducts.map(relatedProduct => (
                 <Link
                   key={relatedProduct.id}
                   href={`/products/${relatedProduct.id}`}
@@ -537,9 +561,142 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                   </p>
                 </Link>
               ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Order Creation Modal */}
+      {isOrderModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-background rounded-lg shadow-lg">
+            {/* Close Button */}
+            <button
+              onClick={() => setIsOrderModalOpen(false)}
+              className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-muted transition-colors"
+              aria-label="Close"
+              disabled={isCreatingOrder}
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-2">Create Order</h2>
+              <p className="text-muted-foreground mb-6">
+                Complete your order for {product?.title}
+              </p>
+
+              <form onSubmit={handleCreateOrder} className="space-y-4">
+                {/* Product Info */}
+                <div className="bg-muted/50 rounded-lg p-4">
+                  <div className="flex gap-4">
+                    {product?.photos && product.photos[0] && (
+                      <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                        <Image
+                          src={product.photos[0]}
+                          alt={product.title}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold truncate">{product?.title}</h3>
+                      <PriceDisplay
+                        amount={product?.price || 0}
+                        currency={product?.currency || 'USD'}
+                        size="md"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Delivery Address */}
+                <div className="space-y-2">
+                  <Label htmlFor="deliveryAddress">
+                    Delivery Address <span className="text-destructive">*</span>
+                  </Label>
+                  <Textarea
+                    id="deliveryAddress"
+                    placeholder="Enter your full delivery address..."
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                    required
+                    rows={3}
+                    disabled={isCreatingOrder}
+                  />
+                </div>
+
+                {/* Order Notes (Optional) */}
+                <div className="space-y-2">
+                  <Label htmlFor="orderNotes">Order Notes (Optional)</Label>
+                  <Textarea
+                    id="orderNotes"
+                    placeholder="Any special instructions or notes..."
+                    value={orderNotes}
+                    onChange={(e) => setOrderNotes(e.target.value)}
+                    rows={2}
+                    disabled={isCreatingOrder}
+                  />
+                </div>
+
+                {/* Seller Info */}
+                {product?.seller && (
+                  <div className="bg-muted/50 rounded-lg p-4 text-sm">
+                    <p className="text-muted-foreground">
+                      <span className="font-medium">Seller:</span> {product.seller.name}
+                    </p>
+                    <p className="text-muted-foreground">
+                      <span className="font-medium">Location:</span> {product.seller.city}, {product.seller.country}
+                    </p>
+                    {product.seller.rating && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="font-medium">Rating:</span>
+                        <Rating value={product.seller.rating} size="sm" readonly />
+                        <span className="text-muted-foreground">
+                          ({product.seller.reviewCount} reviews)
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setIsOrderModalOpen(false)}
+                    disabled={isCreatingOrder}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="flex-1"
+                    disabled={isCreatingOrder}
+                  >
+                    {isCreatingOrder ? (
+                      <>
+                        <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                        Creating Order...
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                        Create Order
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      )}
     </div>
   );
 }

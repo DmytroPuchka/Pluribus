@@ -20,7 +20,7 @@ echo -e "${BLUE}╚════════════════════�
 echo ""
 
 # Проверка что PostgreSQL запущен
-echo -e "${YELLOW}[1/4]${NC} Проверка PostgreSQL..."
+echo -e "${YELLOW}[1/5]${NC} Проверка PostgreSQL..."
 if brew services list | grep postgresql@15 | grep started > /dev/null 2>&1; then
     echo -e "${GREEN}✓${NC} PostgreSQL запущен"
 else
@@ -31,7 +31,7 @@ else
 fi
 
 # Проверка что Redis запущен
-echo -e "${YELLOW}[2/4]${NC} Проверка Redis..."
+echo -e "${YELLOW}[2/5]${NC} Проверка Redis..."
 if brew services list | grep redis | grep started > /dev/null 2>&1; then
     echo -e "${GREEN}✓${NC} Redis запущен"
 else
@@ -42,7 +42,7 @@ else
 fi
 
 # Запуск Backend
-echo -e "${YELLOW}[3/4]${NC} Запуск Backend API..."
+echo -e "${YELLOW}[3/5]${NC} Запуск Backend API..."
 cd "$PROJECT_DIR/backend"
 
 # Проверка что порт 5001 свободен
@@ -72,7 +72,7 @@ done
 echo ""
 
 # Запуск Frontend
-echo -e "${YELLOW}[4/4]${NC} Запуск Frontend..."
+echo -e "${YELLOW}[4/5]${NC} Запуск Frontend..."
 cd "$PROJECT_DIR/frontend"
 
 # Проверка что порт 3000 свободен
@@ -100,6 +100,41 @@ for i in {1..15}; do
 done
 echo ""
 
+# Запуск Admin Frontend
+echo -e "${YELLOW}[5/5]${NC} Запуск Admin Frontend..."
+cd "$PROJECT_DIR/admin-frontend"
+
+# Автоматический setup если нужно
+if [ ! -f ".env.local" ] || [ ! -d "node_modules" ]; then
+    echo -e "${YELLOW}⚠${NC}  Первый запуск Admin Frontend, выполняю setup..."
+    ./setup.sh
+fi
+
+# Проверка что порт 3001 свободен
+if lsof -Pi :3001 -sTCP:LISTEN -t >/dev/null 2>&1; then
+    echo -e "${RED}✗${NC} Порт 3001 занят. Останавливаю процесс..."
+    kill $(lsof -t -i:3001) 2>/dev/null || true
+    sleep 1
+fi
+
+# Запуск Admin Frontend в фоне
+npm run dev > /tmp/pluribus-admin.log 2>&1 &
+ADMIN_PID=$!
+echo -e "${GREEN}✓${NC} Admin Frontend запущен (PID: $ADMIN_PID)"
+echo "   Логи: /tmp/pluribus-admin.log"
+
+# Ждем запуска Admin Frontend
+echo "   Ожидание запуска Admin Frontend..."
+for i in {1..15}; do
+    if curl -s http://localhost:3001 > /dev/null 2>&1; then
+        echo -e "${GREEN}✓${NC} Admin Frontend готов: http://localhost:3001"
+        break
+    fi
+    sleep 1
+    echo -n "."
+done
+echo ""
+
 # Итоговая информация
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════╗${NC}"
@@ -107,25 +142,32 @@ echo -e "${GREEN}║      ✅ Все компоненты запущены!     
 echo -e "${GREEN}╚═══════════════════════════════════════╝${NC}"
 echo ""
 echo -e "${BLUE}📊 Доступные сервисы:${NC}"
-echo -e "   ${GREEN}Frontend:${NC}      http://localhost:3000"
-echo -e "   ${GREEN}Backend API:${NC}   http://localhost:5001"
-echo -e "   ${GREEN}API Docs:${NC}      http://localhost:5001/api/v1"
-echo -e "   ${GREEN}Health Check:${NC}  http://localhost:5001/health"
+echo -e "   ${GREEN}Frontend:${NC}       http://localhost:3000"
+echo -e "   ${GREEN}Admin Panel:${NC}    http://localhost:3001  ⭐"
+echo -e "   ${GREEN}Backend API:${NC}    http://localhost:5001"
+echo -e "   ${GREEN}API Docs:${NC}       http://localhost:5001/api/v1"
+echo -e "   ${GREEN}Health Check:${NC}   http://localhost:5001/health"
 echo ""
 echo -e "${BLUE}🔐 Тестовые аккаунты:${NC}"
-echo -e "   Email: buyer@test.com    | Password: password123"
-echo -e "   Email: seller@test.com   | Password: password123"
-echo -e "   Email: both@test.com     | Password: password123"
+echo -e "   ${BLUE}Frontend:${NC}"
+echo -e "   Email: buyer@test.com       | Password: password123  (BUYER)"
+echo -e "   Email: seller@test.com      | Password: password123  (SELLER)"
+echo -e "   Email: both@test.com        | Password: password123  (SELLER)"
+echo ""
+echo -e "   ${BLUE}Admin Panel (только ADMIN):${NC}"
+echo -e "   Email: admin@pluribus.com   | Password: password123  (ADMIN) ⭐"
 echo ""
 echo -e "${BLUE}📝 Process IDs:${NC}"
-echo -e "   Backend:  ${BACKEND_PID}"
-echo -e "   Frontend: ${FRONTEND_PID}"
+echo -e "   Backend:       ${BACKEND_PID}"
+echo -e "   Frontend:      ${FRONTEND_PID}"
+echo -e "   Admin Panel:   ${ADMIN_PID}"
 echo ""
 echo -e "${YELLOW}📋 Полезные команды:${NC}"
-echo -e "   Просмотр логов Backend:  tail -f /tmp/pluribus-backend.log"
-echo -e "   Просмотр логов Frontend: tail -f /tmp/pluribus-frontend.log"
-echo -e "   Открыть Prisma Studio:   cd backend && npx prisma studio"
-echo -e "   Остановить все:          kill ${BACKEND_PID} ${FRONTEND_PID}"
+echo -e "   Просмотр логов Backend:      tail -f /tmp/pluribus-backend.log"
+echo -e "   Просмотр логов Frontend:     tail -f /tmp/pluribus-frontend.log"
+echo -e "   Просмотр логов Admin Panel:  tail -f /tmp/pluribus-admin.log"
+echo -e "   Открыть Prisma Studio:       cd backend && npx prisma studio"
+echo -e "   Остановить все:              ./stop.sh"
 echo ""
 echo -e "${GREEN}🎉 Готово к тестированию!${NC}"
 echo ""
@@ -133,6 +175,7 @@ echo ""
 # Сохранить PIDs в файл для stop скрипта
 echo "BACKEND_PID=${BACKEND_PID}" > /tmp/pluribus.pids
 echo "FRONTEND_PID=${FRONTEND_PID}" >> /tmp/pluribus.pids
+echo "ADMIN_PID=${ADMIN_PID}" >> /tmp/pluribus.pids
 
 # Опция: открыть браузер автоматически
 read -p "Открыть Frontend в браузере? (y/n) " -n 1 -r

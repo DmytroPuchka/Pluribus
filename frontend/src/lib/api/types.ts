@@ -6,8 +6,11 @@
 import type {
   User,
   Product,
+  Order,
+  Review,
   UserRole,
   ProductCategory,
+  OrderStatus,
 } from '@/types';
 
 // Generic API Response
@@ -125,3 +128,77 @@ export interface ListUsersParams {
   country?: string;
   isActive?: boolean;
 }
+
+// Orders
+export interface CreateOrderRequest {
+  productId?: string;
+  customOrderId?: string;
+  price: number;
+  currency: string;
+  deliveryAddress: string;
+}
+
+export interface UpdateOrderStatusRequest {
+  status: OrderStatus;
+  trackingNumber?: string;
+}
+
+export interface OrdersFilters {
+  role?: 'buyer' | 'seller';
+  status?: OrderStatus;
+  page?: number;
+  limit?: number;
+}
+
+export interface OrderStats {
+  totalOrders: number;
+  totalAsBuyer: number;
+  totalAsSeller: number;
+  pendingOrders: number;
+  completedOrders: number;
+  totalRevenue: number;
+}
+
+// Reviews
+export interface CreateReviewRequest {
+  orderId: string;
+  revieweeId: string;
+  overallRating: number;
+  communicationRating: number;
+  timelinessRating: number;
+  comment?: string;
+}
+
+export interface ReviewsFilters {
+  page?: number;
+  limit?: number;
+  minRating?: number;
+  maxRating?: number;
+}
+
+// Custom Orders
+export interface CreateCustomOrderRequest {
+  sellerId?: string;
+  title: string;
+  description: string;
+  photos?: string[];
+  items?: any;
+  maxPrice: number;
+  currency: string;
+  deliveryDeadline?: string;
+  deliveryType?: 'ASAP' | 'DATE';
+}
+
+export interface UpdateCustomOrderStatusRequest {
+  status: 'ACCEPTED' | 'DECLINED' | 'COMPLETED' | 'CANCELLED';
+}
+
+export interface CustomOrdersFilters {
+  role?: 'buyer' | 'seller';
+  status?: 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'COMPLETED' | 'CANCELLED';
+  page?: number;
+  limit?: number;
+}
+
+// Export Order, Review, and CustomOrder types
+export type { Order, Review, CustomOrder } from '@/types';

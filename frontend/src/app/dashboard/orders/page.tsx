@@ -8,501 +8,19 @@
 'use client';
 
 import { useState, useMemo, useEffect, use } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, Filter } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { OrderCard } from '@/components/features/OrderCard';
 import { Pagination } from '@/components/common/Pagination';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Order, OrderStatus } from '@/types';
 import { useTranslations } from '@/contexts/TranslationsContext';
-
-// Mock data for development
-const getMockOrders = (): Order[] => [
-  {
-    id: 'order-1',
-    orderNumber: 'ORD-2025-001',
-    buyerId: 'buyer-1',
-    buyer: {
-      id: 'buyer-1',
-      name: 'Sarah Johnson',
-      email: 'sarah@example.com',
-      role: 'BUYER',
-      country: 'United States',
-      city: 'New York',
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    sellerId: 'seller-1',
-    seller: {
-      id: 'seller-1',
-      name: 'John Smith',
-      email: 'john@example.com',
-      role: 'SELLER',
-      country: 'United States',
-      city: 'New York',
-      rating: 4.8,
-      reviewCount: 125,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    productId: '1',
-    product: {
-      id: '1',
-      sellerId: 'seller-1',
-      title: 'Apple iPhone 15 Pro Max',
-      description: 'Brand new Apple iPhone 15 Pro Max with 256GB storage.',
-      photos: ['https://images.unsplash.com/photo-1696446702183-cbd80e00b9c8?w=400'],
-      price: 1299,
-      currency: 'USD',
-      category: 'ELECTRONICS',
-      tags: ['smartphone', 'apple'],
-      stockQuantity: 5,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    status: 'DELIVERED',
-    quantity: 1,
-    price: 1299,
-    currency: 'USD',
-    deliveryAddress: '123 Main St, New York, NY 10001',
-    trackingNumber: 'TRACK-2025-001',
-    notes: 'Please handle with care',
-    createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'order-2',
-    orderNumber: 'ORD-2025-002',
-    buyerId: 'buyer-2',
-    buyer: {
-      id: 'buyer-2',
-      name: 'Michael Chen',
-      email: 'michael@example.com',
-      role: 'BUYER',
-      country: 'Canada',
-      city: 'Toronto',
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    sellerId: 'seller-2',
-    seller: {
-      id: 'seller-2',
-      name: 'Maria Garcia',
-      email: 'maria@example.com',
-      role: 'SELLER',
-      country: 'Spain',
-      city: 'Barcelona',
-      rating: 4.9,
-      reviewCount: 89,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    productId: '2',
-    product: {
-      id: '2',
-      sellerId: 'seller-2',
-      title: 'Premium Leather Handbag',
-      description: 'Handcrafted leather handbag from Barcelona.',
-      photos: ['https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400'],
-      price: 299,
-      currency: 'EUR',
-      category: 'CLOTHING',
-      tags: ['handbag', 'leather'],
-      stockQuantity: 3,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    status: 'SHIPPED',
-    quantity: 1,
-    price: 299,
-    currency: 'EUR',
-    deliveryAddress: '456 King St, Toronto, ON M5H 2R2',
-    trackingNumber: 'TRACK-2025-002',
-    notes: '',
-    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'order-3',
-    orderNumber: 'ORD-2025-003',
-    buyerId: 'buyer-1',
-    buyer: {
-      id: 'buyer-1',
-      name: 'Sarah Johnson',
-      email: 'sarah@example.com',
-      role: 'BUYER',
-      country: 'United States',
-      city: 'New York',
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    sellerId: 'seller-3',
-    seller: {
-      id: 'seller-3',
-      name: 'Yuki Tanaka',
-      email: 'yuki@example.com',
-      role: 'SELLER',
-      country: 'Japan',
-      city: 'Tokyo',
-      rating: 5.0,
-      reviewCount: 234,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    productId: '3',
-    product: {
-      id: '3',
-      sellerId: 'seller-3',
-      title: 'Traditional Japanese Tea Set',
-      description: 'Authentic Japanese tea set with teapot and 4 cups.',
-      photos: ['https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400'],
-      price: 89,
-      currency: 'USD',
-      category: 'HOME',
-      tags: ['tea', 'japanese'],
-      stockQuantity: 10,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    status: 'PENDING',
-    quantity: 2,
-    price: 178,
-    currency: 'USD',
-    deliveryAddress: '123 Main St, New York, NY 10001',
-    notes: 'Gift for my mother',
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'order-4',
-    orderNumber: 'ORD-2025-004',
-    buyerId: 'buyer-3',
-    buyer: {
-      id: 'buyer-3',
-      name: 'Emma Wilson',
-      email: 'emma@example.com',
-      role: 'BUYER',
-      country: 'United Kingdom',
-      city: 'London',
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    sellerId: 'seller-1',
-    seller: {
-      id: 'seller-1',
-      name: 'John Smith',
-      email: 'john@example.com',
-      role: 'SELLER',
-      country: 'United States',
-      city: 'New York',
-      rating: 4.8,
-      reviewCount: 125,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    productId: '4',
-    product: {
-      id: '4',
-      sellerId: 'seller-1',
-      title: 'Sony WH-1000XM5 Headphones',
-      description: 'Premium noise-cancelling wireless headphones.',
-      photos: ['https://images.unsplash.com/photo-1545127398-14699f92334b?w=400'],
-      price: 399,
-      currency: 'USD',
-      category: 'ELECTRONICS',
-      tags: ['headphones', 'sony'],
-      stockQuantity: 0,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    status: 'COMPLETED',
-    quantity: 1,
-    price: 399,
-    currency: 'USD',
-    deliveryAddress: '789 Oxford St, London, W1D 2HU',
-    trackingNumber: 'TRACK-2025-004',
-    notes: '',
-    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'order-5',
-    orderNumber: 'ORD-2025-005',
-    buyerId: 'buyer-4',
-    buyer: {
-      id: 'buyer-4',
-      name: 'Alex Rodriguez',
-      email: 'alex@example.com',
-      role: 'BUYER',
-      country: 'Mexico',
-      city: 'Mexico City',
-      emailVerified: true,
-      phoneVerified: false,
-      idVerified: false,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    sellerId: 'seller-2',
-    seller: {
-      id: 'seller-2',
-      name: 'Maria Garcia',
-      email: 'maria@example.com',
-      role: 'SELLER',
-      country: 'Spain',
-      city: 'Barcelona',
-      rating: 4.9,
-      reviewCount: 89,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    productId: '2',
-    product: {
-      id: '2',
-      sellerId: 'seller-2',
-      title: 'Premium Leather Handbag',
-      description: 'Handcrafted leather handbag from Barcelona.',
-      photos: ['https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400'],
-      price: 299,
-      currency: 'EUR',
-      category: 'CLOTHING',
-      tags: ['handbag', 'leather'],
-      stockQuantity: 3,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    status: 'CANCELLED',
-    quantity: 1,
-    price: 299,
-    currency: 'EUR',
-    deliveryAddress: 'Reforma 505, Mexico City, CDMX 06500',
-    notes: 'Order cancelled by buyer',
-    createdAt: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 38 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'order-6',
-    orderNumber: 'ORD-2025-006',
-    buyerId: 'buyer-2',
-    buyer: {
-      id: 'buyer-2',
-      name: 'Michael Chen',
-      email: 'michael@example.com',
-      role: 'BUYER',
-      country: 'Canada',
-      city: 'Toronto',
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    sellerId: 'seller-3',
-    seller: {
-      id: 'seller-3',
-      name: 'Yuki Tanaka',
-      email: 'yuki@example.com',
-      role: 'SELLER',
-      country: 'Japan',
-      city: 'Tokyo',
-      rating: 5.0,
-      reviewCount: 234,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    productId: '3',
-    product: {
-      id: '3',
-      sellerId: 'seller-3',
-      title: 'Traditional Japanese Tea Set',
-      description: 'Authentic Japanese tea set with teapot and 4 cups.',
-      photos: ['https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400'],
-      price: 89,
-      currency: 'USD',
-      category: 'HOME',
-      tags: ['tea', 'japanese'],
-      stockQuantity: 10,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    status: 'PAID',
-    quantity: 1,
-    price: 89,
-    currency: 'USD',
-    deliveryAddress: '456 King St, Toronto, ON M5H 2R2',
-    notes: '',
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'order-7',
-    orderNumber: 'ORD-2025-007',
-    buyerId: 'buyer-1',
-    buyer: {
-      id: 'buyer-1',
-      name: 'Sarah Johnson',
-      email: 'sarah@example.com',
-      role: 'BUYER',
-      country: 'United States',
-      city: 'New York',
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    sellerId: 'seller-1',
-    seller: {
-      id: 'seller-1',
-      name: 'John Smith',
-      email: 'john@example.com',
-      role: 'SELLER',
-      country: 'United States',
-      city: 'New York',
-      rating: 4.8,
-      reviewCount: 125,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    productId: '1',
-    product: {
-      id: '1',
-      sellerId: 'seller-1',
-      title: 'Apple iPhone 15 Pro Max',
-      description: 'Brand new Apple iPhone 15 Pro Max with 256GB storage.',
-      photos: ['https://images.unsplash.com/photo-1696446702183-cbd80e00b9c8?w=400'],
-      price: 1299,
-      currency: 'USD',
-      category: 'ELECTRONICS',
-      tags: ['smartphone', 'apple'],
-      stockQuantity: 5,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    status: 'ACCEPTED',
-    quantity: 1,
-    price: 1299,
-    currency: 'USD',
-    deliveryAddress: '123 Main St, New York, NY 10001',
-    notes: '',
-    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'order-8',
-    orderNumber: 'ORD-2025-008',
-    buyerId: 'buyer-3',
-    buyer: {
-      id: 'buyer-3',
-      name: 'Emma Wilson',
-      email: 'emma@example.com',
-      role: 'BUYER',
-      country: 'United Kingdom',
-      city: 'London',
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    sellerId: 'seller-2',
-    seller: {
-      id: 'seller-2',
-      name: 'Maria Garcia',
-      email: 'maria@example.com',
-      role: 'SELLER',
-      country: 'Spain',
-      city: 'Barcelona',
-      rating: 4.9,
-      reviewCount: 89,
-      emailVerified: true,
-      phoneVerified: true,
-      idVerified: true,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    productId: '2',
-    product: {
-      id: '2',
-      sellerId: 'seller-2',
-      title: 'Premium Leather Handbag',
-      description: 'Handcrafted leather handbag from Barcelona.',
-      photos: ['https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400'],
-      price: 299,
-      currency: 'EUR',
-      category: 'CLOTHING',
-      tags: ['handbag', 'leather'],
-      stockQuantity: 3,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    status: 'PENDING',
-    quantity: 1,
-    price: 299,
-    currency: 'EUR',
-    deliveryAddress: '789 Oxford St, London, W1D 2HU',
-    notes: 'Expedited shipping requested',
-    createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 8 * 60 * 60 * 1000),
-  },
-];
+import { useAuth } from '@/contexts/AuthContext';
+import { ordersService } from '@/lib/api';
+import { toast } from 'sonner';
 
 type OrderStatusTab = 'all' | 'pending' | 'completed' | 'cancelled';
 
@@ -514,6 +32,8 @@ interface OrdersPageProps {
 
 export default function OrdersPage({ searchParams }: OrdersPageProps) {
   const { t } = useTranslations();
+  const router = useRouter();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const params = use(searchParams);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<OrderStatusTab>(
@@ -524,7 +44,51 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const orders = getMockOrders();
+  // Orders state
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(true);
+
+  // Authentication guard
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isAuthLoading, router]);
+
+  // Fetch orders
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (!user) return;
+
+      setIsLoadingOrders(true);
+
+      try {
+        const ordersData = await ordersService.getOrders({
+          page: 1,
+          limit: 1000,
+        });
+
+        const convertedOrders = ordersData.data.map((order) => ({
+          ...order,
+          createdAt: new Date(order.createdAt),
+          updatedAt: new Date(order.updatedAt),
+        }));
+
+        setOrders(convertedOrders);
+      } catch (error: any) {
+        console.error('Error fetching orders:', error);
+        const errorMessage =
+          error?.response?.data?.error || 'Failed to load orders';
+        toast.error('Error', {
+          description: errorMessage,
+        });
+      } finally {
+        setIsLoadingOrders(false);
+      }
+    };
+
+    fetchOrders();
+  }, [user]);
 
   // Filter orders by status and search query
   const filteredOrders = useMemo(() => {
@@ -578,6 +142,32 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1);
   };
+
+  // Show loading skeleton
+  if (isAuthLoading || isLoadingOrders) {
+    return (
+      <div className="container px-4 py-8">
+        <div className="mb-8">
+          <Skeleton className="h-9 w-48 mb-2" />
+          <Skeleton className="h-5 w-96" />
+        </div>
+        <div className="mb-6 flex gap-3 flex-col sm:flex-row">
+          <Skeleton className="h-10 flex-1" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="space-y-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-48 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="container px-4 py-8">
