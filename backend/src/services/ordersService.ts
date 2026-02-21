@@ -1,5 +1,5 @@
 import { PrismaClient, OrderStatus, Prisma } from '@prisma/client';
-import { NotFoundError, BadRequestError, UnauthorizedError } from '../utils/errors';
+import { NotFoundError, BadRequestError, UnauthorizedError } from '../middleware/errorHandler';
 
 const prisma = new PrismaClient();
 
@@ -55,7 +55,7 @@ class OrdersService {
     else if (data.customOrderId) {
       const customOrder = await prisma.customOrder.findUnique({
         where: { id: data.customOrderId },
-        select: { buyerId: true, sellerId: true, estimatedPrice: true, status: true },
+        select: { buyerId: true, sellerId: true, maxPrice: true, status: true },
       });
 
       if (!customOrder) {
@@ -70,8 +70,12 @@ class OrdersService {
         throw new UnauthorizedError('You can only create orders for your own custom orders');
       }
 
+      if (!customOrder.sellerId) {
+        throw new BadRequestError('Custom order must have a seller');
+      }
+
       sellerId = customOrder.sellerId;
-      price = Number(customOrder.estimatedPrice);
+      price = Number(customOrder.maxPrice);
       currency = data.currency || 'USD';
     } else {
       throw new BadRequestError('Invalid order data');
@@ -288,8 +292,8 @@ class OrdersService {
     }
 
     // Validate status transitions
-    if (order.status === 'CANCELLED' || order.status === 'COMPLETED') {
-      throw new BadRequestError('Cannot update a cancelled or completed order');
+    if (order.status === 'CANCELLED' || order.status === 'DELIVERED') {
+      throw new BadRequestError('Cannot update a cancelled or delivered order');
     }
 
     const updatedOrder = await prisma.order.update({
@@ -352,7 +356,7 @@ class OrdersService {
       throw new UnauthorizedError('Only the buyer can cancel their order');
     }
 
-    if (order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETED') {
+    if (order.status === 'SHIPPED' || order.status === 'DELIVERED') {
       throw new BadRequestError('Cannot cancel an order that has been shipped or delivered');
     }
 
@@ -407,7 +411,7 @@ class OrdersService {
   async getOrderStats(userId: string) {
     const [
       totalOrders,
-      totalAsБуyer,
+      totalAsBuyer,
       totalAsSeller,
       pendingOrders,
       completedOrders,
@@ -440,14 +444,14 @@ class OrdersService {
       prisma.order.count({
         where: {
           OR: [{ buyerId: userId }, { sellerId: userId }],
-          status: 'COMPLETED',
+          status: 'DELIVERED',
         },
       }),
       // Total revenue as seller
       prisma.order.aggregate({
         where: {
           sellerId: userId,
-          status: 'COMPLETED',
+          status: 'DELIVERED',
         },
         _sum: {
           price: true,
@@ -461,7 +465,7 @@ class OrdersService {
       totalAsSeller,
       pendingOrders,
       completedOrders,
-      totalRevenue: totalRevenue._sum.price || 0,
+      totalRevenue: totalRevenue._sum?.price || 0,
     };
   }
 }

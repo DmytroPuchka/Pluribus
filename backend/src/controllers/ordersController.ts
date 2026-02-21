@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import ordersService from '../services/ordersService';
 import { sendSuccess, sendPaginatedResponse } from '../utils/response';
+import { JwtPayload } from '../types';
 
 export class OrdersController {
   /**
@@ -9,7 +10,7 @@ export class OrdersController {
    */
   async createOrder(req: Request, res: Response, next: NextFunction) {
     try {
-      const buyerId = req.user!.userId;
+      const buyerId = (req.user as JwtPayload).userId;
       const order = await ordersService.createOrder(buyerId, req.body);
 
       sendSuccess(res, order, 201);
@@ -24,7 +25,7 @@ export class OrdersController {
    */
   async getOrders(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user!.userId;
+      const userId = (req.user as JwtPayload).userId;
       const result = await ordersService.getOrders(userId, req.query);
 
       sendPaginatedResponse(
@@ -46,8 +47,8 @@ export class OrdersController {
   async getOrderById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const userId = req.user!.userId;
-      const order = await ordersService.getOrderById(id, userId);
+      const userId = (req.user as JwtPayload).userId;
+      const order = await ordersService.getOrderById(id as string, userId);
 
       sendSuccess(res, order);
     } catch (error) {
@@ -62,11 +63,11 @@ export class OrdersController {
   async updateOrderStatus(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const sellerId = req.user!.userId;
+      const sellerId = (req.user as JwtPayload).userId;
       const { status, trackingNumber } = req.body;
 
       const order = await ordersService.updateOrderStatus(
-        id,
+        id as string,
         sellerId,
         status,
         trackingNumber
@@ -85,8 +86,8 @@ export class OrdersController {
   async cancelOrder(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const buyerId = req.user!.userId;
-      const order = await ordersService.cancelOrder(id, buyerId);
+      const buyerId = (req.user as JwtPayload).userId;
+      const order = await ordersService.cancelOrder(id as string, buyerId);
 
       sendSuccess(res, order);
     } catch (error) {
@@ -100,7 +101,7 @@ export class OrdersController {
    */
   async getOrderStats(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user!.userId;
+      const userId = (req.user as JwtPayload).userId;
       const stats = await ordersService.getOrderStats(userId);
 
       sendSuccess(res, stats);

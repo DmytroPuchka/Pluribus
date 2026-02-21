@@ -5,7 +5,8 @@
 
 import { Request, Response, NextFunction } from 'express';
 import customOrdersService from '../services/customOrdersService';
-import { formatSuccessResponse } from '../utils/response';
+import { sendSuccess } from '../utils/response';
+import { JwtPayload } from '../types';
 
 /**
  * Create custom order
@@ -17,13 +18,13 @@ export const createCustomOrder = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const buyerId = req.user!.id;
+    const buyerId = (req.user as JwtPayload).userId;
     const customOrder = await customOrdersService.createCustomOrder({
       ...req.body,
       buyerId,
     });
 
-    res.status(201).json(formatSuccessResponse(customOrder));
+    sendSuccess(res, customOrder, 201);
   } catch (error) {
     next(error);
   }
@@ -39,7 +40,7 @@ export const getCustomOrders = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = req.user!.id;
+    const userId = (req.user as JwtPayload).userId;
     const filters = {
       role: req.query.role as 'buyer' | 'seller' | undefined,
       status: req.query.status as any,
@@ -64,9 +65,9 @@ export const getCustomOrderById = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = req.user!.id;
-    const customOrder = await customOrdersService.getCustomOrderById(req.params.id, userId);
-    res.json(formatSuccessResponse(customOrder));
+    const userId = (req.user as JwtPayload).userId;
+    const customOrder = await customOrdersService.getCustomOrderById(req.params.id as string, userId);
+    sendSuccess(res, customOrder);
   } catch (error) {
     next(error);
   }
@@ -82,13 +83,13 @@ export const updateCustomOrderStatus = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = req.user!.id;
+    const userId = (req.user as JwtPayload).userId;
     const customOrder = await customOrdersService.updateCustomOrderStatus(
-      req.params.id,
+      req.params.id as string,
       userId,
       req.body
     );
-    res.json(formatSuccessResponse(customOrder));
+    sendSuccess(res, customOrder);
   } catch (error) {
     next(error);
   }
@@ -104,9 +105,9 @@ export const deleteCustomOrder = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = req.user!.id;
-    const result = await customOrdersService.deleteCustomOrder(req.params.id, userId);
-    res.json(formatSuccessResponse(result));
+    const userId = (req.user as JwtPayload).userId;
+    const result = await customOrdersService.deleteCustomOrder(req.params.id as string, userId);
+    sendSuccess(res, result);
   } catch (error) {
     next(error);
   }

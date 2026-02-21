@@ -3,7 +3,7 @@
  * Handles authentication endpoints
  */
 
-import { apiClient, setAccessToken, setRefreshToken, clearTokens } from './client';
+import { apiClient, setAccessToken, setRefreshToken, clearTokens, getRefreshToken } from './client';
 import type {
   ApiResponse,
   LoginRequest,
@@ -59,7 +59,10 @@ export async function refreshToken(data: RefreshTokenRequest): Promise<AuthRespo
  */
 export async function logout(): Promise<void> {
   try {
-    await apiClient.post('/auth/logout');
+    const refreshToken = getRefreshToken();
+    if (refreshToken) {
+      await apiClient.post('/auth/logout', { refreshToken });
+    }
   } finally {
     // Clear tokens even if request fails
     clearTokens();

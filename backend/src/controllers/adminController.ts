@@ -5,20 +5,20 @@
 
 import { Request, Response, NextFunction } from 'express';
 import adminService from '../services/adminService';
-import { formatSuccessResponse } from '../utils/response';
+import { sendSuccess } from '../utils/response';
 
 /**
  * Get platform statistics
  * GET /api/v1/admin/stats
  */
 export const getPlatformStats = async (
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const stats = await adminService.getPlatformStats();
-    res.json(formatSuccessResponse(stats));
+    sendSuccess(res, stats);
   } catch (error) {
     next(error);
   }
@@ -62,8 +62,8 @@ export const toggleUserStatus = async (
     const { id } = req.params;
     const { isActive } = req.body;
 
-    const user = await adminService.toggleUserStatus(id, isActive);
-    res.json(formatSuccessResponse(user));
+    const user = await adminService.toggleUserStatus(id as string, isActive);
+    sendSuccess(res, user);
   } catch (error) {
     next(error);
   }
@@ -79,8 +79,8 @@ export const deleteUser = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const result = await adminService.deleteUser(req.params.id);
-    res.json(formatSuccessResponse(result));
+    const result = await adminService.deleteUser(req.params.id as string);
+    sendSuccess(res, result);
   } catch (error) {
     next(error);
   }
@@ -123,8 +123,8 @@ export const toggleProductStatus = async (
     const { id } = req.params;
     const { isActive } = req.body;
 
-    const product = await adminService.toggleProductStatus(id, isActive);
-    res.json(formatSuccessResponse(product));
+    const product = await adminService.toggleProductStatus(id as string, isActive);
+    sendSuccess(res, product);
   } catch (error) {
     next(error);
   }
@@ -140,8 +140,8 @@ export const deleteProduct = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const result = await adminService.deleteProduct(req.params.id);
-    res.json(formatSuccessResponse(result));
+    const result = await adminService.deleteProduct(req.params.id as string);
+    sendSuccess(res, result);
   } catch (error) {
     next(error);
   }

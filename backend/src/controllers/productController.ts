@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import productService from '../services/productService';
 import { sendSuccess, sendPaginatedResponse } from '../utils/response';
+import { JwtPayload } from '../types';
 
 export class ProductController {
   /**
@@ -9,7 +10,7 @@ export class ProductController {
    */
   async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
-      const sellerId = req.user!.userId;
+      const sellerId = (req.user as JwtPayload).userId;
       const product = await productService.createProduct(sellerId, req.body);
 
       sendSuccess(res, product, 201);
@@ -60,7 +61,7 @@ export class ProductController {
   async updateProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const sellerId = req.user!.userId;
+      const sellerId = (req.user as JwtPayload).userId;
       const product = await productService.updateProduct(id as string, sellerId, req.body);
 
       sendSuccess(res, product);
@@ -76,7 +77,7 @@ export class ProductController {
   async deleteProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const sellerId = req.user!.userId;
+      const sellerId = (req.user as JwtPayload).userId;
       const result = await productService.deleteProduct(id as string, sellerId);
 
       sendSuccess(res, result);

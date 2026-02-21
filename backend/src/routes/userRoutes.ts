@@ -26,6 +26,13 @@ router.put(
 );
 
 /**
+ * @route   GET /api/v1/users/me/stats
+ * @desc    Get current user statistics
+ * @access  Private
+ */
+router.get('/me/stats', authenticate, userController.getCurrentUserStats.bind(userController));
+
+/**
  * @route   GET /api/v1/users
  * @desc    Get all users (admin only)
  * @access  Private (Admin)

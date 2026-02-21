@@ -4,7 +4,7 @@
  */
 
 import { PrismaClient, CustomOrderStatus, DeliveryType } from '@prisma/client';
-import { NotFoundError, BadRequestError, UnauthorizedError } from '../utils/errors';
+import { NotFoundError, BadRequestError, UnauthorizedError } from '../middleware/errorHandler';
 
 const prisma = new PrismaClient();
 
@@ -97,8 +97,6 @@ class CustomOrdersService {
             avatar: true,
             country: true,
             city: true,
-            rating: true,
-            reviewCount: true,
           },
         },
       },
@@ -163,8 +161,6 @@ class CustomOrdersService {
             avatar: true,
             country: true,
             city: true,
-            rating: true,
-            reviewCount: true,
           },
         },
       },
@@ -211,8 +207,6 @@ class CustomOrdersService {
             avatar: true,
             country: true,
             city: true,
-            rating: true,
-            reviewCount: true,
           },
         },
       },
@@ -257,7 +251,6 @@ class CustomOrdersService {
       throw new UnauthorizedError('You do not have permission to update this custom order');
     }
 
-    const isBuyer = customOrder.buyerId === userId;
     const isSeller = customOrder.sellerId === userId;
 
     // Validate status transitions
@@ -323,8 +316,6 @@ class CustomOrdersService {
             avatar: true,
             country: true,
             city: true,
-            rating: true,
-            reviewCount: true,
           },
         },
       },

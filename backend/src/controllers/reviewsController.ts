@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import reviewsService from '../services/reviewsService';
 import { sendSuccess, sendPaginatedResponse } from '../utils/response';
+import { JwtPayload } from '../types';
 
 export class ReviewsController {
   /**
@@ -9,7 +10,7 @@ export class ReviewsController {
    */
   async createReview(req: Request, res: Response, next: NextFunction) {
     try {
-      const reviewerId = req.user!.userId;
+      const reviewerId = (req.user as JwtPayload).userId;
       const review = await reviewsService.createReview(reviewerId, req.body);
 
       sendSuccess(res, review, 201);
@@ -45,7 +46,7 @@ export class ReviewsController {
   async getReviewById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const review = await reviewsService.getReviewById(id);
+      const review = await reviewsService.getReviewById(id as string);
 
       sendSuccess(res, review);
     } catch (error) {
@@ -60,7 +61,7 @@ export class ReviewsController {
   async getUserReviews(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      const result = await reviewsService.getUserReviews(userId, req.query);
+      const result = await reviewsService.getUserReviews(userId as string, req.query);
 
       sendPaginatedResponse(
         res,
@@ -81,7 +82,7 @@ export class ReviewsController {
   async getProductReviews(req: Request, res: Response, next: NextFunction) {
     try {
       const { productId } = req.params;
-      const result = await reviewsService.getProductReviews(productId, req.query);
+      const result = await reviewsService.getProductReviews(productId as string, req.query);
 
       sendPaginatedResponse(
         res,
@@ -102,8 +103,8 @@ export class ReviewsController {
   async deleteReview(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const reviewerId = req.user!.userId;
-      const result = await reviewsService.deleteReview(id, reviewerId);
+      const reviewerId = (req.user as JwtPayload).userId;
+      const result = await reviewsService.deleteReview(id as string, reviewerId);
 
       sendSuccess(res, result);
     } catch (error) {

@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { createServer } from 'http';
+import passport from 'passport';
 
 // Load environment variables
 dotenv.config();
@@ -14,6 +15,7 @@ import { corsOptions } from './config/cors';
 import { rateLimiter } from './config/rateLimiter';
 import logger from './config/logger';
 import { connectDatabase, disconnectDatabase } from './config/database';
+import { configurePassport } from './config/passport';
 
 // Import routes
 import authRoutes from './routes/authRoutes';
@@ -35,6 +37,9 @@ const server = createServer(app);
 const PORT = process.env.PORT || 5000;
 const API_VERSION = process.env.API_VERSION || 'v1';
 
+// Configure Passport
+configurePassport();
+
 // Middleware
 app.use(helmet()); // Security headers
 app.use(cors(corsOptions)); // CORS configuration
@@ -42,6 +47,7 @@ app.use(morgan('combined', { stream: { write: (message) => logger.info(message.t
 app.use(express.json({ limit: '10mb' })); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Parse URL-encoded bodies
 app.use(cookieParser()); // Parse cookies
+app.use(passport.initialize()); // Initialize Passport
 app.use(rateLimiter); // Rate limiting
 
 // Health check endpoint

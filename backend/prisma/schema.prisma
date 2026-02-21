@@ -17,16 +17,20 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  password  String
+  password  String?  // Optional for OAuth users
   name      String
   role      UserRole @default(BUYER)
+
+  // OAuth fields
+  googleId     String? @unique
+  provider     String? // "local", "google"
 
   // Profile information
   avatar          String?
   bio             String?
   phone           String?
-  country         String
-  city            String
+  country         String?  // Optional for OAuth users (fill later)
+  city            String?  // Optional for OAuth users (fill later)
   address         String?
   deliveryCountries String[] // For sellers - countries they can deliver to
 
@@ -61,6 +65,8 @@ model User {
   @@index([email])
   @@index([role])
   @@index([country, city])
+  @@index([googleId])
+  @@index([provider])
   @@map("users")
 }
 

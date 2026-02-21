@@ -32,35 +32,10 @@ import { useTranslations } from '@/contexts/TranslationsContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { usersService } from '@/lib/api'
 import { toast } from 'sonner'
-
-const COUNTRIES = [
-  { value: "us", label: "United States" },
-  { value: "ca", label: "Canada" },
-  { value: "uk", label: "United Kingdom" },
-  { value: "au", label: "Australia" },
-  { value: "de", label: "Germany" },
-  { value: "fr", label: "France" },
-  { value: "jp", label: "Japan" },
-  { value: "cn", label: "China" },
-  { value: "in", label: "India" },
-  { value: "br", label: "Brazil" },
-]
-
-const CITIES_BY_COUNTRY: Record<string, string[]> = {
-  us: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"],
-  ca: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
-  uk: ["London", "Manchester", "Birmingham", "Leeds", "Glasgow"],
-  au: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
-  de: ["Berlin", "Munich", "Frankfurt", "Hamburg", "Cologne"],
-  fr: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice"],
-  jp: ["Tokyo", "Osaka", "Kyoto", "Yokohama", "Kobe"],
-  cn: ["Beijing", "Shanghai", "Guangzhou", "Shenzhen", "Chengdu"],
-  in: ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai"],
-  br: ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador", "Fortaleza"],
-}
+import { CountrySelect } from '@/components/CountrySelect'
 
 export default function ProfilePage() {
-  const { t } = useTranslations()
+  const { t, language } = useTranslations()
   const { user, refreshUser, isLoading: authLoading } = useAuth()
   const router = useRouter()
   const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null)
@@ -312,20 +287,16 @@ export default function ProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t('pages.dashboard.profile.personalInfo.country')}</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t('pages.dashboard.profile.personalInfo.countryPlaceholder')} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {COUNTRIES.map(country => (
-                              <SelectItem key={country.value} value={country.value}>
-                                {country.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <FormControl>
+                          <CountrySelect
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            placeholder={t('pages.dashboard.profile.personalInfo.countryPlaceholder')}
+                            searchPlaceholder={t('pages.dashboard.profile.personalInfo.countrySearchPlaceholder')}
+                            emptyMessage={t('pages.dashboard.profile.personalInfo.countryEmptyMessage')}
+                            language={language}
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

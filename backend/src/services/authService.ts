@@ -113,6 +113,11 @@ export class AuthService {
       throw new UnauthorizedError('Account is inactive or suspended');
     }
 
+    // Check if user has a password (OAuth users don't have passwords)
+    if (!user.password) {
+      throw new UnauthorizedError('This account uses Google Sign In. Please sign in with Google.');
+    }
+
     // Verify password
     const isPasswordValid = await comparePassword(password, user.password);
 

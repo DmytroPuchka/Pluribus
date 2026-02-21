@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import userService from '../services/userService';
 import { sendSuccess, sendPaginatedResponse } from '../utils/response';
+import { JwtPayload } from '../types';
 
 export class UserController {
   /**
@@ -9,7 +10,7 @@ export class UserController {
    */
   async getCurrentUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user!.userId;
+      const userId = (req.user as JwtPayload).userId;
       const user = await userService.getCurrentUser(userId);
 
       sendSuccess(res, user);
@@ -24,10 +25,25 @@ export class UserController {
    */
   async updateProfile(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user!.userId;
+      const userId = (req.user as JwtPayload).userId;
       const user = await userService.updateProfile(userId, req.body);
 
       sendSuccess(res, user);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Get current user statistics
+   * GET /api/v1/users/me/stats
+   */
+  async getCurrentUserStats(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = (req.user as JwtPayload).userId;
+      const stats = await userService.getUserStats(userId);
+
+      sendSuccess(res, stats);
     } catch (error) {
       next(error);
     }
@@ -70,8 +86,8 @@ export class UserController {
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const requesterId = req.user!.userId;
-      const requesterRole = req.user!.role;
+      const requesterId = (req.user as JwtPayload).userId;
+      const requesterRole = (req.user as JwtPayload).role;
 
       const result = await userService.deleteUser(id as string, requesterId, requesterRole);
 

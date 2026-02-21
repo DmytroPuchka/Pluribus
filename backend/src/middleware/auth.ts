@@ -1,16 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/jwt';
 import { UnauthorizedError, ForbiddenError } from './errorHandler';
-import { JwtPayload, UserRole } from '../types';
-
-// Extend Express Request type to include user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: JwtPayload;
-    }
-  }
-}
+import { UserRole, JwtPayload } from '../types';
 
 /**
  * Authenticate user via JWT token
@@ -51,7 +42,7 @@ export const authorize = (...allowedRoles: UserRole[]) => {
       throw new UnauthorizedError('Authentication required');
     }
 
-    if (!allowedRoles.includes(req.user.role as UserRole)) {
+    if (!allowedRoles.includes((req.user as JwtPayload).role)) {
       throw new ForbiddenError('Insufficient permissions');
     }
 

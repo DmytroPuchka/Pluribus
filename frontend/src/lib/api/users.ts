@@ -41,7 +41,7 @@ export async function getUserById(userId: string): Promise<User> {
  * Get user statistics
  */
 export async function getUserStats(): Promise<UserStatsResponse> {
-  const response = await apiClient.get<ApiResponse<UserStatsResponse>>('/users/stats');
+  const response = await apiClient.get<ApiResponse<UserStatsResponse>>('/users/me/stats');
   return response.data.data;
 }
 

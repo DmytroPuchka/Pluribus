@@ -1,6 +1,7 @@
 import prisma from '../config/database';
 import { NotFoundError, ForbiddenError } from '../middleware/errorHandler';
 import { PaginationParams } from '../types';
+import { UserRole } from '@prisma/client';
 
 export interface UpdateProfileData {
   name?: string;
@@ -10,6 +11,7 @@ export interface UpdateProfileData {
   city?: string;
   address?: string;
   avatar?: string;
+  role?: UserRole;
   deliveryCountries?: string[];
 }
 

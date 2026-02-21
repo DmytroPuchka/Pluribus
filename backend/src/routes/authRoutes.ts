@@ -52,4 +52,18 @@ router.post(
   authController.logout.bind(authController)
 );
 
+/**
+ * @route   GET /api/v1/auth/google
+ * @desc    Initiate Google OAuth authentication
+ * @access  Public
+ */
+router.get('/google', authController.googleAuth.bind(authController));
+
+/**
+ * @route   GET /api/v1/auth/google/callback
+ * @desc    Google OAuth callback handler
+ * @access  Public
+ */
+router.get('/google/callback', authController.googleCallback.bind(authController));
+
 export default router;

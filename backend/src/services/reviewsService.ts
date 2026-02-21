@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma } from '@prisma/client';
-import { NotFoundError, BadRequestError, UnauthorizedError } from '../utils/errors';
+import { NotFoundError, BadRequestError, UnauthorizedError } from '../middleware/errorHandler';
 
 const prisma = new PrismaClient();
 
@@ -58,7 +58,7 @@ class ReviewsService {
     }
 
     // Check if order is completed
-    if (order.status !== 'COMPLETED') {
+    if (order.status !== 'DELIVERED') {
       throw new BadRequestError('You can only review completed orders');
     }
 
@@ -338,7 +338,7 @@ class ReviewsService {
     const orders = await prisma.order.findMany({
       where: {
         productId,
-        status: 'COMPLETED',
+        status: 'DELIVERED',
       },
       select: { id: true },
     });
@@ -418,32 +418,34 @@ class ReviewsService {
    * Update user's average rating
    */
   private async updateUserRating(userId: string) {
+    // TODO: Add rating and reviewCount fields to User model in Prisma schema
+    // For now, this method is disabled as the fields don't exist
     const reviews = await prisma.review.findMany({
       where: { revieweeId: userId },
       select: { overallRating: true },
     });
 
     if (reviews.length === 0) {
-      await prisma.user.update({
-        where: { id: userId },
-        data: {
-          rating: null,
-          reviewCount: 0,
-        },
-      });
+      // await prisma.user.update({
+      //   where: { id: userId },
+      //   data: {
+      //     rating: null,
+      //     reviewCount: 0,
+      //   },
+      // });
       return;
     }
 
-    const avgRating =
-      reviews.reduce((sum, review) => sum + review.overallRating, 0) / reviews.length;
+    // const avgRating =
+    //   reviews.reduce((sum, review) => sum + review.overallRating, 0) / reviews.length;
 
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        rating: Math.round(avgRating * 10) / 10, // Round to 1 decimal place
-        reviewCount: reviews.length,
-      },
-    });
+    // await prisma.user.update({
+    //   where: { id: userId },
+    //   data: {
+    //     rating: Math.round(avgRating * 10) / 10, // Round to 1 decimal place
+    //     reviewCount: reviews.length,
+    //   },
+    // });
   }
 }
 

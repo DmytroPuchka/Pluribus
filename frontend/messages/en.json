@@ -379,6 +379,35 @@
     },
     "logout": {
       "success": "You have successfully logged out"
+    },
+    "onboarding": {
+      "title": "Complete Your Profile",
+      "subtitle": "Tell us more about you to get started",
+      "roleSection": {
+        "title": "How do you plan to use",
+        "description": "Choose how you want to use Pluribus",
+        "seller": {
+          "title": "Send and receive packages",
+          "description": "Send and receive packages globally"
+        },
+        "buyer": {
+          "title": "Only receive",
+          "description": "Shop internationally. You can change to \"Send and receive\" in settings"
+        }
+      },
+      "location": {
+        "title": "Your Location",
+        "country": "Country",
+        "countryPlaceholder": "Select your country",
+        "countrySearchPlaceholder": "Search country...",
+        "countryEmptyMessage": "No country found.",
+        "city": "City",
+        "cityPlaceholder": "Enter your city"
+      },
+      "buttons": {
+        "complete": "Complete Profile",
+        "completing": "Completing..."
+      }
     }
   },
   "dashboard": {
@@ -952,6 +981,8 @@
           "emailDescription": "Your email address is used for account recovery and notifications",
           "country": "Country",
           "countryPlaceholder": "Select a country",
+          "countrySearchPlaceholder": "Search country...",
+          "countryEmptyMessage": "No country found.",
           "city": "City",
           "cityPlaceholder": "Select a city",
           "bio": "Bio",

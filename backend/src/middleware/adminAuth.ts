@@ -4,15 +4,16 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { UnauthorizedError } from '../utils/errors';
+import { UnauthorizedError } from '../middleware/errorHandler';
+import { JwtPayload } from '../types';
 
 /**
  * Check if user is admin
  * Only users with ADMIN role can access admin endpoints
  */
-export const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
+export const requireAdmin = (req: Request, _res: Response, next: NextFunction) => {
   try {
-    const user = req.user;
+    const user = req.user as JwtPayload;
 
     if (!user) {
       throw new UnauthorizedError('Authentication required');
