@@ -97,9 +97,13 @@ export class ProductService {
 
     const skip = (page - 1) * limit;
 
-    const where: any = {
-      isAvailable: true,
-    };
+    const where: any = {};
+
+    // Only filter by isAvailable if sellerId is NOT provided
+    // When sellerId is provided (seller viewing their own products), show all products
+    if (!sellerId) {
+      where.isAvailable = true;
+    }
 
     if (category) where.category = category;
     if (sellerId) where.sellerId = sellerId;

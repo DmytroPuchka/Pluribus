@@ -68,6 +68,20 @@
       "thisYear": "Цього року"
     }
   },
+  "components": {
+    "productCard": {
+      "viewDetails": "Переглянути деталі"
+    },
+    "orderCard": {
+      "cancelOrder": "Скасувати замовлення",
+      "cancelling": "Скасування...",
+      "cancelConfirm": "Ви впевнені, що хочете скасувати це замовлення?",
+      "cancelSuccess": "Замовлення скасовано",
+      "cancelSuccessDescription": "Ваше замовлення успішно скасовано",
+      "cancelErrorTitle": "Не вдалося скасувати",
+      "cancelError": "Помилка скасування замовлення"
+    }
+  },
   "header": {
     "nav": {
       "products": "Товари",
@@ -760,6 +774,9 @@
         "stockQuantityDescription": "Введіть кількість товарів, доступних на складі",
         "unlimitedStock": "Необмежена кількість",
         "unlimitedStockDescription": "Відмітьте це, якщо у вас необмежена кількість цього товару",
+        "productStatus": "Статус товару",
+        "productStatusActive": "Активний - Товар видимий для покупців",
+        "productStatusInactive": "Неактивний - Товар прихований від покупців",
         "submit": "Додати товар"
       },
       "validation": {
@@ -848,6 +865,7 @@
         "availability": "Наявність",
         "outOfStock": "Немає в наявності",
         "addToCart": "Додати в кошик",
+        "editProduct": "Редагувати товар",
         "saveForLater": "Зберегти на потім",
         "share": "Поділитися",
         "description": "Опис",
@@ -870,6 +888,34 @@
       },
       "relatedProducts": {
         "title": "Схожі продукти"
+      },
+      "orderModal": {
+        "title": "Створити замовлення",
+        "subtitle": "Завершіть замовлення для {product}",
+        "deliveryAddress": "Адреса доставки",
+        "deliveryAddressPlaceholder": "Введіть повну адресу доставки...",
+        "orderNotes": "Примітки до замовлення (необов'язково)",
+        "orderNotesPlaceholder": "Будь-які особливі інструкції або примітки...",
+        "seller": "Продавець",
+        "location": "Місцезнаходження",
+        "rating": "Рейтинг",
+        "reviews": "відгуків",
+        "creating": "Створення замовлення...",
+        "createOrder": "Створити замовлення",
+        "errors": {
+          "loginRequired": "Будь ласка, увійдіть",
+          "loginRequiredDescription": "Вам потрібно увійти, щоб купувати товари",
+          "cannotBuyOwnProduct": "Неможливо купити власний товар",
+          "cannotBuyOwnProductDescription": "Ви не можете купити власні товари",
+          "addressRequired": "Необхідна адреса доставки",
+          "addressRequiredDescription": "Будь ласка, введіть адресу доставки",
+          "createFailedTitle": "Не вдалося створити замовлення",
+          "createFailed": "Помилка створення замовлення"
+        },
+        "success": {
+          "title": "Замовлення успішно створено!",
+          "description": "Замовлення {orderNumber} було створено"
+        }
       }
     },
     "sellerProfile": {
@@ -918,6 +964,11 @@
         "timeliness": "Своєчасність:",
         "noReviews": "Відгуків ще немає. Станьте першим, хто залишить відгук про цього продавця!"
       }
+    },
+    "chat": {
+      "title": "Повідомлення",
+      "comingSoon": "Чат скоро з'явиться",
+      "description": "Функціональність обміну повідомленнями буде доступна в майбутньому оновленні. Ви зможете спілкуватися безпосередньо з покупцями та продавцями."
     },
     "privacy": {
       "hero": {

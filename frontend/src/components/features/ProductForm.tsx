@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Product, ProductCategory } from '@/types';
 import { cn } from '@/lib/utils';
@@ -63,6 +64,7 @@ export interface ProductFormData {
   category: ProductCategory;
   photos: File[];
   existingPhotos?: string[];
+  isAvailable?: boolean;
 }
 
 export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: ProductFormProps) {
@@ -90,6 +92,7 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
     ),
     photos: z.array(z.instanceof(File)).optional(),
     existingPhotos: z.array(z.string()).optional(),
+    isAvailable: z.boolean().optional(),
   });
 
   type ProductFormValues = z.infer<typeof productFormSchema>;
@@ -104,6 +107,7 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
       category: product?.category || '',
       photos: [],
       existingPhotos: product?.photos || [],
+      isAvailable: product?.isAvailable ?? true,
     },
   });
 
@@ -164,6 +168,7 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
       category: values.category as ProductCategory,
       photos: photoFiles,
       existingPhotos: values.existingPhotos,
+      isAvailable: values.isAvailable,
     };
 
     await onSubmit(formData);
@@ -361,6 +366,34 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
                 </FormItem>
               )}
             />
+
+            {/* Product Status - Only show when editing */}
+            {product && (
+              <FormField
+                control={form.control}
+                name="isAvailable"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">
+                        {t('pages.productForm.form.productStatus')}
+                      </FormLabel>
+                      <FormDescription>
+                        {field.value
+                          ? t('pages.productForm.form.productStatusActive')
+                          : t('pages.productForm.form.productStatusInactive')}
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            )}
 
           </CardContent>
         </Card>

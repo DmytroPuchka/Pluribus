@@ -83,13 +83,16 @@ export default function EditProductPage() {
       }
 
       // Update product via API
-      await productsService.updateProduct(productId, {
+      const updateData = {
         title: data.title,
         description: data.description,
         photos: photoUrls,
         price: data.price,
+        currency: data.currency,
         category: data.category,
-      });
+        isAvailable: data.isAvailable,
+      };
+      await productsService.updateProduct(productId, updateData);
 
       toast.success(t('pages.productForm.messages.updateSuccess'));
       router.push('/dashboard/products');

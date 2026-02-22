@@ -132,16 +132,16 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
   // Handle Buy Now button click
   const handleBuyNow = () => {
     if (!user) {
-      toast.error('Please login', {
-        description: 'You need to be logged in to purchase products',
+      toast.error(t('pages.productDetail.orderModal.errors.loginRequired'), {
+        description: t('pages.productDetail.orderModal.errors.loginRequiredDescription'),
       });
       router.push('/login');
       return;
     }
 
     if (user.id === product?.sellerId) {
-      toast.error('Cannot buy own product', {
-        description: 'You cannot purchase your own products',
+      toast.error(t('pages.productDetail.orderModal.errors.cannotBuyOwnProduct'), {
+        description: t('pages.productDetail.orderModal.errors.cannotBuyOwnProductDescription'),
       });
       return;
     }
@@ -159,8 +159,8 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
     e.preventDefault();
 
     if (!deliveryAddress.trim()) {
-      toast.error('Delivery address required', {
-        description: 'Please enter your delivery address',
+      toast.error(t('pages.productDetail.orderModal.errors.addressRequired'), {
+        description: t('pages.productDetail.orderModal.errors.addressRequiredDescription'),
       });
       return;
     }
@@ -177,8 +177,10 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
         deliveryAddress: deliveryAddress.trim(),
       });
 
-      toast.success('Order created successfully!', {
-        description: `Order ${order.orderNumber || order.id} has been created`,
+      toast.success(t('pages.productDetail.orderModal.success.title'), {
+        description: t('pages.productDetail.orderModal.success.description', {
+          orderNumber: order.orderNumber || order.id
+        }),
       });
 
       // Reset form
@@ -191,8 +193,8 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
     } catch (error: any) {
       console.error('Error creating order:', error);
       const errorMessage =
-        error?.response?.data?.error || 'Failed to create order';
-      toast.error('Order creation failed', {
+        error?.response?.data?.error || t('pages.productDetail.orderModal.errors.createFailed');
+      toast.error(t('pages.productDetail.orderModal.errors.createFailedTitle'), {
         description: errorMessage,
       });
     } finally {
@@ -308,20 +310,36 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
 
           {/* Action Buttons */}
           <div className="space-y-3">
-            <Button
-              size="lg"
-              className="w-full"
-              disabled={!product.isActive}
-              onClick={handleBuyNow}
-            >
-              <ShoppingCart className="w-4 h-4" />
-              {t('pages.productDetail.details.addToCart')}
-            </Button>
+            {user?.id === product.sellerId ? (
+              // Seller view - Edit button
+              <Button
+                size="lg"
+                className="w-full"
+                asChild
+              >
+                <Link href={`/dashboard/products/${product.id}/edit`}>
+                  {t('pages.productDetail.details.editProduct')}
+                </Link>
+              </Button>
+            ) : (
+              // Buyer view - Buy button
+              <>
+                <Button
+                  size="lg"
+                  className="w-full"
+                  disabled={!product.isAvailable}
+                  onClick={handleBuyNow}
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  {t('pages.productDetail.details.addToCart')}
+                </Button>
 
-            <Button variant="outline" size="lg" className="w-full">
-              <Heart className="w-4 h-4" />
-              {t('pages.productDetail.details.saveForLater')}
-            </Button>
+                <Button variant="outline" size="lg" className="w-full">
+                  <Heart className="w-4 h-4" />
+                  {t('pages.productDetail.details.saveForLater')}
+                </Button>
+              </>
+            )}
 
             <Button variant="outline" size="lg" className="w-full">
               <Share2 className="w-4 h-4" />
@@ -561,9 +579,9 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
 
             {/* Modal Content */}
             <div className="p-6">
-              <h2 className="text-2xl font-bold mb-2">Create Order</h2>
+              <h2 className="text-2xl font-bold mb-2">{t('pages.productDetail.orderModal.title')}</h2>
               <p className="text-muted-foreground mb-6">
-                Complete your order for {product?.title}
+                {t('pages.productDetail.orderModal.subtitle', { product: product?.title })}
               </p>
 
               <form onSubmit={handleCreateOrder} className="space-y-4">
@@ -595,11 +613,11 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                 {/* Delivery Address */}
                 <div className="space-y-2">
                   <Label htmlFor="deliveryAddress">
-                    Delivery Address <span className="text-destructive">*</span>
+                    {t('pages.productDetail.orderModal.deliveryAddress')} <span className="text-destructive">*</span>
                   </Label>
                   <Textarea
                     id="deliveryAddress"
-                    placeholder="Enter your full delivery address..."
+                    placeholder={t('pages.productDetail.orderModal.deliveryAddressPlaceholder')}
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
                     required
@@ -610,10 +628,10 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
 
                 {/* Order Notes (Optional) */}
                 <div className="space-y-2">
-                  <Label htmlFor="orderNotes">Order Notes (Optional)</Label>
+                  <Label htmlFor="orderNotes">{t('pages.productDetail.orderModal.orderNotes')}</Label>
                   <Textarea
                     id="orderNotes"
-                    placeholder="Any special instructions or notes..."
+                    placeholder={t('pages.productDetail.orderModal.orderNotesPlaceholder')}
                     value={orderNotes}
                     onChange={(e) => setOrderNotes(e.target.value)}
                     rows={2}
@@ -625,17 +643,17 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                 {product?.seller && (
                   <div className="bg-muted/50 rounded-lg p-4 text-sm">
                     <p className="text-muted-foreground">
-                      <span className="font-medium">Seller:</span> {product.seller.name}
+                      <span className="font-medium">{t('pages.productDetail.orderModal.seller')}:</span> {product.seller.name}
                     </p>
                     <p className="text-muted-foreground">
-                      <span className="font-medium">Location:</span> {product.seller.city}, {product.seller.country}
+                      <span className="font-medium">{t('pages.productDetail.orderModal.location')}:</span> {product.seller.city}, {product.seller.country}
                     </p>
                     {product.seller.rating && (
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="font-medium">Rating:</span>
+                        <span className="font-medium">{t('pages.productDetail.orderModal.rating')}:</span>
                         <Rating value={product.seller.rating} size="sm" readonly />
                         <span className="text-muted-foreground">
-                          ({product.seller.reviewCount} reviews)
+                          ({product.seller.reviewCount} {t('pages.productDetail.orderModal.reviews')})
                         </span>
                       </div>
                     )}
@@ -651,7 +669,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                     onClick={() => setIsOrderModalOpen(false)}
                     disabled={isCreatingOrder}
                   >
-                    Cancel
+                    {t('common.buttons.cancel')}
                   </Button>
                   <Button
                     type="submit"
@@ -661,12 +679,12 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                     {isCreatingOrder ? (
                       <>
                         <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
-                        Creating Order...
+                        {t('pages.productDetail.orderModal.creating')}
                       </>
                     ) : (
                       <>
                         <ShoppingCart className="w-4 h-4 mr-2" />
-                        Create Order
+                        {t('pages.productDetail.orderModal.createOrder')}
                       </>
                     )}
                   </Button>

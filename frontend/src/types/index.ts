@@ -49,7 +49,7 @@ export interface Product {
   category: ProductCategory;
   tags: string[];
   stockQuantity?: number;
-  isActive: boolean;
+  isAvailable: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

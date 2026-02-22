@@ -22,6 +22,7 @@ import { Rating } from '@/components/common/Rating';
 import { PriceDisplay } from '@/components/common/PriceDisplay';
 import { Product } from '@/types';
 import { cn, truncate } from '@/lib/utils';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 interface ProductCardProps {
   product: Product;
@@ -29,6 +30,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard: FC<ProductCardProps> = ({ product, className }) => {
+  const { t } = useTranslations();
   const sellerRating = product.seller?.rating || 0;
   const sellerLocation = product.seller
     ? `${product.seller.city}, ${product.seller.country}`
@@ -123,7 +125,7 @@ export const ProductCard: FC<ProductCardProps> = ({ product, className }) => {
 
       <CardFooter className="p-4 pt-0">
         <Button asChild className="w-full">
-          <Link href={`/products/${product.id}`}>View Details</Link>
+          <Link href={`/products/${product.id}`}>{t('components.productCard.viewDetails')}</Link>
         </Button>
       </CardFooter>
     </Card>

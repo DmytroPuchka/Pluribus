@@ -68,6 +68,20 @@
       "thisYear": "This Year"
     }
   },
+  "components": {
+    "productCard": {
+      "viewDetails": "View Details"
+    },
+    "orderCard": {
+      "cancelOrder": "Cancel Order",
+      "cancelling": "Cancelling...",
+      "cancelConfirm": "Are you sure you want to cancel this order?",
+      "cancelSuccess": "Order cancelled",
+      "cancelSuccessDescription": "Your order has been cancelled successfully",
+      "cancelErrorTitle": "Cancellation failed",
+      "cancelError": "Failed to cancel order"
+    }
+  },
   "header": {
     "nav": {
       "products": "Products",
@@ -760,6 +774,9 @@
         "stockQuantityDescription": "Enter the number of items available in stock",
         "unlimitedStock": "Unlimited Stock",
         "unlimitedStockDescription": "Check this if you have unlimited quantity of this product",
+        "productStatus": "Product Status",
+        "productStatusActive": "Active - Product is visible to buyers",
+        "productStatusInactive": "Inactive - Product is hidden from buyers",
         "submit": "Add Product"
       },
       "validation": {
@@ -848,6 +865,7 @@
         "availability": "Availability",
         "outOfStock": "Out of Stock",
         "addToCart": "Add to Cart",
+        "editProduct": "Edit Product",
         "saveForLater": "Save for Later",
         "share": "Share",
         "description": "Description",
@@ -870,6 +888,34 @@
       },
       "relatedProducts": {
         "title": "Related Products"
+      },
+      "orderModal": {
+        "title": "Create Order",
+        "subtitle": "Complete your order for {product}",
+        "deliveryAddress": "Delivery Address",
+        "deliveryAddressPlaceholder": "Enter your full delivery address...",
+        "orderNotes": "Order Notes (Optional)",
+        "orderNotesPlaceholder": "Any special instructions or notes...",
+        "seller": "Seller",
+        "location": "Location",
+        "rating": "Rating",
+        "reviews": "reviews",
+        "creating": "Creating Order...",
+        "createOrder": "Create Order",
+        "errors": {
+          "loginRequired": "Please login",
+          "loginRequiredDescription": "You need to be logged in to purchase products",
+          "cannotBuyOwnProduct": "Cannot buy own product",
+          "cannotBuyOwnProductDescription": "You cannot purchase your own products",
+          "addressRequired": "Delivery address required",
+          "addressRequiredDescription": "Please enter your delivery address",
+          "createFailedTitle": "Order creation failed",
+          "createFailed": "Failed to create order"
+        },
+        "success": {
+          "title": "Order created successfully!",
+          "description": "Order {orderNumber} has been created"
+        }
       }
     },
     "sellerProfile": {
@@ -918,6 +964,11 @@
         "timeliness": "Timeliness:",
         "noReviews": "No reviews yet. Be the first to review this seller!"
       }
+    },
+    "chat": {
+      "title": "Messages",
+      "comingSoon": "Chat Coming Soon",
+      "description": "Messaging functionality will be available in a future update. You'll be able to communicate directly with buyers and sellers."
     },
     "privacy": {
       "hero": {

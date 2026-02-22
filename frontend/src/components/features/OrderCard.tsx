@@ -8,18 +8,27 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Package, MapPin, Calendar, Star, MessageCircle, X } from 'lucide-react';
+import { Package, MapPin, Calendar, Star, MessageCircle, X, Truck } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { PriceDisplay } from '@/components/common/PriceDisplay';
 import { Rating } from '@/components/common/Rating';
-import { Order } from '@/types';
-import { reviewsService } from '@/lib/api';
+import { Order, OrderStatus } from '@/types';
+import { reviewsService, ordersService } from '@/lib/api';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslations } from '@/contexts/TranslationsContext';
 
 interface OrderCardProps {
   order: Order;
@@ -35,8 +44,10 @@ const statusColors: Record<string, string> = {
   CANCELLED: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
 };
 
-export function OrderCard({ order }: OrderCardProps) {
+export function OrderCard({ order: initialOrder }: OrderCardProps) {
   const { user } = useAuth();
+  const { t } = useTranslations();
+  const [order, setOrder] = useState(initialOrder);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
@@ -46,9 +57,118 @@ export function OrderCard({ order }: OrderCardProps) {
   const [timelinessRating, setTimelinessRating] = useState(5);
   const [comment, setComment] = useState('');
 
+  // Order status update state
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
+  const [trackingNumber, setTrackingNumber] = useState(order.trackingNumber || '');
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+
   const isBuyer = user?.id === order.buyerId;
   const isSeller = user?.id === order.sellerId;
   const canLeaveReview = isBuyer && order.status === 'COMPLETED';
+  const canCancelOrder = isBuyer && order.status === 'PENDING';
+
+  // Get available status transitions based on current status
+  const getAvailableStatuses = (): OrderStatus[] => {
+    const transitions: Record<string, OrderStatus[]> = {
+      PENDING: ['ACCEPTED', 'CANCELLED'],
+      ACCEPTED: ['PAID', 'PROCESSING'],
+      PAID: ['PROCESSING'],
+      PROCESSING: ['SHIPPED'],
+      SHIPPED: ['DELIVERED'],
+      DELIVERED: [],
+      CANCELLED: [],
+      REFUNDED: [],
+    };
+    return transitions[order.status] || [];
+  };
+
+  // Handle status update
+  const handleStatusChange = async (newStatus: OrderStatus) => {
+    // If changing to SHIPPED, show modal for tracking number
+    if (newStatus === 'SHIPPED') {
+      setSelectedStatus(newStatus);
+      setIsTrackingModalOpen(true);
+      return;
+    }
+
+    // Otherwise, update status directly
+    await updateOrderStatus(newStatus);
+  };
+
+  // Handle tracking number submission
+  const handleTrackingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedStatus) return;
+
+    await updateOrderStatus(selectedStatus, trackingNumber.trim() || undefined);
+    setIsTrackingModalOpen(false);
+    setSelectedStatus(null);
+  };
+
+  // Update order status API call
+  const updateOrderStatus = async (newStatus: OrderStatus, tracking?: string) => {
+    setIsUpdatingStatus(true);
+
+    try {
+      const updatedOrder = await ordersService.updateOrderStatus(order.id, {
+        status: newStatus,
+        trackingNumber: tracking,
+      });
+
+      setOrder({
+        ...updatedOrder,
+        createdAt: new Date(updatedOrder.createdAt),
+        updatedAt: new Date(updatedOrder.updatedAt),
+      });
+
+      toast.success('Order status updated', {
+        description: `Status changed to ${newStatus}`,
+      });
+    } catch (error: any) {
+      console.error('Error updating order status:', error);
+      const errorMessage =
+        error?.response?.data?.error || 'Failed to update order status';
+      toast.error('Update failed', {
+        description: errorMessage,
+      });
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+
+  // Handle order cancellation (buyer only)
+  const handleCancelOrder = async () => {
+    if (!confirm(t('components.orderCard.cancelConfirm'))) {
+      return;
+    }
+
+    setIsCancelling(true);
+
+    try {
+      const updatedOrder = await ordersService.cancelOrder(order.id);
+
+      setOrder({
+        ...updatedOrder,
+        createdAt: new Date(updatedOrder.createdAt),
+        updatedAt: new Date(updatedOrder.updatedAt),
+      });
+
+      toast.success(t('components.orderCard.cancelSuccess'), {
+        description: t('components.orderCard.cancelSuccessDescription'),
+      });
+    } catch (error: any) {
+      console.error('Error cancelling order:', error);
+      const errorMessage =
+        error?.response?.data?.error || t('components.orderCard.cancelError');
+      toast.error(t('components.orderCard.cancelErrorTitle'), {
+        description: errorMessage,
+      });
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   // Check if user already left a review for this order
   // In a real app, we would check this from the backend
@@ -204,8 +324,34 @@ export function OrderCard({ order }: OrderCardProps) {
             </div>
           )}
 
+          {/* Seller Status Management */}
+          {isSeller && getAvailableStatuses().length > 0 && (
+            <div className="border-t pt-4">
+              <Label className="text-sm font-medium mb-2 block">Update Order Status</Label>
+              <div className="flex gap-2">
+                <Select
+                  value={order.status}
+                  onValueChange={(value) => handleStatusChange(value as OrderStatus)}
+                  disabled={isUpdatingStatus}
+                >
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={order.status}>{order.status}</SelectItem>
+                    {getAvailableStatuses().map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+
           {/* Actions */}
-          <div className="flex gap-2 pt-2">
+          <div className="flex gap-2 pt-2 flex-wrap">
             {canLeaveReview && (
               <Button
                 size="sm"
@@ -215,6 +361,19 @@ export function OrderCard({ order }: OrderCardProps) {
               >
                 <Star className="w-4 h-4" />
                 Leave Review
+              </Button>
+            )}
+
+            {canCancelOrder && (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={handleCancelOrder}
+                disabled={isCancelling}
+                className="gap-2"
+              >
+                <X className="w-4 h-4" />
+                {isCancelling ? t('components.orderCard.cancelling') : t('components.orderCard.cancelOrder')}
               </Button>
             )}
 
@@ -233,6 +392,91 @@ export function OrderCard({ order }: OrderCardProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Tracking Number Modal */}
+      {isTrackingModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="relative w-full max-w-md bg-background rounded-lg shadow-lg">
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                setIsTrackingModalOpen(false);
+                setSelectedStatus(null);
+              }}
+              className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-muted transition-colors"
+              aria-label="Close"
+              disabled={isUpdatingStatus}
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-full bg-primary/10">
+                  <Truck className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Mark as Shipped</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Add tracking information
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleTrackingSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="trackingNumber">
+                    Tracking Number (Optional)
+                  </Label>
+                  <Input
+                    id="trackingNumber"
+                    placeholder="Enter tracking number..."
+                    value={trackingNumber}
+                    onChange={(e) => setTrackingNumber(e.target.value)}
+                    disabled={isUpdatingStatus}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Provide a tracking number to help the buyer track their shipment
+                  </p>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => {
+                      setIsTrackingModalOpen(false);
+                      setSelectedStatus(null);
+                    }}
+                    disabled={isUpdatingStatus}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="flex-1"
+                    disabled={isUpdatingStatus}
+                  >
+                    {isUpdatingStatus ? (
+                      <>
+                        <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Truck className="w-4 h-4 mr-2" />
+                        Mark as Shipped
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Review Modal */}
       {isReviewModalOpen && (

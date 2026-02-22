@@ -68,10 +68,10 @@ const DashboardProductCard: FC<DashboardProductCardProps> = ({
         {/* Status badges */}
         <div className="absolute top-2 right-2 flex gap-2">
           <Badge
-            variant={product.isActive ? 'default' : 'secondary'}
-            className={product.isActive ? 'bg-green-600' : 'bg-gray-600'}
+            variant={product.isAvailable ? 'default' : 'secondary'}
+            className={product.isAvailable ? 'bg-green-600' : 'bg-gray-600'}
           >
-            {product.isActive ? t('pages.dashboard.products.card.active') : t('pages.dashboard.products.card.inactive')}
+            {product.isAvailable ? t('pages.dashboard.products.card.active') : t('pages.dashboard.products.card.inactive')}
           </Badge>
         </div>
       </div>
@@ -110,9 +110,9 @@ const DashboardProductCard: FC<DashboardProductCardProps> = ({
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={() => onToggleStatus(product.id, product.isActive)}
+                onClick={() => onToggleStatus(product.id, product.isAvailable)}
               >
-                {product.isActive ? (
+                {product.isAvailable ? (
                   <>
                     <EyeOff className="w-4 h-4 mr-2" />
                     {t('pages.dashboard.products.card.deactivate')}
@@ -336,8 +336,8 @@ const DashboardProductsPage: FC = () => {
         !selectedCategory || product.category === selectedCategory;
       const statusMatch =
         !selectedStatus ||
-        (selectedStatus === 'active' && product.isActive) ||
-        (selectedStatus === 'inactive' && !product.isActive);
+        (selectedStatus === 'active' && product.isAvailable) ||
+        (selectedStatus === 'inactive' && !product.isAvailable);
       return categoryMatch && statusMatch;
     });
   }, [products, selectedCategory, selectedStatus]);
@@ -356,7 +356,7 @@ const DashboardProductsPage: FC = () => {
 
   // Calculate stats
   const totalProducts = products.length;
-  const activeProducts = products.filter((p) => p.isActive).length;
+  const activeProducts = products.filter((p) => p.isAvailable).length;
 
   const handleEdit = (product: Product) => {
     router.push(`/dashboard/products/${product.id}/edit`);
@@ -371,7 +371,7 @@ const DashboardProductsPage: FC = () => {
 
       // Update product in local state
       setProducts(prev => prev.map(p =>
-        p.id === productId ? { ...p, isActive: newStatus } : p
+        p.id === productId ? { ...p, isAvailable: newStatus } : p
       ));
 
       toast.success(
