@@ -324,7 +324,7 @@ export default function CustomOrdersPage() {
         const response = await customOrdersService.getCustomOrders({
           role,
           page: 1,
-          limit: 1000,
+          limit: 100,
         });
 
         const converted = response.data.map(order => ({
@@ -349,6 +349,10 @@ export default function CustomOrdersPage() {
   }, [user, activeTab]);
 
   const allCustomOrders = customOrders;
+
+  // Get current user role and ID
+  const CURRENT_USER_ROLE = user?.role || 'BUYER';
+  const CURRENT_USER_ID = user?.id || '';
 
   // Filter orders based on tab (incoming/outgoing) - API already filters by role
   const tabFilteredOrders = useMemo(() => {
@@ -432,15 +436,15 @@ export default function CustomOrdersPage() {
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold mb-2">
-            {t('pages.dashboard.customOrders.dashboard.title')}
+            {t('pages.customOrders.dashboard.title')}
           </h1>
           <p className="text-muted-foreground">
-            {t('pages.dashboard.customOrders.dashboard.subtitle')}
+            {t('pages.customOrders.dashboard.subtitle')}
           </p>
         </div>
         <Button className="gap-2 w-fit">
           <Plus className="w-4 h-4" />
-          Create Custom Order
+          {t('pages.customOrders.create.button')}
         </Button>
       </div>
 
@@ -454,39 +458,24 @@ export default function CustomOrdersPage() {
           {CURRENT_USER_ROLE === 'BUYER' && (
             <TabsTrigger value="outgoing" className="gap-2">
               <Package className="w-4 h-4" />
-              My Requests
+              {t('pages.customOrders.dashboard.tabs.myRequests')}
               <span className="ml-1 text-xs bg-primary/10 px-1.5 py-0.5 rounded">
                 {allCustomOrders.filter((o) => o.buyerId === CURRENT_USER_ID).length}
               </span>
             </TabsTrigger>
           )}
           {CURRENT_USER_ROLE === 'SELLER' && (
-            <TabsTrigger value="incoming" className="gap-2">
-              <Package className="w-4 h-4" />
-              Incoming Requests
-              <span className="ml-1 text-xs bg-primary/10 px-1.5 py-0.5 rounded">
-                {
-                  allCustomOrders.filter(
-                    (o) =>
-                      o.sellerId === CURRENT_USER_ID ||
-                      (!o.sellerId && o.buyerId !== CURRENT_USER_ID)
-                  ).length
-                }
-              </span>
-            </TabsTrigger>
-          )}
-          {CURRENT_USER_ROLE === 'BOTH' && (
             <>
               <TabsTrigger value="outgoing" className="gap-2">
                 <Package className="w-4 h-4" />
-                My Requests
+                {t('pages.customOrders.dashboard.tabs.myRequests')}
                 <span className="ml-1 text-xs bg-primary/10 px-1.5 py-0.5 rounded">
                   {allCustomOrders.filter((o) => o.buyerId === CURRENT_USER_ID).length}
                 </span>
               </TabsTrigger>
               <TabsTrigger value="incoming" className="gap-2">
                 <Package className="w-4 h-4" />
-                Incoming
+                {t('pages.customOrders.dashboard.tabs.incomingRequests')}
                 <span className="ml-1 text-xs bg-primary/10 px-1.5 py-0.5 rounded">
                   {
                     allCustomOrders.filter(
@@ -507,7 +496,7 @@ export default function CustomOrdersPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search custom orders..."
+                placeholder={t('pages.customOrders.search.placeholder')}
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -515,7 +504,7 @@ export default function CustomOrdersPage() {
             </div>
             <Button variant="outline" size="default" className="gap-2">
               <Filter className="w-4 h-4" />
-              Filters
+              {t('common.buttons.filter')}
             </Button>
           </div>
 
@@ -526,49 +515,49 @@ export default function CustomOrdersPage() {
               size="sm"
               onClick={() => setStatusFilter('all')}
             >
-              All ({statusCounts.all})
+              {t('pages.customOrders.statusFilters.all')} ({statusCounts.all})
             </Button>
             <Button
               variant={statusFilter === 'PENDING_SELLER_RESPONSE' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setStatusFilter('PENDING_SELLER_RESPONSE')}
             >
-              Pending ({statusCounts.PENDING_SELLER_RESPONSE})
+              {t('pages.customOrders.statusFilters.pending')} ({statusCounts.PENDING_SELLER_RESPONSE})
             </Button>
             <Button
               variant={statusFilter === 'ACCEPTED' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setStatusFilter('ACCEPTED')}
             >
-              Accepted ({statusCounts.ACCEPTED})
+              {t('pages.customOrders.statusFilters.accepted')} ({statusCounts.ACCEPTED})
             </Button>
             <Button
               variant={statusFilter === 'DECLINED' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setStatusFilter('DECLINED')}
             >
-              Declined ({statusCounts.DECLINED})
+              {t('pages.customOrders.statusFilters.declined')} ({statusCounts.DECLINED})
             </Button>
             <Button
               variant={statusFilter === 'CLARIFICATION_NEEDED' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setStatusFilter('CLARIFICATION_NEEDED')}
             >
-              Clarification ({statusCounts.CLARIFICATION_NEEDED})
+              {t('pages.customOrders.statusFilters.clarification')} ({statusCounts.CLARIFICATION_NEEDED})
             </Button>
             <Button
               variant={statusFilter === 'CONVERTED_TO_ORDER' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setStatusFilter('CONVERTED_TO_ORDER')}
             >
-              Converted ({statusCounts.CONVERTED_TO_ORDER})
+              {t('pages.customOrders.statusFilters.converted')} ({statusCounts.CONVERTED_TO_ORDER})
             </Button>
             <Button
               variant={statusFilter === 'CANCELLED' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setStatusFilter('CANCELLED')}
             >
-              Cancelled ({statusCounts.CANCELLED})
+              {t('pages.customOrders.statusFilters.cancelled')} ({statusCounts.CANCELLED})
             </Button>
           </div>
 
@@ -576,8 +565,8 @@ export default function CustomOrdersPage() {
           {filteredOrders.length > 0 && (
             <div className="mb-4">
               <p className="text-sm text-muted-foreground">
-                Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems}{' '}
-                custom orders
+                {t('pages.customOrders.results.showing')} {startIndex + 1}-{Math.min(endIndex, totalItems)} {t('pages.customOrders.results.of')} {totalItems}{' '}
+                {t('pages.customOrders.results.customOrders')}
               </p>
             </div>
           )}
@@ -600,27 +589,27 @@ export default function CustomOrdersPage() {
                 <Package className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-lg font-medium mb-2">
                   {searchQuery
-                    ? 'No custom orders found'
+                    ? t('pages.customOrders.search.noResults')
                     : activeTab === 'outgoing'
-                      ? t('pages.dashboard.customOrders.dashboard.empty.noOrders')
-                      : t('pages.dashboard.customOrders.dashboard.empty.noRequests')}
+                      ? t('pages.customOrders.empty.noOrdersYet')
+                      : t('pages.customOrders.empty.noRequestsYet')}
                 </p>
                 <p className="text-sm text-muted-foreground mb-4">
                   {searchQuery
-                    ? 'Try adjusting your search or filters'
+                    ? t('pages.customOrders.search.tryAdjusting')
                     : activeTab === 'outgoing'
-                      ? 'Create a custom order to get started'
-                      : 'Check back later for new requests'}
+                      ? t('pages.customOrders.create.getStarted')
+                      : t('pages.customOrders.checkBackLater')}
                 </p>
                 {searchQuery && (
                   <Button variant="outline" onClick={() => setSearchQuery('')}>
-                    Clear Search
+                    {t('pages.customOrders.search.clearSearch')}
                   </Button>
                 )}
                 {!searchQuery && activeTab === 'outgoing' && (
                   <Button className="gap-2">
                     <Plus className="w-4 h-4" />
-                    Create Custom Order
+                    {t('pages.customOrders.create.button')}
                   </Button>
                 )}
               </div>
@@ -656,7 +645,7 @@ export default function CustomOrdersPage() {
             />
             <div className="mt-4 flex justify-end">
               <Button onClick={() => setSelectedOrder(null)} variant="outline">
-                Close
+                {t('common.buttons.close')}
               </Button>
             </div>
           </div>

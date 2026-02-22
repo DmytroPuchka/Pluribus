@@ -25,11 +25,11 @@ export default function EditProductPage() {
 
   // Redirect if not authenticated or not a seller
   useEffect(() => {
-    if (!authLoading && (!user || (user.role !== 'SELLER' && user.role !== 'BOTH'))) {
-      toast.error('Only sellers can edit products');
+    if (!authLoading && (!user || user.role !== 'SELLER')) {
+      toast.error(t('pages.dashboard.products.errors.onlySellersEdit'));
       router.push('/dashboard');
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, t]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -48,7 +48,7 @@ export default function EditProductPage() {
 
         // Check if user owns this product
         if (user && productData.sellerId !== user.id) {
-          toast.error('You can only edit your own products');
+          toast.error(t('pages.dashboard.products.errors.canOnlyEditOwn'));
           router.push('/dashboard/products');
           return;
         }
@@ -56,8 +56,8 @@ export default function EditProductPage() {
         setProduct(convertedProduct);
       } catch (error: any) {
         console.error('Error fetching product:', error);
-        const errorMessage = error?.response?.data?.error || 'Failed to load product';
-        toast.error('Error', {
+        const errorMessage = error?.response?.data?.error || t('pages.dashboard.products.errors.failedToLoad');
+        toast.error(t('common.messages.error'), {
           description: errorMessage,
         });
         router.push('/dashboard/products');

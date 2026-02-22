@@ -324,12 +324,19 @@ const DashboardProductsPage: FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
 
-  // Redirect if not authenticated
+  // Redirect if not authenticated or not a seller
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login');
+      return;
     }
-  }, [user, authLoading, router]);
+
+    // Only SELLER and BOTH roles can access products page
+    if (user && user.role === 'BUYER') {
+      toast.error(t('pages.dashboard.products.errors.onlySellersCreate'));
+      router.push('/dashboard');
+    }
+  }, [user, authLoading, router, t]);
 
   // Fetch products
   useEffect(() => {
@@ -340,7 +347,7 @@ const DashboardProductsPage: FC = () => {
       try {
         const data = await productsService.getProducts({
           sellerId: user.id,
-          limit: 100, // Fetch all products for filtering
+          limit: 50, // Fetch products for filtering
         });
 
         const convertedProducts = data.data.map(p => ({

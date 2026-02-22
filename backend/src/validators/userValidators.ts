@@ -8,7 +8,7 @@ export const updateProfileSchema = Joi.object({
   city: Joi.string().min(2).optional(),
   address: Joi.string().allow('', null).optional(),
   avatar: Joi.string().uri().allow('', null).optional(),
-  role: Joi.string().valid('BUYER', 'SELLER', 'ADMIN').optional(),
+  role: Joi.string().valid('BUYER', 'SELLER').optional(),
   deliveryCountries: Joi.array().items(Joi.string()).optional(),
 });
 

@@ -19,7 +19,7 @@ import { CountrySelect } from '@/components/CountrySelect';
 
 const onboardingSchema = z.object({
   role: z.enum(['BUYER', 'SELLER'], {
-    required_error: 'Please select a role',
+    message: 'Please select a role',
   }),
   country: z.string().min(2, 'Please select a country'),
   city: z.string().min(2, 'City is required'),

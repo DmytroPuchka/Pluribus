@@ -152,8 +152,8 @@ export default function DashboardPage() {
   const [isLoadingData, setIsLoadingData] = useState(true);
 
   // Determine capabilities based on current role
-  const canBuy = currentRole === 'BUYER' || currentRole === 'BOTH';
-  const canSell = currentRole === 'SELLER' || currentRole === 'BOTH';
+  const canBuy = currentRole === 'BUYER' || currentRole === 'SELLER';
+  const canSell = currentRole === 'SELLER';
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -239,22 +239,26 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className={`grid grid-cols-1 md:grid-cols-2 ${canSell ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-4`}>
         <StatCard
           icon={ShoppingCart}
           label={t('pages.dashboard.stats.totalOrders')}
           value={stats.totalOrders}
         />
-        <StatCard
-          icon={Package}
-          label={t('pages.dashboard.stats.activeProducts')}
-          value={stats.totalProducts}
-        />
-        <StatCard
-          icon={TrendingUp}
-          label={t('pages.dashboard.stats.totalRevenue')}
-          value={`$${totalRevenue.toFixed(2)}`}
-        />
+        {canSell && (
+          <StatCard
+            icon={Package}
+            label={t('pages.dashboard.stats.activeProducts')}
+            value={stats.totalProducts}
+          />
+        )}
+        {canSell && (
+          <StatCard
+            icon={TrendingUp}
+            label={t('pages.dashboard.stats.totalRevenue')}
+            value={`$${totalRevenue.toFixed(2)}`}
+          />
+        )}
         <StatCard
           icon={Eye}
           label={t('pages.dashboard.stats.profileViews')}
@@ -423,7 +427,7 @@ export default function DashboardPage() {
                             />
                           ) : (
                             <div className="h-full w-full flex items-center justify-center text-xs text-muted-foreground">
-                              No image
+                              {t('pages.dashboard.noImage')}
                             </div>
                           )}
                         </div>

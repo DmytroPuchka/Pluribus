@@ -65,7 +65,7 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
       try {
         const ordersData = await ordersService.getOrders({
           page: 1,
-          limit: 1000,
+          limit: 50,
         });
 
         const convertedOrders = ordersData.data.map((order) => ({
@@ -78,7 +78,9 @@ export default function OrdersPage({ searchParams }: OrdersPageProps) {
       } catch (error: any) {
         console.error('Error fetching orders:', error);
         const errorMessage =
-          error?.response?.data?.error || 'Failed to load orders';
+          typeof error?.response?.data?.error === 'string'
+            ? error.response.data.error
+            : error?.message || 'Failed to load orders';
         toast.error('Error', {
           description: errorMessage,
         });

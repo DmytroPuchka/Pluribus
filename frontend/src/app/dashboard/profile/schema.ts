@@ -6,7 +6,7 @@ export const profileFormSchema = z.object({
   country: z.string().min(1, "Please select a country"),
   city: z.string().min(1, "Please enter a city"),
   bio: z.string().max(500, "Bio must not exceed 500 characters").optional().or(z.literal("")),
-  role: z.enum(["BUYER", "SELLER", "ADMIN"], {
+  role: z.enum(["BUYER", "SELLER"], {
     message: "Please select a valid role"
   }),
   deliveryCountries: z.array(z.string()).optional(),

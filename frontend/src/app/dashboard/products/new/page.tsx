@@ -19,11 +19,11 @@ export default function NewProductPage() {
 
   // Redirect if not authenticated or not a seller
   useEffect(() => {
-    if (!authLoading && (!user || (user.role !== 'SELLER' && user.role !== 'BOTH'))) {
-      toast.error('Only sellers can create products');
+    if (!authLoading && (!user || user.role !== 'SELLER')) {
+      toast.error(t('pages.dashboard.products.errors.onlySellersCreate'));
       router.push('/dashboard');
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, t]);
 
   const handleSubmit = async (data: ProductFormData) => {
     setIsSubmitting(true);

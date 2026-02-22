@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Upload, Check, X } from "lucide-react"
+import { Upload, Check, X, ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -197,6 +198,16 @@ export default function ProfilePage() {
   return (
     <div className="container py-8 md:py-12">
       <div className="max-w-4xl">
+        {/* Back Button */}
+        <div className="mb-4">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              {t('common.buttons.back')}
+            </Link>
+          </Button>
+        </div>
+
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">{t('pages.dashboard.profile.title')}</h1>
           <p className="text-muted-foreground mt-2">
@@ -373,7 +384,6 @@ export default function ProfilePage() {
                           <SelectContent>
                             <SelectItem value="BUYER">{t('pages.dashboard.profile.personalInfo.roleBuyer')}</SelectItem>
                             <SelectItem value="SELLER">{t('pages.dashboard.profile.personalInfo.roleSeller')}</SelectItem>
-                            <SelectItem value="ADMIN">{t('pages.dashboard.profile.personalInfo.roleAdmin')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>

@@ -26,7 +26,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (user) {
       const savedRole = localStorage.getItem('pluribus_current_role') as UserRole;
-      if (savedRole && (user.role === 'BOTH' || savedRole === user.role)) {
+      if (savedRole && savedRole === user.role) {
         setCurrentRoleState(savedRole);
       } else {
         setCurrentRoleState(user.role);

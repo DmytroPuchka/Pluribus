@@ -45,7 +45,7 @@ export function DashboardSidebar({
   const { logout } = useAuth();
   const { t } = useTranslations();
 
-  const navItems = [
+  const allNavItems = [
     {
       href: '/dashboard',
       label: t('dashboard.sidebar.overview'),
@@ -66,6 +66,7 @@ export function DashboardSidebar({
       href: '/dashboard/products',
       label: t('dashboard.sidebar.products'),
       icon: Package,
+      roles: ['SELLER'], // Only for sellers
     },
     {
       href: '/dashboard/profile',
@@ -79,6 +80,12 @@ export function DashboardSidebar({
     },
   ];
 
+  // Filter navigation items based on user role
+  const navItems = allNavItems.filter(item => {
+    if (!item.roles) return true; // Show items without role restrictions
+    return item.roles.includes(user.role);
+  });
+
   const handleLogout = () => {
     logout();
     toast.success(t('auth.logout.success'));
@@ -91,8 +98,8 @@ export function DashboardSidebar({
         return `🛍️ ${t('dashboard.sidebar.roleBuyer')}`;
       case 'SELLER':
         return `🏪 ${t('dashboard.sidebar.roleSeller')}`;
-      case 'BOTH':
-        return `🔄 ${t('dashboard.sidebar.roleBoth')}`;
+      case 'ADMIN':
+        return `👑 ${t('dashboard.sidebar.roleAdmin')}`;
       default:
         return role;
     }
@@ -141,24 +148,9 @@ export function DashboardSidebar({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48">
-              {(user.role === 'BUYER' || user.role === 'BOTH') && (
-                <DropdownMenuItem onClick={() => onRoleSwitch('BUYER')}>
-                  <span>🛍️ {t('dashboard.sidebar.roleBuyer')}</span>
-                </DropdownMenuItem>
-              )}
-              {(user.role === 'SELLER' || user.role === 'BOTH') && (
-                <DropdownMenuItem onClick={() => onRoleSwitch('SELLER')}>
-                  <span>🏪 {t('dashboard.sidebar.roleSeller')}</span>
-                </DropdownMenuItem>
-              )}
-              {user.role === 'BOTH' && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onRoleSwitch('BOTH')}>
-                    <span>🔄 {t('dashboard.sidebar.roleBoth')}</span>
-                  </DropdownMenuItem>
-                </>
-              )}
+              <DropdownMenuItem onClick={() => onRoleSwitch(user.role)}>
+                <span>{getRoleLabel(user.role)}</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

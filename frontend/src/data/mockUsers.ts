@@ -46,7 +46,7 @@ export const MOCK_USERS: Record<string, User> = {
     email: 'both@test.com',
     name: 'Maria Martinez',
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop',
-    role: 'BOTH',
+    role: 'SELLER',
     country: 'Spain',
     city: 'Barcelona',
     deliveryCountries: ['Spain', 'Portugal', 'France', 'Italy', 'Germany', 'Netherlands', 'Belgium', 'United Kingdom', 'Ukraine'],
@@ -83,8 +83,8 @@ export const TEST_ACCOUNTS = [
     email: 'both@test.com',
     password: 'password123',
     name: 'Maria Martinez',
-    role: 'BOTH',
-    description: 'Test account - Buyer & Seller',
+    role: 'SELLER',
+    description: 'Test account - Seller (can buy and sell)',
   },
 ];
 
