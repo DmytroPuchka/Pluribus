@@ -59,13 +59,6 @@ export const ProductCard: FC<ProductCardProps> = ({ product, className }) => {
               {product.category}
             </Badge>
           </div>
-
-          {/* Out of Stock Badge */}
-          {product.stockQuantity !== undefined && product.stockQuantity === 0 && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <Badge variant="destructive">Out of Stock</Badge>
-            </div>
-          )}
         </div>
       </Link>
 

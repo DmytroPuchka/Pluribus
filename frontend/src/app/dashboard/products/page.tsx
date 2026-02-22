@@ -10,6 +10,8 @@ import {
   AlertCircle,
   Package,
   ChevronDown,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,6 +37,7 @@ interface DashboardProductCardProps {
   product: Product;
   onEdit: (product: Product) => void;
   onDelete: (productId: string) => void;
+  onToggleStatus: (productId: string, currentStatus: boolean) => void;
   t: (key: string, params?: Record<string, any>) => string;
 }
 
@@ -42,43 +45,9 @@ const DashboardProductCard: FC<DashboardProductCardProps> = ({
   product,
   onEdit,
   onDelete,
+  onToggleStatus,
   t,
 }) => {
-  const stockStatus =
-    product.stockQuantity === undefined
-      ? 'unknown'
-      : product.stockQuantity === 0
-        ? 'out-of-stock'
-        : product.stockQuantity < 10
-          ? 'low-stock'
-          : 'in-stock';
-
-  const getStockBadgeVariant = () => {
-    switch (stockStatus) {
-      case 'out-of-stock':
-        return 'destructive';
-      case 'low-stock':
-        return 'secondary';
-      case 'in-stock':
-        return 'default';
-      default:
-        return 'outline';
-    }
-  };
-
-  const getStockLabel = () => {
-    switch (stockStatus) {
-      case 'out-of-stock':
-        return t('pages.dashboard.products.card.outOfStock');
-      case 'low-stock':
-        return `${t('pages.dashboard.products.card.lowStock')} (${product.stockQuantity})`;
-      case 'in-stock':
-        return `${t('pages.dashboard.products.card.stock')}: ${product.stockQuantity}`;
-      default:
-        return 'Unknown';
-    }
-  };
-
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
       <div className="relative w-full h-40 bg-muted">
@@ -105,13 +74,6 @@ const DashboardProductCard: FC<DashboardProductCardProps> = ({
             {product.isActive ? t('pages.dashboard.products.card.active') : t('pages.dashboard.products.card.inactive')}
           </Badge>
         </div>
-
-        {/* Out of stock overlay */}
-        {product.stockQuantity === 0 && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <Badge variant="destructive">{t('pages.dashboard.products.card.outOfStock')}</Badge>
-          </div>
-        )}
       </div>
 
       <CardContent className="p-4">
@@ -121,35 +83,12 @@ const DashboardProductCard: FC<DashboardProductCardProps> = ({
         </h3>
 
         {/* Category and Price */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-4">
           <Badge variant="outline" className="text-xs">
             {product.category}
           </Badge>
           <PriceDisplay amount={product.price} currency={product.currency} />
         </div>
-
-        {/* Stock Status */}
-        <div className="mb-4">
-          <Badge variant={getStockBadgeVariant()} className="text-xs">
-            {getStockLabel()}
-          </Badge>
-        </div>
-
-        {/* Tags */}
-        {product.tags && product.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-4">
-            {product.tags.slice(0, 2).map((tag) => (
-              <Badge key={tag} variant="ghost" className="text-xs bg-muted">
-                {tag}
-              </Badge>
-            ))}
-            {product.tags.length > 2 && (
-              <span className="text-xs text-muted-foreground">
-                +{product.tags.length - 2}
-              </span>
-            )}
-          </div>
-        )}
 
         {/* Action Buttons */}
         <div className="flex gap-2">
@@ -169,6 +108,22 @@ const DashboardProductCard: FC<DashboardProductCardProps> = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => onToggleStatus(product.id, product.isActive)}
+              >
+                {product.isActive ? (
+                  <>
+                    <EyeOff className="w-4 h-4 mr-2" />
+                    {t('pages.dashboard.products.card.deactivate')}
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4 mr-2" />
+                    {t('pages.dashboard.products.card.activate')}
+                  </>
+                )}
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive cursor-pointer"
                 onClick={() => onDelete(product.id)}
@@ -283,7 +238,7 @@ const FilterControls: FC<FilterControlsProps> = ({
             onStatusChange(null);
           }}
         >
-          Clear Filters
+          {t('pages.dashboard.products.filters.clearFilters')}
         </Button>
       )}
     </div>
@@ -291,19 +246,23 @@ const FilterControls: FC<FilterControlsProps> = ({
 };
 
 // Empty state component
-const EmptyState: FC = () => (
+interface EmptyStateProps {
+  t: (key: string, params?: Record<string, any>) => string;
+}
+
+const EmptyState: FC<EmptyStateProps> = ({ t }) => (
   <div className="flex flex-col items-center justify-center py-16 text-center">
     <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
       <Package className="w-8 h-8 text-muted-foreground" />
     </div>
-    <h3 className="text-lg font-semibold mb-2">No Products Yet</h3>
+    <h3 className="text-lg font-semibold mb-2">{t('pages.dashboard.products.emptyState.title')}</h3>
     <p className="text-muted-foreground max-w-md mb-6">
-      You haven't added any products yet. Start by creating your first product to begin selling.
+      {t('pages.dashboard.products.emptyState.description')}
     </p>
     <Button asChild>
       <Link href="/dashboard/products/new">
         <Plus className="w-4 h-4 mr-2" />
-        Add Your First Product
+        {t('pages.dashboard.products.emptyState.button')}
       </Link>
     </Button>
   </div>
@@ -398,13 +357,39 @@ const DashboardProductsPage: FC = () => {
   // Calculate stats
   const totalProducts = products.length;
   const activeProducts = products.filter((p) => p.isActive).length;
-  const outOfStockCount = products.filter((p) => p.stockQuantity === 0).length;
-  const lowStockCount = products.filter(
-    (p) => (p.stockQuantity ?? 0) > 0 && (p.stockQuantity ?? 0) < 10
-  ).length;
 
   const handleEdit = (product: Product) => {
     router.push(`/dashboard/products/${product.id}/edit`);
+  };
+
+  const handleToggleStatus = async (productId: string, currentStatus: boolean) => {
+    try {
+      const newStatus = !currentStatus;
+      await productsService.updateProduct(productId, {
+        isAvailable: newStatus,
+      });
+
+      // Update product in local state
+      setProducts(prev => prev.map(p =>
+        p.id === productId ? { ...p, isActive: newStatus } : p
+      ));
+
+      toast.success(
+        newStatus
+          ? t('pages.dashboard.products.messages.activated')
+          : t('pages.dashboard.products.messages.deactivated'),
+        {
+          description: newStatus
+            ? t('pages.dashboard.products.messages.activatedDescription')
+            : t('pages.dashboard.products.messages.deactivatedDescription'),
+        }
+      );
+    } catch (error: any) {
+      console.error('Failed to toggle product status:', error);
+      toast.error(t('pages.dashboard.products.messages.toggleStatusError'), {
+        description: error?.response?.data?.error || t('pages.dashboard.products.messages.toggleStatusErrorDescription'),
+      });
+    }
   };
 
   const handleDelete = async (productId: string) => {
@@ -491,7 +476,7 @@ const DashboardProductsPage: FC = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -515,50 +500,7 @@ const DashboardProductsPage: FC = () => {
               </div>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t('pages.dashboard.products.stats.outOfStock')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-destructive">
-                {outOfStockCount}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t('pages.dashboard.products.stats.lowStock')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">
-                {lowStockCount}
-              </div>
-            </CardContent>
-          </Card>
         </div>
-
-        {/* Low Stock Alert */}
-        {lowStockCount > 0 && (
-          <Card className="mb-8 border-orange-200 bg-orange-50">
-            <CardContent className="pt-6 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <h4 className="font-semibold text-orange-900 mb-1">
-                  {t('pages.dashboard.products.alert.title')}
-                </h4>
-                <p className="text-sm text-orange-800">
-                  {t('pages.dashboard.products.alert.description', { count: lowStockCount })}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Filter Controls */}
         <FilterControls
@@ -593,7 +535,7 @@ const DashboardProductsPage: FC = () => {
             ))}
           </div>
         ) : filteredProducts.length === 0 && selectedCategory === null && selectedStatus === null ? (
-          <EmptyState />
+          <EmptyState t={t} />
         ) : filteredProducts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
@@ -613,6 +555,7 @@ const DashboardProductsPage: FC = () => {
                   product={product}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
+                  onToggleStatus={handleToggleStatus}
                   t={t}
                 />
               ))}

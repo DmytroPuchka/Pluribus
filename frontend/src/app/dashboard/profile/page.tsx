@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Upload, Check, X, ArrowLeft } from "lucide-react"
+import { Upload, Check, X, ArrowLeft, Star } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
@@ -46,6 +46,11 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isPasswordChanging, setIsPasswordChanging] = useState(false)
   const [deliveryCountrySearch, setDeliveryCountrySearch] = useState('')
+  const [stats, setStats] = useState({
+    averageRating: 0,
+    totalReviews: 0,
+  })
+  const [isLoadingStats, setIsLoadingStats] = useState(true)
 
   // Get sorted countries based on current language
   const sortedCountries = getSortedCountries(language)
@@ -84,6 +89,30 @@ export default function ProfilePage() {
       })
     }
   }, [user, form])
+
+  // Fetch user stats (for seller rating)
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user || user.role !== 'SELLER') {
+        setIsLoadingStats(false)
+        return
+      }
+
+      try {
+        const userStats = await usersService.getUserStats()
+        setStats({
+          averageRating: userStats.averageRating,
+          totalReviews: userStats.totalReviews,
+        })
+      } catch (error) {
+        console.error('Failed to fetch user stats:', error)
+      } finally {
+        setIsLoadingStats(false)
+      }
+    }
+
+    fetchStats()
+  }, [user])
 
   // Watch the role field to show/hide delivery countries
   const selectedRole = form.watch('role')
@@ -559,6 +588,50 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Seller Rating Section - Only for Sellers */}
+          {user.role === 'SELLER' && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('pages.dashboard.profile.rating.title')}</CardTitle>
+                <CardDescription>
+                  {t('pages.dashboard.profile.rating.description')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isLoadingStats ? (
+                  <div className="h-20 bg-muted animate-pulse rounded" />
+                ) : (
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100">
+                      <Star className="h-8 w-8 text-yellow-600 fill-yellow-600" />
+                    </div>
+                    <div>
+                      {stats.totalReviews > 0 ? (
+                        <>
+                          <p className="text-3xl font-bold">
+                            {stats.averageRating.toFixed(1)} <span className="text-yellow-600">★</span>
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {t('pages.dashboard.profile.rating.reviewsCount', { count: stats.totalReviews })}
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-xl font-semibold text-muted-foreground">
+                            {t('pages.dashboard.stats.noRatings')}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {t('pages.dashboard.profile.rating.noReviewsYet')}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Change Password Section */}
           <Card>

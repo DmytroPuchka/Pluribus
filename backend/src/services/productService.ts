@@ -41,6 +41,23 @@ export class ProductService {
    * Create new product (seller only)
    */
   async createProduct(sellerId: string, data: CreateProductData) {
+    // Check if user exists and upgrade to seller if needed
+    const user = await prisma.user.findUnique({
+      where: { id: sellerId },
+    });
+
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+
+    // Auto-upgrade to SELLER role if creating first product
+    if (user.role === 'BUYER') {
+      await prisma.user.update({
+        where: { id: sellerId },
+        data: { role: 'SELLER' },
+      });
+    }
+
     const product = await prisma.product.create({
       data: {
         ...data,

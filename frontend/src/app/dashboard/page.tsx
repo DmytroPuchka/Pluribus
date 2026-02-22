@@ -22,6 +22,7 @@ import {
   Users,
   History,
   Repeat,
+  Star,
 } from 'lucide-react';
 import { Order, Product, User } from '@/types';
 import { useTranslations } from '@/contexts/TranslationsContext';
@@ -203,7 +204,7 @@ export default function DashboardPage() {
   }, [user, canSell]);
 
   const totalRevenue = products.reduce(
-    (sum, product) => sum + product.price * (product.stockQuantity || 1),
+    (sum, product) => sum + Number(product.price) * (product.stockQuantity || 1),
     0
   );
 
@@ -259,11 +260,13 @@ export default function DashboardPage() {
             value={`$${totalRevenue.toFixed(2)}`}
           />
         )}
-        <StatCard
-          icon={Eye}
-          label={t('pages.dashboard.stats.profileViews')}
-          value={stats.averageRating.toFixed(1)}
-        />
+        {canSell && (
+          <StatCard
+            icon={Star}
+            label={t('pages.dashboard.stats.sellerRating')}
+            value={stats.totalReviews > 0 ? `${stats.averageRating.toFixed(1)} ★ (${stats.totalReviews})` : t('pages.dashboard.stats.noRatings')}
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -436,7 +439,7 @@ export default function DashboardPage() {
                             {product.title}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            ${product.price.toFixed(2)} · {t('pages.dashboard.activeProducts.stock')}: {product.stockQuantity}
+                            ${Number(product.price).toFixed(2)} · {t('pages.dashboard.activeProducts.stock')}: {product.stockQuantity}
                           </p>
                         </div>
                       </div>

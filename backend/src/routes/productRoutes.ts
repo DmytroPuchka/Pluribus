@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import productController from '../controllers/productController';
-import { authenticate, authorize } from '../middleware/auth';
+import { authenticate } from '../middleware/auth';
 import { validate, validateParams, validateQuery } from '../utils/validation';
 import {
   createProductSchema,
@@ -24,13 +24,12 @@ router.get(
 
 /**
  * @route   POST /api/v1/products
- * @desc    Create product (seller only)
- * @access  Private (Seller)
+ * @desc    Create product (authenticated users, auto-upgrades to seller)
+ * @access  Private
  */
 router.post(
   '/',
   authenticate,
-  authorize('SELLER'),
   validate(createProductSchema),
   productController.createProduct.bind(productController)
 );
@@ -48,13 +47,12 @@ router.get(
 
 /**
  * @route   PUT /api/v1/products/:id
- * @desc    Update product (seller only)
- * @access  Private (Seller)
+ * @desc    Update product (owner or admin)
+ * @access  Private
  */
 router.put(
   '/:id',
   authenticate,
-  authorize('SELLER'),
   validateParams(productIdSchema),
   validate(updateProductSchema),
   productController.updateProduct.bind(productController)
@@ -62,13 +60,12 @@ router.put(
 
 /**
  * @route   DELETE /api/v1/products/:id
- * @desc    Delete product (seller only)
- * @access  Private (Seller)
+ * @desc    Delete product (owner or admin)
+ * @access  Private
  */
 router.delete(
   '/:id',
   authenticate,
-  authorize('SELLER'),
   validateParams(productIdSchema),
   productController.deleteProduct.bind(productController)
 );

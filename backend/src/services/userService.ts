@@ -197,10 +197,13 @@ export class UserService {
       userId: user.id,
       role: user.role,
       productsCount: user._count.productsAsSeller,
+      totalProducts: user._count.productsAsSeller,
       ordersAsBuyer: user._count.ordersAsBuyer,
       ordersAsSeller: user._count.ordersAsSeller,
+      totalOrders: user._count.ordersAsBuyer + user._count.ordersAsSeller,
       reviewsGiven: user._count.reviewsGiven,
       reviewsReceived: user._count.reviewsReceived,
+      totalReviews: user._count.reviewsReceived,
       averageRating: parseFloat(averageRating.toFixed(2)),
     };
   }

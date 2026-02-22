@@ -61,7 +61,6 @@ export interface ProductFormData {
   price: number;
   currency: string;
   category: ProductCategory;
-  tags: string;
   photos: File[];
   existingPhotos?: string[];
 }
@@ -85,8 +84,10 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
       .positive({ message: t('pages.productForm.validation.pricePositive') })
       .max(1000000, { message: t('pages.productForm.validation.priceMaxExceeded') }),
     currency: z.string().min(1, { message: t('pages.productForm.validation.currencyRequired') }),
-    category: z.string().min(1, { message: t('pages.productForm.validation.categoryRequired') }),
-    tags: z.string(),
+    category: z.string().min(1, { message: t('pages.productForm.validation.categoryRequired') }).refine(
+      (val) => val !== '',
+      { message: t('pages.productForm.validation.categoryRequired') }
+    ),
     photos: z.array(z.instanceof(File)).optional(),
     existingPhotos: z.array(z.string()).optional(),
   });
@@ -98,10 +99,9 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
     defaultValues: {
       title: product?.title || '',
       description: product?.description || '',
-      price: product?.price || undefined,
+      price: product?.price ? Number(product.price) : 0,
       currency: product?.currency || 'UAH',
-      category: product?.category || undefined,
-      tags: product?.tags?.join(', ') || '',
+      category: product?.category || '',
       photos: [],
       existingPhotos: product?.photos || [],
     },
@@ -162,7 +162,6 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
       price: values.price,
       currency: values.currency,
       category: values.category as ProductCategory,
-      tags: values.tags,
       photos: photoFiles,
       existingPhotos: values.existingPhotos,
     };
@@ -298,8 +297,11 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
                         type="number"
                         step="0.01"
                         placeholder="99.99"
-                        {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                        value={field.value || ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === '' ? 0 : parseFloat(value) || 0);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -314,7 +316,7 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t('pages.productForm.form.currency')}</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder={t('pages.productForm.form.currencyPlaceholder')} />
@@ -341,7 +343,7 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('pages.productForm.form.category')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value || undefined}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder={t('pages.productForm.form.categoryPlaceholder')} />
@@ -360,21 +362,6 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
               )}
             />
 
-            {/* Tags */}
-            <FormField
-              control={form.control}
-              name="tags"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('pages.productForm.form.tags')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t('pages.productForm.form.tagsPlaceholder')} {...field} />
-                  </FormControl>
-                  <FormDescription>{t('pages.productForm.form.tagsDescription')}</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </CardContent>
         </Card>
 

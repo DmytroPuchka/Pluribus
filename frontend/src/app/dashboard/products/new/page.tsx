@@ -28,11 +28,6 @@ export default function NewProductPage() {
   const handleSubmit = async (data: ProductFormData) => {
     setIsSubmitting(true);
     try {
-      // Parse tags from comma-separated string to array
-      const tagsArray = data.tags
-        ? data.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
-        : [];
-
       // TODO: Upload photos to Cloudinary and get URLs
       // For now, use placeholder URLs for uploaded photos
       const photoUrls = data.existingPhotos || [];
@@ -50,8 +45,7 @@ export default function NewProductPage() {
         photos: photoUrls,
         price: data.price,
         category: data.category,
-        tags: tagsArray,
-        stockQuantity: 1, // Default stock quantity
+        stockQuantity: 999999, // Default unlimited stock
       });
 
       toast.success(t('pages.productForm.messages.createSuccess'));

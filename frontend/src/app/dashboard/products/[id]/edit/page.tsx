@@ -72,11 +72,6 @@ export default function EditProductPage() {
   const handleSubmit = async (data: ProductFormData) => {
     setIsSubmitting(true);
     try {
-      // Parse tags from comma-separated string to array
-      const tagsArray = data.tags
-        ? data.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
-        : [];
-
       // Handle photos: combine existing + new uploads
       const photoUrls = data.existingPhotos || [];
       if (data.photos && data.photos.length > 0) {
@@ -94,7 +89,6 @@ export default function EditProductPage() {
         photos: photoUrls,
         price: data.price,
         category: data.category,
-        tags: tagsArray,
       });
 
       toast.success(t('pages.productForm.messages.updateSuccess'));

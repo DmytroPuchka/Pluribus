@@ -757,9 +757,9 @@
         "category": "Категорія",
         "categoryPlaceholder": "Виберіть категорію",
         "stockQuantity": "Кількість на складі",
-        "tags": "Теги (опціонально)",
-        "tagsPlaceholder": "напр. handmade, vintage, eco-friendly",
-        "tagsDescription": "Додайте теги через кому для кращого пошуку (необов'язково)",
+        "stockQuantityDescription": "Введіть кількість товарів, доступних на складі",
+        "unlimitedStock": "Необмежена кількість",
+        "unlimitedStockDescription": "Відмітьте це, якщо у вас необмежена кількість цього товару",
         "submit": "Додати товар"
       },
       "validation": {
@@ -986,6 +986,8 @@
         "activeProducts": "Активні продукти",
         "totalRevenue": "Загальний дохід",
         "profileViews": "Перегляди профілю",
+        "sellerRating": "Рейтинг продавця",
+        "noRatings": "Ще немає оцінок",
         "fromLastMonth": "з минулого місяця"
       },
       "recentOrders": {
@@ -1066,6 +1068,12 @@
           "notVerified": "Не верифіковано",
           "verify": "Верифікувати"
         },
+        "rating": {
+          "title": "Рейтинг продавця",
+          "description": "Ваш рейтинг на основі відгуків покупців",
+          "reviewsCount": "На основі {count} відгуків",
+          "noReviewsYet": "Завершіть ваше перше замовлення, щоб отримувати відгуки"
+        },
         "security": {
           "title": "Безпека",
           "description": "Керуйте своїм паролем та налаштуваннями безпеки",
@@ -1135,6 +1143,11 @@
           "noProductsDescription": "Ви ще не додали жодного продукту. Почніть зі створення свого першого продукту.",
           "addFirstProduct": "Додати ваш перший продукт"
         },
+        "emptyState": {
+          "title": "Ще немає продуктів",
+          "description": "Ви ще не додали жодного продукту. Почніть зі створення свого першого продукту, щоб почати продаж.",
+          "button": "Додати ваш перший продукт"
+        },
         "card": {
           "stock": "Залишок",
           "outOfStock": "Немає в наявності",
@@ -1143,6 +1156,8 @@
           "inactive": "Неактивний",
           "edit": "Редагувати",
           "delete": "Видалити",
+          "activate": "Активувати",
+          "deactivate": "Деактивувати",
           "unknown": "Невідомо"
         },
         "confirmDelete": "Ви впевнені, що хочете видалити цей продукт?",
@@ -1150,7 +1165,13 @@
           "deleteSuccess": "Продукт видалено",
           "deleteSuccessDescription": "Продукт успішно видалено",
           "deleteError": "Не вдалося видалити продукт",
-          "deleteErrorDescription": "Виникла помилка при видаленні продукту"
+          "deleteErrorDescription": "Виникла помилка при видаленні продукту",
+          "activated": "Продукт активовано",
+          "activatedDescription": "Продукт тепер видимий для покупців",
+          "deactivated": "Продукт деактивовано",
+          "deactivatedDescription": "Продукт тепер прихований від покупців",
+          "toggleStatusError": "Не вдалося змінити статус продукту",
+          "toggleStatusErrorDescription": "Виникла помилка при зміні статусу продукту"
         },
         "errors": {
           "onlySellersCreate": "Тільки продавці можуть створювати продукти",

@@ -42,7 +42,14 @@ export const authorize = (...allowedRoles: UserRole[]) => {
       throw new UnauthorizedError('Authentication required');
     }
 
-    if (!allowedRoles.includes((req.user as JwtPayload).role)) {
+    const userRole = (req.user as JwtPayload).role;
+
+    // Admin can access everything
+    if (userRole === 'ADMIN') {
+      return next();
+    }
+
+    if (!allowedRoles.includes(userRole)) {
       throw new ForbiddenError('Insufficient permissions');
     }
 

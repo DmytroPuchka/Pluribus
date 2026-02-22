@@ -23,7 +23,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Product, User, Review } from '@/types';
 import { cn, truncate } from '@/lib/utils';
 import { ImageGallery } from './components/ImageGallery';
-import { StockStatus } from './components/StockStatus';
 import { useTranslations } from '@/contexts/TranslationsContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { productsService, reviewsService, ordersService } from '@/lib/api';
@@ -307,22 +306,16 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
             </div>
           </div>
 
-          {/* Stock Status */}
-          <div className="bg-muted/50 rounded-lg p-4">
-            <p className="text-muted-foreground text-sm mb-2">{t('pages.productDetail.details.availability')}</p>
-            <StockStatus quantity={product.stockQuantity} />
-          </div>
-
           {/* Action Buttons */}
           <div className="space-y-3">
             <Button
               size="lg"
               className="w-full"
-              disabled={product.stockQuantity === 0 || !product.isActive}
+              disabled={!product.isActive}
               onClick={handleBuyNow}
             >
               <ShoppingCart className="w-4 h-4" />
-              {product.stockQuantity === 0 ? t('pages.productDetail.details.outOfStock') : t('pages.productDetail.details.addToCart')}
+              {t('pages.productDetail.details.addToCart')}
             </Button>
 
             <Button variant="outline" size="lg" className="w-full">
@@ -343,20 +336,6 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
               {product.description}
             </p>
           </div>
-
-          {/* Tags */}
-          {product.tags && product.tags.length > 0 && (
-            <div>
-              <h3 className="font-semibold mb-2 text-sm">{t('pages.productDetail.details.tags')}</h3>
-              <div className="flex flex-wrap gap-2">
-                {product.tags.map((tag, index) => (
-                  <Badge key={index} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
