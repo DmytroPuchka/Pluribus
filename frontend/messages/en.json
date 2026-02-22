@@ -224,10 +224,10 @@
       "confirmPassword": "Confirm Password",
       "country": "Country",
       "city": "City",
-      "role": "I want to be a",
+      "role": "How do you plan to use",
       "roleOptions": {
-        "buyer": "Buyer",
-        "seller": "Seller",
+        "buyer": "Only receive",
+        "seller": "Send and receive",
         "both": "Both Buyer & Seller"
       },
       "roleDescription": "You can change this later in your profile settings",
@@ -270,7 +270,15 @@
         "deliveryCountriesRequired": "Please select at least one delivery country."
       },
       "errors": {
-        "emailExists": "This email is already registered",
+        "emailExists": {
+          "title": "Email Already Exists",
+          "description": "This email is already registered. Please use a different email or sign in to your existing account.",
+          "field": "This email is already in use"
+        },
+        "general": {
+          "title": "Registration Failed",
+          "description": "Something went wrong. Please try again."
+        },
         "weakPassword": "Password is too weak",
         "mustAcceptTerms": "You must accept the terms and conditions"
       },
@@ -993,7 +1001,7 @@
           "roleDescription": "Choose whether you want to buy, sell, or do both on Pluribus",
           "roleBuyer": "Buyer",
           "roleSeller": "Seller",
-          "roleBoth": "Buyer & Seller",
+          "roleAdmin": "Administrator",
           "saving": "Saving...",
           "saveChanges": "Save Changes"
         },

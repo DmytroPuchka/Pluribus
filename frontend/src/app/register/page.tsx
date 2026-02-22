@@ -25,36 +25,19 @@ import { Mail, Lock, User, Globe, MapPin, UserCheck, Truck } from 'lucide-react'
 import { useTranslations } from '@/contexts/TranslationsContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-
-const countries = [
-  'United States',
-  'Canada',
-  'United Kingdom',
-  'Australia',
-  'Germany',
-  'France',
-  'Italy',
-  'Spain',
-  'Ukraine',
-  'Poland',
-  'Japan',
-  'China',
-  'India',
-  'Brazil',
-  'Mexico',
-  'South Korea',
-  'Netherlands',
-  'Belgium',
-  'Portugal',
-  'Singapore',
-  'Taiwan',
-  'Other',
-];
+import { CountrySelect } from '@/components/CountrySelect';
+import { countries, getCountryName, getSortedCountries } from '@/utils/countries';
 
 export default function RegisterPage() {
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const { register: registerUser } = useAuth();
   const router = useRouter();
+
+  // Get sorted countries based on current language
+  const sortedCountries = getSortedCountries(language);
+
+  // Search state for delivery countries
+  const [deliveryCountrySearch, setDeliveryCountrySearch] = useState('');
 
   const registrationSchema = z.object({
     name: z.string().min(2, {
@@ -104,13 +87,21 @@ export default function RegisterPage() {
       confirmPassword: '',
       country: '',
       city: '',
-      role: 'BUYER',
+      role: 'SELLER',
       deliveryCountries: [],
     },
   });
 
   // Watch the role field to show/hide delivery countries
   const selectedRole = form.watch('role');
+
+  // Filter countries based on search
+  const filteredCountries = sortedCountries.filter((country) => {
+    const searchLower = deliveryCountrySearch.toLowerCase();
+    const countryName = language === 'uk' ? country.uk : country.en;
+    return countryName.toLowerCase().includes(searchLower) ||
+           country.en.toLowerCase().includes(searchLower);
+  });
 
   async function onSubmit(values: RegistrationFormValues) {
     setIsLoading(true);
@@ -136,27 +127,36 @@ export default function RegisterPage() {
         router.push('/dashboard');
       }, 1000);
     } catch (error: any) {
-      console.error('Registration error:', error);
-      const errorMessage = error?.response?.data?.error || 'Registration failed. Please try again.';
-      toast.error('Registration failed', {
-        description: errorMessage,
-      });
+      // Handle specific error codes
+      if (error?.response?.status === 409) {
+        // Email already exists - this is expected behavior, not a critical error
+        console.log('Registration attempt with existing email:', error?.response?.data);
+
+        toast.error(t('auth.signup.errors.emailExists.title'), {
+          description: t('auth.signup.errors.emailExists.description'),
+        });
+        // Highlight the email field
+        form.setError('email', {
+          type: 'manual',
+          message: t('auth.signup.errors.emailExists.field'),
+        });
+      } else {
+        // Generic error - log for debugging
+        console.error('Registration error:', error);
+        const errorMessage = error?.response?.data?.error || 'Registration failed. Please try again.';
+        toast.error(t('auth.signup.errors.general.title'), {
+          description: errorMessage,
+        });
+      }
     } finally {
       setIsLoading(false);
     }
   }
 
-  const handleGoogleSignUp = async () => {
-    setIsLoading(true);
-    try {
-      // TODO: Replace with actual Google OAuth implementation
-      console.log('Google sign up clicked');
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('Google sign up error:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleGoogleSignUp = () => {
+    // Redirect to Google OAuth endpoint
+    // Backend will handle creating new user or linking existing account
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
   };
 
   return (
@@ -319,18 +319,15 @@ export default function RegisterPage() {
                         {t('auth.signup.country')}
                       </FormLabel>
                       <FormControl>
-                        <select
+                        <CountrySelect
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          placeholder={t('auth.signup.placeholders.country')}
+                          searchPlaceholder={t('auth.onboarding.location.countrySearchPlaceholder')}
+                          emptyMessage={t('auth.onboarding.location.countryEmptyMessage')}
+                          language={language}
                           disabled={isLoading}
-                          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                          {...field}
-                        >
-                          <option value="">{t('auth.signup.placeholders.country')}</option>
-                          {countries.map((country) => (
-                            <option key={country} value={country}>
-                              {country}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -375,8 +372,8 @@ export default function RegisterPage() {
                           className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
                           {...field}
                         >
-                          <option value="BUYER">{t('auth.signup.roleOptions.buyer')}</option>
                           <option value="SELLER">{t('auth.signup.roleOptions.seller')}</option>
+                          <option value="BUYER">{t('auth.signup.roleOptions.buyer')}</option>
                         </select>
                       </FormControl>
                       <FormDescription className="text-xs">
@@ -401,27 +398,39 @@ export default function RegisterPage() {
                         <FormDescription className="text-xs mb-3">
                           {t('auth.signup.deliveryCountriesDescription')}
                         </FormDescription>
+                        <div className="mb-3">
+                          <Input
+                            type="text"
+                            placeholder={t('auth.onboarding.location.countrySearchPlaceholder')}
+                            value={deliveryCountrySearch}
+                            onChange={(e) => setDeliveryCountrySearch(e.target.value)}
+                            disabled={isLoading}
+                            className="w-full"
+                          />
+                        </div>
                         <div className="border rounded-md p-4 max-h-60 overflow-y-auto space-y-3">
-                          {countries.map((country) => (
+                          {filteredCountries.length > 0 ? (
+                            filteredCountries.map((country) => (
                             <FormField
-                              key={country}
+                              key={country.code}
                               control={form.control}
                               name="deliveryCountries"
                               render={({ field }) => {
+                                const countryName = language === 'uk' ? country.uk : country.en;
                                 return (
                                   <FormItem
-                                    key={country}
+                                    key={country.code}
                                     className="flex flex-row items-center space-x-3 space-y-0"
                                   >
                                     <FormControl>
                                       <Checkbox
-                                        checked={field.value?.includes(country)}
+                                        checked={field.value?.includes(country.en)}
                                         onCheckedChange={(checked) => {
                                           return checked
-                                            ? field.onChange([...(field.value || []), country])
+                                            ? field.onChange([...(field.value || []), country.en])
                                             : field.onChange(
                                                 field.value?.filter(
-                                                  (value) => value !== country
+                                                  (value) => value !== country.en
                                                 )
                                               );
                                         }}
@@ -429,13 +438,18 @@ export default function RegisterPage() {
                                       />
                                     </FormControl>
                                     <FormLabel className="font-normal cursor-pointer">
-                                      {country}
+                                      {countryName}
                                     </FormLabel>
                                   </FormItem>
                                 );
                               }}
                             />
-                          ))}
+                          ))
+                          ) : (
+                            <p className="text-sm text-muted-foreground text-center py-4">
+                              {t('auth.onboarding.location.countryEmptyMessage')}
+                            </p>
+                          )}
                         </div>
                         <FormMessage />
                       </FormItem>

@@ -14,8 +14,8 @@ export const registerSchema = Joi.object({
     'string.max': 'Name must not exceed 100 characters',
     'any.required': 'Name is required',
   }),
-  role: Joi.string().valid('buyer', 'seller').default('buyer').messages({
-    'any.only': 'Role must be either buyer or seller',
+  role: Joi.string().valid('BUYER', 'SELLER').default('BUYER').messages({
+    'any.only': 'Role must be either BUYER or SELLER',
   }),
   country: Joi.string().min(2).required().messages({
     'any.required': 'Country is required',

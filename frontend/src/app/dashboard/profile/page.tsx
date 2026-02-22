@@ -33,6 +33,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { usersService } from '@/lib/api'
 import { toast } from 'sonner'
 import { CountrySelect } from '@/components/CountrySelect'
+import { getSortedCountries } from '@/utils/countries'
+import { Checkbox } from '@/components/ui/checkbox'
 
 export default function ProfilePage() {
   const { t, language } = useTranslations()
@@ -42,6 +44,10 @@ export default function ProfilePage() {
   const [isPasswordOpen, setIsPasswordOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isPasswordChanging, setIsPasswordChanging] = useState(false)
+  const [deliveryCountrySearch, setDeliveryCountrySearch] = useState('')
+
+  // Get sorted countries based on current language
+  const sortedCountries = getSortedCountries(language)
 
   // Redirect if not logged in
   useEffect(() => {
@@ -58,7 +64,8 @@ export default function ProfilePage() {
       country: user?.country || '',
       city: user?.city || '',
       bio: user?.bio || '',
-      role: user?.role.toLowerCase() as 'buyer' | 'seller' || 'buyer',
+      role: user?.role || 'BUYER',
+      deliveryCountries: user?.deliveryCountries || [],
     },
   })
 
@@ -71,10 +78,22 @@ export default function ProfilePage() {
         country: user.country,
         city: user.city,
         bio: user.bio || '',
-        role: user.role.toLowerCase() as 'buyer' | 'seller',
+        role: user.role,
+        deliveryCountries: user.deliveryCountries || [],
       })
     }
   }, [user, form])
+
+  // Watch the role field to show/hide delivery countries
+  const selectedRole = form.watch('role')
+
+  // Filter countries based on search
+  const filteredCountries = sortedCountries.filter((country) => {
+    const searchLower = deliveryCountrySearch.toLowerCase();
+    const countryName = language === 'uk' ? country.uk : country.en;
+    return countryName.toLowerCase().includes(searchLower) ||
+           country.en.toLowerCase().includes(searchLower);
+  })
 
   const passwordForm = useForm<ChangePasswordData>({
     resolver: zodResolver(changePasswordSchema),
@@ -84,11 +103,6 @@ export default function ProfilePage() {
       confirmPassword: "",
     },
   })
-
-  const selectedCountry = form.watch("country")
-  const availableCities = COUNTRIES.find(c => c.value === selectedCountry)
-    ? CITIES_BY_COUNTRY[selectedCountry] || []
-    : []
 
   const onProfilePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -111,6 +125,7 @@ export default function ProfilePage() {
         bio: data.bio,
         country: data.country,
         city: data.city,
+        deliveryCountries: data.role === 'SELLER' ? data.deliveryCountries : undefined,
         // TODO: Add avatar upload with Cloudinary
       })
 
@@ -309,20 +324,12 @@ export default function ProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t('pages.dashboard.profile.personalInfo.city')}</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t('pages.dashboard.profile.personalInfo.cityPlaceholder')} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {availableCities.map(city => (
-                              <SelectItem key={city} value={city}>
-                                {city}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <FormControl>
+                          <Input
+                            placeholder={t('pages.dashboard.profile.personalInfo.cityPlaceholder')}
+                            {...field}
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -364,9 +371,9 @@ export default function ProfilePage() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="buyer">{t('pages.dashboard.profile.personalInfo.roleBuyer')}</SelectItem>
-                            <SelectItem value="seller">{t('pages.dashboard.profile.personalInfo.roleSeller')}</SelectItem>
-                            <SelectItem value="both">{t('pages.dashboard.profile.personalInfo.roleBoth')}</SelectItem>
+                            <SelectItem value="BUYER">{t('pages.dashboard.profile.personalInfo.roleBuyer')}</SelectItem>
+                            <SelectItem value="SELLER">{t('pages.dashboard.profile.personalInfo.roleSeller')}</SelectItem>
+                            <SelectItem value="ADMIN">{t('pages.dashboard.profile.personalInfo.roleAdmin')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>
@@ -376,6 +383,76 @@ export default function ProfilePage() {
                       </FormItem>
                     )}
                   />
+
+                  {/* Delivery Countries Field - Only for Sellers */}
+                  {selectedRole === 'SELLER' && (
+                    <FormField
+                      control={form.control}
+                      name="deliveryCountries"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>{t('auth.signup.deliveryCountries')}</FormLabel>
+                          <FormDescription className="text-xs mb-3">
+                            {t('auth.signup.deliveryCountriesDescription')}
+                          </FormDescription>
+                          <div className="mb-3">
+                            <Input
+                              type="text"
+                              placeholder={t('auth.onboarding.location.countrySearchPlaceholder')}
+                              value={deliveryCountrySearch}
+                              onChange={(e) => setDeliveryCountrySearch(e.target.value)}
+                              disabled={isSaving}
+                              className="w-full"
+                            />
+                          </div>
+                          <div className="border rounded-md p-4 max-h-60 overflow-y-auto space-y-3">
+                            {filteredCountries.length > 0 ? (
+                              filteredCountries.map((country) => (
+                                <FormField
+                                  key={country.code}
+                                  control={form.control}
+                                  name="deliveryCountries"
+                                  render={({ field }) => {
+                                    const countryName = language === 'uk' ? country.uk : country.en;
+                                    return (
+                                      <FormItem
+                                        key={country.code}
+                                        className="flex flex-row items-center space-x-3 space-y-0"
+                                      >
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value?.includes(country.en)}
+                                            onCheckedChange={(checked) => {
+                                              return checked
+                                                ? field.onChange([...(field.value || []), country.en])
+                                                : field.onChange(
+                                                    field.value?.filter(
+                                                      (value) => value !== country.en
+                                                    )
+                                                  );
+                                            }}
+                                            disabled={isSaving}
+                                          />
+                                        </FormControl>
+                                        <FormLabel className="font-normal cursor-pointer">
+                                          {countryName}
+                                        </FormLabel>
+                                      </FormItem>
+                                    );
+                                  }}
+                                />
+                              ))
+                            ) : (
+                              <p className="text-sm text-muted-foreground text-center py-4">
+                                {t('auth.onboarding.location.countryEmptyMessage')}
+                              </p>
+                            )}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
 
                   <Button type="submit" disabled={isSaving}>
                     {isSaving ? t('pages.dashboard.profile.personalInfo.saving') : t('pages.dashboard.profile.personalInfo.saveChanges')}
