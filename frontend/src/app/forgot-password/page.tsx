@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/form'
 import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { useTranslations } from '@/contexts/TranslationsContext'
+import { apiClient } from '@/lib/api'
+import { toast } from 'sonner'
 
 export default function ForgotPasswordPage() {
   const { t } = useTranslations()
@@ -49,22 +51,24 @@ export default function ForgotPasswordPage() {
       setIsLoading(true)
       setError('')
 
-      // TODO: Implement actual password reset API call
-      console.log('Password reset requested for:', values.email)
-      // Example: const response = await fetch('/api/auth/forgot-password', {
-      //   method: 'POST',
-      //   body: JSON.stringify(values)
-      // })
+      // Request password reset
+      await apiClient.post('/auth/forgot-password', {
+        email: values.email,
+      })
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1200))
+      toast.success(t('auth.forgotPassword.success.title'), {
+        description: t('auth.forgotPassword.success.message'),
+      })
 
       setSubmittedEmail(values.email)
       setIsSubmitted(true)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Forgot password error:', err)
-      setError(t('auth.forgotPassword.errors.generic'))
-      form.setError('root', { message: t('auth.forgotPassword.errors.failedToProcess') })
+      const errorMessage = err?.response?.data?.error || t('auth.forgotPassword.errors.generic')
+      setError(errorMessage)
+      toast.error(t('auth.forgotPassword.errors.failedToProcess'), {
+        description: errorMessage,
+      })
     } finally {
       setIsLoading(false)
     }
@@ -74,18 +78,21 @@ export default function ForgotPasswordPage() {
     try {
       setIsLoading(true)
 
-      // TODO: Implement actual resend email API call
-      console.log('Resending password reset email to:', submittedEmail)
-      // Example: const response = await fetch('/api/auth/forgot-password/resend', {
-      //   method: 'POST',
-      //   body: JSON.stringify({ email: submittedEmail })
-      // })
+      // Resend password reset email
+      await apiClient.post('/auth/forgot-password', {
+        email: submittedEmail,
+      })
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-    } catch (err) {
+      toast.success(t('auth.forgotPassword.resend.success'), {
+        description: t('auth.forgotPassword.success.message'),
+      })
+    } catch (err: any) {
       console.error('Resend error:', err)
-      setError(t('auth.forgotPassword.errors.failedToResend'))
+      const errorMessage = err?.response?.data?.error || t('auth.forgotPassword.errors.failedToResend')
+      setError(errorMessage)
+      toast.error(t('auth.forgotPassword.errors.failedToResend'), {
+        description: errorMessage,
+      })
     } finally {
       setIsLoading(false)
     }

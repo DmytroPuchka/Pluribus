@@ -9,6 +9,10 @@ import {
   resendVerificationEmail,
   checkVerificationStatus,
 } from '../controllers/verificationController';
+import {
+  requestPasswordReset,
+  resetPassword,
+} from '../controllers/passwordResetController';
 
 const router = Router();
 
@@ -92,5 +96,19 @@ router.post('/resend-verification', authRateLimiter, resendVerificationEmail);
  * @access  Private
  */
 router.get('/verification-status', authenticate, checkVerificationStatus);
+
+/**
+ * @route   POST /api/v1/auth/forgot-password
+ * @desc    Request password reset email
+ * @access  Public
+ */
+router.post('/forgot-password', authRateLimiter, requestPasswordReset);
+
+/**
+ * @route   POST /api/v1/auth/reset-password
+ * @desc    Reset password with token
+ * @access  Public
+ */
+router.post('/reset-password', authRateLimiter, resetPassword);
 
 export default router;

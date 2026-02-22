@@ -42,6 +42,10 @@ model User {
   phoneVerified            Boolean   @default(false)
   idVerified               Boolean   @default(false)
 
+  // Password reset
+  passwordResetToken       String?   @unique
+  passwordResetExpires     DateTime?
+
   // Account status
   isActive        Boolean  @default(true)
   isSuspended     Boolean  @default(false)

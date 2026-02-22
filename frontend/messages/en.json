@@ -210,7 +210,12 @@
       },
       "messages": {
         "success": "Login successful!",
-        "failed": "Login failed. Please try again."
+        "welcomeBack": "Welcome back!",
+        "failed": "Login failed",
+        "invalidCredentials": "Invalid email or password",
+        "emailNotVerified": "Please verify your email address before logging in",
+        "accountInactive": "Account is inactive or suspended",
+        "useGoogleSignIn": "This account uses Google Sign In. Please sign in with Google"
       }
     },
     "signup": {
@@ -304,7 +309,8 @@
       },
       "resend": {
         "button": "Didn't receive the email? Resend",
-        "sending": "Sending..."
+        "sending": "Sending...",
+        "success": "Email sent successfully!"
       },
       "help": {
         "trouble": "Having trouble?",

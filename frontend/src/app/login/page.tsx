@@ -70,7 +70,7 @@ export default function LoginPage() {
 
       // Login successful
       toast.success(t('auth.login.messages.success'), {
-        description: `Welcome back!`,
+        description: t('auth.login.messages.welcomeBack'),
       })
 
       // Redirect to products page
@@ -79,9 +79,28 @@ export default function LoginPage() {
       }, 300)
     } catch (error: any) {
       console.error('Login error:', error)
-      const errorMessage = error?.response?.data?.error || 'Invalid email or password'
-      toast.error(t('auth.login.messages.failed'), {
-        description: errorMessage,
+      const backendError = error?.response?.data?.error || ''
+
+      // Map backend errors to localized messages
+      let errorMessage = t('auth.login.messages.failed')
+      let errorDescription = backendError
+
+      if (backendError.includes('Invalid email or password')) {
+        errorMessage = t('auth.login.messages.invalidCredentials')
+        errorDescription = ''
+      } else if (backendError.includes('verify your email')) {
+        errorMessage = t('auth.login.messages.emailNotVerified')
+        errorDescription = ''
+      } else if (backendError.includes('inactive or suspended')) {
+        errorMessage = t('auth.login.messages.accountInactive')
+        errorDescription = ''
+      } else if (backendError.includes('Google Sign In')) {
+        errorMessage = t('auth.login.messages.useGoogleSignIn')
+        errorDescription = ''
+      }
+
+      toast.error(errorMessage, {
+        description: errorDescription || undefined,
       })
     } finally {
       setIsLoading(false)

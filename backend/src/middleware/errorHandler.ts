@@ -31,14 +31,12 @@ export const errorHandler = (
 
   // Send error response
   res.status(statusCode).json({
-    error: {
-      message: err.message || 'Internal Server Error',
-      statusCode,
-      ...(process.env.NODE_ENV === 'development' && {
-        stack: err.stack,
-        isOperational,
-      }),
-    },
+    error: err.message || 'Internal Server Error',
+    statusCode,
+    ...(process.env.NODE_ENV === 'development' && {
+      stack: err.stack,
+      isOperational,
+    }),
   });
 };
 
