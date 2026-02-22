@@ -9,7 +9,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
-  register: (data: RegisterRequest) => Promise<void>;
+  register: (data: RegisterRequest) => Promise<any>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   isLoading: boolean;
@@ -60,7 +60,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const register = async (data: RegisterRequest) => {
     try {
       const authResponse = await authService.register(data);
-      setUser(authResponse.user);
+      // Only set user if email verification is not required
+      if (!authResponse.requiresEmailVerification) {
+        setUser(authResponse.user);
+      }
+      return authResponse;
     } catch (error) {
       console.error('Registration error:', error);
       throw error;

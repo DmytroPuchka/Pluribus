@@ -18,8 +18,8 @@ export class AuthController {
         res,
         {
           user: result.user,
-          accessToken: result.tokens.accessToken,
-          refreshToken: result.tokens.refreshToken,
+          message: result.message,
+          requiresEmailVerification: result.requiresEmailVerification,
         },
         201
       );

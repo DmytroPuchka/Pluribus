@@ -107,7 +107,7 @@ export default function RegisterPage() {
     setIsLoading(true);
     try {
       // Register user via API
-      await registerUser({
+      const response = await registerUser({
         email: values.email,
         password: values.password,
         name: values.name,
@@ -117,15 +117,28 @@ export default function RegisterPage() {
         deliveryCountries: values.role === 'SELLER' ? values.deliveryCountries : undefined,
       });
 
-      // Show success message
-      toast.success('Registration successful!', {
-        description: `Welcome to Pluribus, ${values.name}!`,
-      });
+      // Check if email verification is required
+      if (response?.requiresEmailVerification) {
+        // Show success message about email verification
+        toast.success('Registration successful!', {
+          description: 'Please check your email to verify your account.',
+        });
 
-      // Redirect to dashboard after short delay
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 1000);
+        // Redirect to email verification sent page
+        setTimeout(() => {
+          router.push(`/email-verification-sent?email=${encodeURIComponent(values.email)}`);
+        }, 1000);
+      } else {
+        // Show success message for immediate login
+        toast.success('Registration successful!', {
+          description: `Welcome to Pluribus, ${values.name}!`,
+        });
+
+        // Redirect to dashboard after short delay
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 1000);
+      }
     } catch (error: any) {
       // Handle specific error codes
       if (error?.response?.status === 409) {

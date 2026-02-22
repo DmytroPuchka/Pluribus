@@ -3,6 +3,8 @@ import { hashPassword, comparePassword } from '../utils/password';
 import { generateTokens, verifyRefreshToken, TokenPayload } from '../utils/jwt';
 import { UnauthorizedError, ConflictError } from '../middleware/errorHandler';
 import { UserRole } from '../types';
+import { generateEmailVerificationToken } from '../utils/generateToken';
+import { sendVerificationEmail } from './emailService';
 
 export interface RegisterData {
   email: string;
@@ -40,7 +42,11 @@ export class AuthService {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user
+    // Generate email verification token
+    const verificationToken = generateEmailVerificationToken(email, email);
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    // Create user with email verification fields
     const user = await prisma.user.create({
       data: {
         email,
@@ -52,6 +58,9 @@ export class AuthService {
         phone,
         bio,
         deliveryCountries: deliveryCountries || [],
+        emailVerificationToken: verificationToken,
+        emailVerificationExpires: verificationExpires,
+        emailVerified: false,
       },
       select: {
         id: true,
@@ -71,25 +80,18 @@ export class AuthService {
       },
     });
 
-    // Generate tokens
-    const tokens = generateTokens({
-      userId: user.id,
-      email: user.email,
-      role: user.role as UserRole,
-    });
-
-    // Save refresh token to database
-    await prisma.refreshToken.create({
-      data: {
-        userId: user.id,
-        token: tokens.refreshToken,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      },
-    });
+    // Send verification email
+    try {
+      await sendVerificationEmail(user.email, user.name, verificationToken);
+    } catch (error) {
+      console.error('Failed to send verification email:', error);
+      // Don't fail registration if email fails - user can request resend
+    }
 
     return {
       user,
-      tokens,
+      message: 'Registration successful. Please check your email to verify your account.',
+      requiresEmailVerification: true,
     };
   }
 
@@ -123,6 +125,11 @@ export class AuthService {
 
     if (!isPasswordValid) {
       throw new UnauthorizedError('Invalid email or password');
+    }
+
+    // Check if email is verified
+    if (!user.emailVerified) {
+      throw new UnauthorizedError('Please verify your email address before logging in. Check your inbox for the verification link.');
     }
 
     // Generate tokens

@@ -3,6 +3,12 @@ import authController from '../controllers/authController';
 import { validate } from '../utils/validation';
 import { registerSchema, loginSchema, refreshTokenSchema } from '../validators/authValidators';
 import { authRateLimiter } from '../config/rateLimiter';
+import { authenticate } from '../middleware/auth';
+import {
+  verifyEmail,
+  resendVerificationEmail,
+  checkVerificationStatus,
+} from '../controllers/verificationController';
 
 const router = Router();
 
@@ -65,5 +71,26 @@ router.get('/google', authController.googleAuth.bind(authController));
  * @access  Public
  */
 router.get('/google/callback', authController.googleCallback.bind(authController));
+
+/**
+ * @route   POST /api/v1/auth/verify-email
+ * @desc    Verify email address with token
+ * @access  Public
+ */
+router.post('/verify-email', authRateLimiter, verifyEmail);
+
+/**
+ * @route   POST /api/v1/auth/resend-verification
+ * @desc    Resend verification email
+ * @access  Public
+ */
+router.post('/resend-verification', authRateLimiter, resendVerificationEmail);
+
+/**
+ * @route   GET /api/v1/auth/verification-status
+ * @desc    Check email verification status
+ * @access  Private
+ */
+router.get('/verification-status', authenticate, checkVerificationStatus);
 
 export default router;

@@ -385,6 +385,52 @@
       "success": "Email verified successfully!",
       "error": "Invalid or expired verification link"
     },
+    "emailVerification": {
+      "sent": {
+        "title": "Check your email",
+        "message": "We've sent a verification link to",
+        "instructions": "Please check your inbox and click the verification link to complete your registration.",
+        "note": "The email may take a few minutes to arrive.",
+        "didntReceive": "Didn't receive the email?",
+        "checkSpam": "Check your spam folder or click the button below to resend.",
+        "resendButton": "Resend verification email",
+        "resending": "Resending...",
+        "resendIn": "Resend in {seconds} seconds",
+        "backToLogin": "Back to login",
+        "contactSupport": "Contact support",
+        "success": {
+          "title": "Email sent!",
+          "message": "We've sent a new verification email to your address."
+        },
+        "error": {
+          "tooManyRequests": "Too many requests. Please wait before requesting another verification email.",
+          "generic": "Failed to resend email. Please try again."
+        }
+      },
+      "verify": {
+        "verifying": "Verifying your email...",
+        "success": {
+          "title": "Email verified!",
+          "message": "Your email has been verified successfully. You can now log in to your account.",
+          "button": "Continue to login"
+        },
+        "alreadyVerified": {
+          "title": "Already verified",
+          "message": "This email has already been verified. You can log in to your account.",
+          "button": "Go to login"
+        },
+        "failed": {
+          "title": "Verification failed",
+          "message": "The verification link is invalid or has expired. Please request a new verification email.",
+          "button": "Request new verification email"
+        },
+        "expired": {
+          "title": "Link expired",
+          "message": "The verification link has expired. Please request a new one.",
+          "button": "Resend verification email"
+        }
+      }
+    },
     "logout": {
       "success": "You have successfully logged out"
     },

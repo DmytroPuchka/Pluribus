@@ -18,10 +18,13 @@ import type {
 export async function register(data: RegisterRequest): Promise<AuthResponse> {
   const response = await apiClient.post<ApiResponse<AuthResponse>>('/auth/register', data);
 
-  // Save tokens
-  const { accessToken, refreshToken } = response.data.data;
-  setAccessToken(accessToken);
-  setRefreshToken(refreshToken);
+  // Save tokens only if email verification is not required
+  const { accessToken, refreshToken, requiresEmailVerification } = response.data.data;
+
+  if (!requiresEmailVerification && accessToken && refreshToken) {
+    setAccessToken(accessToken);
+    setRefreshToken(refreshToken);
+  }
 
   return response.data.data;
 }
