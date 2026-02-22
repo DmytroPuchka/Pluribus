@@ -32,8 +32,8 @@ function CallbackContent() {
           description: 'Welcome to Pluribus',
         });
 
-        // Redirect to home page with full page reload to refresh auth context
-        window.location.href = '/';
+        // Redirect to products page with full page reload to refresh auth context
+        window.location.href = '/products';
       } else {
         toast.error('Authentication failed', {
           description: 'Missing authentication tokens',

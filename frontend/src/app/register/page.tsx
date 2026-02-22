@@ -134,9 +134,9 @@ export default function RegisterPage() {
           description: `Welcome to Pluribus, ${values.name}!`,
         });
 
-        // Redirect to dashboard after short delay
+        // Redirect to products page after short delay
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/products');
         }, 1000);
       }
     } catch (error: any) {

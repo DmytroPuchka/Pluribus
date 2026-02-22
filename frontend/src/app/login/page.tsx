@@ -73,9 +73,9 @@ export default function LoginPage() {
         description: `Welcome back!`,
       })
 
-      // Redirect to dashboard or home
+      // Redirect to products page
       setTimeout(() => {
-        router.push('/dashboard')
+        router.push('/products')
       }, 300)
     } catch (error: any) {
       console.error('Login error:', error)
