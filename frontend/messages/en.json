@@ -79,7 +79,26 @@
       "cancelSuccess": "Order cancelled",
       "cancelSuccessDescription": "Your order has been cancelled successfully",
       "cancelErrorTitle": "Cancellation failed",
-      "cancelError": "Failed to cancel order"
+      "cancelError": "Failed to cancel order",
+      "updateOrderStatus": "Update Order Status"
+    },
+    "imageUpload": {
+      "upload": "Upload Images",
+      "uploading": "Uploading...",
+      "uploadError": "Failed to upload images. Please try again."
+    },
+    "avatarUpload": {
+      "upload": "Upload Avatar",
+      "change": "Change Avatar",
+      "remove": "Remove",
+      "uploading": "Uploading...",
+      "success": "Avatar uploaded successfully",
+      "error": "Failed to upload avatar",
+      "removed": "Avatar removed successfully",
+      "removeError": "Failed to remove avatar",
+      "invalidType": "Only JPEG, JPG, PNG, and WebP images are allowed",
+      "fileTooLarge": "File size must be less than 5MB",
+      "hint": "Recommended: Square image, at least 400x400px"
     }
   },
   "header": {
@@ -662,23 +681,189 @@
       },
       "why": {
         "title": "Why Pluribus?",
-        "subtitle": "We've built a platform that removes the barriers of international shopping, making it as easy as local commerce."
+        "subtitle": "We've built a platform that removes the barriers of international shopping, making it as easy as local commerce.",
+        "features": {
+          "countries": {
+            "title": "50+ Countries",
+            "description": "Access sellers from across the globe"
+          },
+          "securePayments": {
+            "title": "Secure Payments",
+            "description": "Escrow protection for every transaction"
+          },
+          "communication": {
+            "title": "Direct Communication",
+            "description": "Chat with sellers in real-time"
+          },
+          "reviews": {
+            "title": "Verified Reviews",
+            "description": "Trust through transparency and ratings"
+          }
+        }
       },
       "forBuyers": {
         "title": "For Buyers",
-        "subtitle": "Follow these simple steps to find and purchase products from sellers worldwide"
+        "subtitle": "Follow these simple steps to find and purchase products from sellers worldwide",
+        "steps": {
+          "step1": {
+            "title": "Create Your Account",
+            "description": "Sign up for free with your email or social account. Set up your profile with your shipping information and preferences.",
+            "feature1": "Takes less than 2 minutes",
+            "feature2": "No fees required to join",
+            "feature3": "Verify your email for security"
+          },
+          "step2": {
+            "title": "Browse Products & Sellers",
+            "description": "Explore our catalog or use the interactive map to find sellers. Read reviews and ratings from other buyers to make informed decisions.",
+            "feature1": "Filter by location, price, and ratings",
+            "feature2": "View detailed seller profiles",
+            "feature3": "Check shipping availability to your country"
+          },
+          "step3": {
+            "title": "Connect with Sellers",
+            "description": "Have questions about a product? Message the seller directly. Discuss specifications, shipping costs, and custom orders through our real-time chat.",
+            "feature1": "Instant messaging with sellers",
+            "feature2": "Negotiate prices and shipping",
+            "feature3": "Request custom items or bundles"
+          },
+          "step4": {
+            "title": "Place Your Order",
+            "description": "Once you're ready, place your order on the platform. Your payment is secured through escrow until you confirm receipt.",
+            "feature1": "Multiple payment options available",
+            "feature2": "Secure payment processing with Stripe",
+            "feature3": "Clear order summary and terms"
+          },
+          "step5": {
+            "title": "Track & Receive",
+            "description": "Seller ships your order, and you can track it in real-time. Get updates at each step of the delivery process.",
+            "feature1": "Real-time tracking updates",
+            "feature2": "Receive at your doorstep",
+            "feature3": "Chat with seller during shipping"
+          },
+          "step6": {
+            "title": "Rate & Review",
+            "description": "Share your experience by rating the seller and leaving a review. Your feedback helps other buyers and builds a trusted community.",
+            "feature1": "5-star rating system",
+            "feature2": "Write detailed reviews",
+            "feature3": "Verified purchase badge on reviews"
+          }
+        }
       },
       "forSellers": {
         "title": "For Sellers",
-        "subtitle": "Start selling to customers around the world in just a few steps"
+        "subtitle": "Start selling to customers around the world in just a few steps",
+        "steps": {
+          "step1": {
+            "title": "Set Up Your Seller Account",
+            "description": "Register as a seller and complete your business profile. Provide your business details, shipping capabilities, and payment information.",
+            "feature1": "Verify your business information",
+            "feature2": "Add payment method for payouts",
+            "feature3": "Set up shipping preferences"
+          },
+          "step2": {
+            "title": "List Your Products",
+            "description": "Create product listings with detailed descriptions, prices, and high-quality images. Specify shipping destinations and delivery times.",
+            "feature1": "Upload multiple product images",
+            "feature2": "Set competitive pricing",
+            "feature3": "Define shipping zones and costs"
+          },
+          "step3": {
+            "title": "Respond to Inquiries",
+            "description": "Buyers will message you with questions, custom requests, and negotiations. Respond quickly to build your reputation and close more sales.",
+            "feature1": "Real-time chat notifications",
+            "feature2": "Negotiate on pricing and terms",
+            "feature3": "Create custom quotes"
+          },
+          "step4": {
+            "title": "Process Orders",
+            "description": "When a buyer places an order, you receive payment through escrow. Money is held securely until the buyer confirms receipt.",
+            "feature1": "Instant order notifications",
+            "feature2": "Secure payment in escrow",
+            "feature3": "Clear order details and requirements"
+          },
+          "step5": {
+            "title": "Ship & Track",
+            "description": "Pack and ship the order using your preferred carrier. Add tracking information so buyers can monitor their shipment in real-time.",
+            "feature1": "Integrate with major carriers",
+            "feature2": "Auto-update buyer on shipment status",
+            "feature3": "Print shipping labels directly"
+          },
+          "step6": {
+            "title": "Receive Payment & Build Reputation",
+            "description": "Once buyer confirms receipt, payment is released to your account. Build your reputation through positive ratings and reviews to attract more customers.",
+            "feature1": "Instant payout upon confirmation",
+            "feature2": "Build seller rating and reviews",
+            "feature3": "Access seller analytics dashboard"
+          }
+        }
       },
       "faq": {
         "title": "Frequently Asked Questions",
-        "subtitle": "Have questions? Find answers to the most common questions about using Pluribus"
+        "subtitle": "Have questions? Find answers to the most common questions about using Pluribus",
+        "questions": {
+          "q1": {
+            "question": "Is it safe to buy on Pluribus?",
+            "answer": "Yes! Pluribus uses escrow protection for all transactions. Your payment is held securely until you confirm receipt of the product. We also verify seller identities and maintain a transparent review system."
+          },
+          "q2": {
+            "question": "What are the payment methods?",
+            "answer": "We accept all major credit and debit cards through Stripe integration. Additional payment methods may be available depending on your location. All payments are encrypted and secure."
+          },
+          "q3": {
+            "question": "How long does shipping take?",
+            "answer": "Shipping times vary depending on the seller's location and your destination. Each product listing shows estimated delivery times. International shipments typically take 7-30 days depending on the route."
+          },
+          "q4": {
+            "question": "What if I don't receive my order?",
+            "answer": "We have a comprehensive buyer protection policy. If you don't receive your order, contact us immediately with tracking information. We'll work with the seller and carrier to resolve the issue or provide a refund."
+          },
+          "q5": {
+            "question": "Are there any hidden fees?",
+            "answer": "No hidden fees! For buyers, you see the full price upfront including shipping. For sellers, we charge a small transaction fee (clearly disclosed) to cover payment processing and platform maintenance."
+          },
+          "q6": {
+            "question": "How do I become a seller?",
+            "answer": "Sign up for a seller account, complete your business profile, and add your products. Our team will verify your information, and once approved, you can start accepting orders within 24-48 hours."
+          },
+          "q7": {
+            "question": "Can I request custom items?",
+            "answer": "Absolutely! Message sellers directly to discuss custom orders or special requests. Many sellers are happy to accommodate specific requirements. You can negotiate terms and pricing through our chat feature."
+          },
+          "q8": {
+            "question": "What about customs and taxes?",
+            "answer": "Buyers are responsible for any customs duties or import taxes based on their country's regulations. Sellers will declare the item value accurately on customs forms. Check your local customs regulations before ordering."
+          }
+        }
       },
       "security": {
         "title": "Your Safety is Our Priority",
-        "subtitle": "We've implemented multiple layers of protection to ensure safe and secure transactions for all users"
+        "subtitle": "We've implemented multiple layers of protection to ensure safe and secure transactions for all users",
+        "features": {
+          "securePayments": {
+            "title": "Secure Payments",
+            "description": "All transactions processed through Stripe with industry-leading encryption and fraud detection"
+          },
+          "escrowProtection": {
+            "title": "Escrow Protection",
+            "description": "Funds held securely until buyer confirms receipt and seller protection against chargebacks"
+          },
+          "verifiedUsers": {
+            "title": "Verified Users",
+            "description": "Email verification and seller account validation ensure you're communicating with legitimate users"
+          },
+          "transparentReviews": {
+            "title": "Transparent Reviews",
+            "description": "Verified purchase reviews with seller response ratings help identify trustworthy partners"
+          },
+          "directCommunication": {
+            "title": "Direct Communication",
+            "description": "All messages routed through our platform for transparency and dispute resolution support"
+          },
+          "buyerProtection": {
+            "title": "Buyer Protection",
+            "description": "Comprehensive claims process protects against fraud and non-delivery issues"
+          }
+        }
       },
       "cta": {
         "title": "Ready to Get Started?",
@@ -792,6 +977,7 @@
         "tagsRequired": "Please add at least one tag",
         "stockRequired": "Stock quantity is required",
         "stockMinValue": "Stock quantity cannot be negative",
+        "photosRequired": "At least one photo is required",
         "photosMaxCount": "You can upload maximum 5 photos",
         "photoSizeExceeded": "Each photo must be less than 5MB"
       },
@@ -1066,13 +1252,15 @@
         "stock": "Stock"
       },
       "orderStatus": {
-        "PENDING": "Pending",
-        "ACCEPTED": "Accepted",
+        "PENDING": "Awaiting Confirmation",
+        "ACCEPTED": "Confirmed & In Progress",
         "PAID": "Paid",
+        "PROCESSING": "Processing",
         "SHIPPED": "Shipped",
         "DELIVERED": "Delivered",
         "COMPLETED": "Completed",
         "CANCELLED": "Cancelled",
+        "REFUNDED": "Refunded",
         "DISPUTED": "Disputed"
       },
       "profile": {

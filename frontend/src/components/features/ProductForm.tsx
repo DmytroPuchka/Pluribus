@@ -27,8 +27,11 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { Product, ProductCategory } from '@/types';
 import { cn } from '@/lib/utils';
+import { apiClient } from '@/lib/api';
+import { toast } from 'sonner';
 
 const CATEGORIES: ProductCategory[] = [
   'ELECTRONICS',
@@ -62,15 +65,13 @@ export interface ProductFormData {
   price: number;
   currency: string;
   category: ProductCategory;
-  photos: File[];
-  existingPhotos?: string[];
+  photos: string[];
   isAvailable?: boolean;
 }
 
 export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: ProductFormProps) {
   const { t } = useTranslations();
-  const [photoPreviews, setPhotoPreviews] = useState<string[]>(product?.photos || []);
-  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [photoUrls, setPhotoUrls] = useState<string[]>(product?.photos || []);
 
   const productFormSchema = z.object({
     title: z
@@ -90,8 +91,10 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
       (val) => val !== '',
       { message: t('pages.productForm.validation.categoryRequired') }
     ),
-    photos: z.array(z.instanceof(File)).optional(),
-    existingPhotos: z.array(z.string()).optional(),
+    photos: z
+      .array(z.string().url())
+      .min(1, { message: t('pages.productForm.validation.photosRequired') })
+      .max(5, { message: t('pages.productForm.validation.photosMaxCount') }),
     isAvailable: z.boolean().optional(),
   });
 
@@ -105,58 +108,40 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
       price: product?.price ? Number(product.price) : 0,
       currency: product?.currency || 'UAH',
       category: product?.category || '',
-      photos: [],
-      existingPhotos: product?.photos || [],
+      photos: product?.photos || [],
       isAvailable: product?.isAvailable ?? true,
     },
   });
 
-  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    const totalFiles = [...photoFiles, ...files];
+  const handlePhotoUpload = async (files: File[]): Promise<string[]> => {
+    try {
+      const uploadPromises = files.map(async (file) => {
+        const formData = new FormData();
+        formData.append('photos', file);
+        formData.append('productId', product?.id || 'temp');
 
-    if (photoPreviews.length + totalFiles.length > 5) {
-      form.setError('photos', {
-        type: 'manual',
-        message: t('pages.productForm.validation.photosMaxCount'),
+        const response = await apiClient.post('/upload/product-photos', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        return response.data.data.urls[0];
       });
-      return;
-    }
 
-    // Validate file sizes
-    const invalidFiles = files.filter((file) => file.size > 5 * 1024 * 1024);
-    if (invalidFiles.length > 0) {
-      form.setError('photos', {
-        type: 'manual',
-        message: t('pages.productForm.validation.photoSizeExceeded'),
-      });
-      return;
+      const urls = await Promise.all(uploadPromises);
+      return urls;
+    } catch (error) {
+      console.error('Photo upload error:', error);
+      toast.error(t('components.imageUpload.uploadError'));
+      throw error;
     }
-
-    // Create previews
-    const newPreviews = files.map((file) => URL.createObjectURL(file));
-    setPhotoPreviews([...photoPreviews, ...newPreviews]);
-    setPhotoFiles([...photoFiles, ...files]);
-    form.setValue('photos', [...photoFiles, ...files]);
   };
 
-  const removePhoto = (index: number) => {
-    const isExistingPhoto = index < (product?.photos?.length || 0);
-
-    if (isExistingPhoto) {
-      // Remove from existing photos
-      const existingPhotos = form.getValues('existingPhotos') || [];
-      const newExistingPhotos = existingPhotos.filter((_, i) => i !== index);
-      form.setValue('existingPhotos', newExistingPhotos);
-      setPhotoPreviews(photoPreviews.filter((_, i) => i !== index));
-    } else {
-      // Remove from new photos
-      const newFileIndex = index - (product?.photos?.length || 0);
-      const newFiles = photoFiles.filter((_, i) => i !== newFileIndex);
-      setPhotoFiles(newFiles);
-      form.setValue('photos', newFiles);
-      setPhotoPreviews(photoPreviews.filter((_, i) => i !== index));
-    }
+  const handlePhotosChange = (urls: string[]) => {
+    setPhotoUrls(urls);
+    form.setValue('photos', urls);
+    form.clearErrors('photos');
   };
 
   const handleSubmit = async (values: ProductFormValues) => {
@@ -166,8 +151,7 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
       price: values.price,
       currency: values.currency,
       category: values.category as ProductCategory,
-      photos: photoFiles,
-      existingPhotos: values.existingPhotos,
+      photos: values.photos,
       isAvailable: values.isAvailable,
     };
 
@@ -225,63 +209,21 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
             <FormField
               control={form.control}
               name="photos"
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('pages.productForm.form.photos')}</FormLabel>
                   <FormControl>
-                    <div className="space-y-4">
-                      {/* Photo previews */}
-                      {photoPreviews.length > 0 && (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                          {photoPreviews.map((preview, index) => (
-                            <div
-                              key={index}
-                              className="relative aspect-square rounded-lg border overflow-hidden group"
-                            >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={preview}
-                                alt={`Preview ${index + 1}`}
-                                className="w-full h-full object-cover"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => removePhoto(index)}
-                                className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                aria-label={t('pages.productForm.form.removePhoto', { number: index + 1 })}
-                              >
-                                <X className="h-4 w-4" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Upload button */}
-                      {photoPreviews.length < 5 && (
-                        <div className="flex items-center gap-3">
-                          <label
-                            htmlFor="photo-upload"
-                            className={cn(
-                              'flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed rounded-lg cursor-pointer transition-colors',
-                              'hover:border-primary hover:bg-accent',
-                              'text-sm text-muted-foreground hover:text-foreground'
-                            )}
-                          >
-                            <Upload className="h-4 w-4" />
-                            <span>{t('pages.productForm.form.photosPlaceholder', { count: photoPreviews.length })}</span>
-                          </label>
-                          <Input
-                            id="photo-upload"
-                            type="file"
-                            accept="image/jpeg,image/jpg,image/png,image/webp"
-                            multiple
-                            onChange={handlePhotoChange}
-                            className="hidden"
-                          />
-                        </div>
-                      )}
-                    </div>
+                    <ImageUpload
+                      value={photoUrls}
+                      onChange={handlePhotosChange}
+                      onUpload={handlePhotoUpload}
+                      maxFiles={5}
+                      maxSize={5}
+                      uploadText={t('components.imageUpload.upload')}
+                      uploadingText={t('components.imageUpload.uploading')}
+                      aspectRatio="square"
+                      disabled={isSubmitting}
+                    />
                   </FormControl>
                   <FormDescription>{t('pages.productForm.form.photosDescription')}</FormDescription>
                   <FormMessage />

@@ -54,9 +54,9 @@ export default function HowItWorks() {
             <Card>
               <CardContent className="pt-6">
                 <Globe2 className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">50+ Countries</h3>
+                <h3 className="font-semibold mb-2">{t('pages.howItWorks.why.features.countries.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Access sellers from across the globe
+                  {t('pages.howItWorks.why.features.countries.description')}
                 </p>
               </CardContent>
             </Card>
@@ -64,9 +64,9 @@ export default function HowItWorks() {
             <Card>
               <CardContent className="pt-6">
                 <Shield className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Secure Payments</h3>
+                <h3 className="font-semibold mb-2">{t('pages.howItWorks.why.features.securePayments.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Escrow protection for every transaction
+                  {t('pages.howItWorks.why.features.securePayments.description')}
                 </p>
               </CardContent>
             </Card>
@@ -74,9 +74,9 @@ export default function HowItWorks() {
             <Card>
               <CardContent className="pt-6">
                 <MessageSquare className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Direct Communication</h3>
+                <h3 className="font-semibold mb-2">{t('pages.howItWorks.why.features.communication.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Chat with sellers in real-time
+                  {t('pages.howItWorks.why.features.communication.description')}
                 </p>
               </CardContent>
             </Card>
@@ -84,9 +84,9 @@ export default function HowItWorks() {
             <Card>
               <CardContent className="pt-6">
                 <Star className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Verified Reviews</h3>
+                <h3 className="font-semibold mb-2">{t('pages.howItWorks.why.features.reviews.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Trust through transparency and ratings
+                  {t('pages.howItWorks.why.features.reviews.description')}
                 </p>
               </CardContent>
             </Card>
@@ -115,27 +115,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Create Your Account
+                        {t('pages.howItWorks.forBuyers.steps.step1.title')}
                       </h3>
                       <Users className="h-5 w-5 text-blue-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Sign up for free with your email or social account. Set
-                      up your profile with your shipping information and
-                      preferences.
+                      {t('pages.howItWorks.forBuyers.steps.step1.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Takes less than 2 minutes
+                        {t('pages.howItWorks.forBuyers.steps.step1.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        No fees required to join
+                        {t('pages.howItWorks.forBuyers.steps.step1.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Verify your email for security
+                        {t('pages.howItWorks.forBuyers.steps.step1.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -153,27 +151,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Browse Products & Sellers
+                        {t('pages.howItWorks.forBuyers.steps.step2.title')}
                       </h3>
                       <Search className="h-5 w-5 text-blue-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Explore our catalog or use the interactive map to find
-                      sellers. Read reviews and ratings from other buyers to
-                      make informed decisions.
+                      {t('pages.howItWorks.forBuyers.steps.step2.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Filter by location, price, and ratings
+                        {t('pages.howItWorks.forBuyers.steps.step2.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        View detailed seller profiles
+                        {t('pages.howItWorks.forBuyers.steps.step2.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Check shipping availability to your country
+                        {t('pages.howItWorks.forBuyers.steps.step2.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -191,27 +187,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Connect with Sellers
+                        {t('pages.howItWorks.forBuyers.steps.step3.title')}
                       </h3>
                       <MessageSquare className="h-5 w-5 text-blue-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Have questions about a product? Message the seller
-                      directly. Discuss specifications, shipping costs, and
-                      custom orders through our real-time chat.
+                      {t('pages.howItWorks.forBuyers.steps.step3.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Instant messaging with sellers
+                        {t('pages.howItWorks.forBuyers.steps.step3.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Negotiate prices and shipping
+                        {t('pages.howItWorks.forBuyers.steps.step3.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Request custom items or bundles
+                        {t('pages.howItWorks.forBuyers.steps.step3.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -229,27 +223,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Place Your Order
+                        {t('pages.howItWorks.forBuyers.steps.step4.title')}
                       </h3>
                       <Package className="h-5 w-5 text-blue-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Once you're ready, place your order on the platform.
-                      Your payment is secured through escrow until you confirm
-                      receipt.
+                      {t('pages.howItWorks.forBuyers.steps.step4.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Multiple payment options available
+                        {t('pages.howItWorks.forBuyers.steps.step4.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Secure payment processing with Stripe
+                        {t('pages.howItWorks.forBuyers.steps.step4.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Clear order summary and terms
+                        {t('pages.howItWorks.forBuyers.steps.step4.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -267,27 +259,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Track & Receive
+                        {t('pages.howItWorks.forBuyers.steps.step5.title')}
                       </h3>
                       <Truck className="h-5 w-5 text-blue-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Seller ships your order, and you can track it in
-                      real-time. Get updates at each step of the delivery
-                      process.
+                      {t('pages.howItWorks.forBuyers.steps.step5.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Real-time tracking updates
+                        {t('pages.howItWorks.forBuyers.steps.step5.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Receive at your doorstep
+                        {t('pages.howItWorks.forBuyers.steps.step5.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Chat with seller during shipping
+                        {t('pages.howItWorks.forBuyers.steps.step5.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -305,27 +295,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Rate & Review
+                        {t('pages.howItWorks.forBuyers.steps.step6.title')}
                       </h3>
                       <Star className="h-5 w-5 text-blue-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Share your experience by rating the seller and leaving a
-                      review. Your feedback helps other buyers and builds a
-                      trusted community.
+                      {t('pages.howItWorks.forBuyers.steps.step6.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        5-star rating system
+                        {t('pages.howItWorks.forBuyers.steps.step6.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Write detailed reviews
+                        {t('pages.howItWorks.forBuyers.steps.step6.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Verified purchase badge on reviews
+                        {t('pages.howItWorks.forBuyers.steps.step6.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -357,27 +345,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Set Up Your Seller Account
+                        {t('pages.howItWorks.forSellers.steps.step1.title')}
                       </h3>
                       <Users className="h-5 w-5 text-green-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Register as a seller and complete your business profile.
-                      Provide your business details, shipping capabilities, and
-                      payment information.
+                      {t('pages.howItWorks.forSellers.steps.step1.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Verify your business information
+                        {t('pages.howItWorks.forSellers.steps.step1.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Add payment method for payouts
+                        {t('pages.howItWorks.forSellers.steps.step1.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Set up shipping preferences
+                        {t('pages.howItWorks.forSellers.steps.step1.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -395,27 +381,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        List Your Products
+                        {t('pages.howItWorks.forSellers.steps.step2.title')}
                       </h3>
                       <Package className="h-5 w-5 text-green-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Create product listings with detailed descriptions,
-                      prices, and high-quality images. Specify shipping
-                      destinations and delivery times.
+                      {t('pages.howItWorks.forSellers.steps.step2.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Upload multiple product images
+                        {t('pages.howItWorks.forSellers.steps.step2.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Set competitive pricing
+                        {t('pages.howItWorks.forSellers.steps.step2.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Define shipping zones and costs
+                        {t('pages.howItWorks.forSellers.steps.step2.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -433,27 +417,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Respond to Inquiries
+                        {t('pages.howItWorks.forSellers.steps.step3.title')}
                       </h3>
                       <MessageSquare className="h-5 w-5 text-green-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Buyers will message you with questions, custom requests,
-                      and negotiations. Respond quickly to build your reputation
-                      and close more sales.
+                      {t('pages.howItWorks.forSellers.steps.step3.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Real-time chat notifications
+                        {t('pages.howItWorks.forSellers.steps.step3.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Negotiate on pricing and terms
+                        {t('pages.howItWorks.forSellers.steps.step3.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Create custom quotes
+                        {t('pages.howItWorks.forSellers.steps.step3.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -471,27 +453,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Process Orders
+                        {t('pages.howItWorks.forSellers.steps.step4.title')}
                       </h3>
                       <CreditCard className="h-5 w-5 text-green-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      When a buyer places an order, you receive payment through
-                      escrow. Money is held securely until the buyer confirms
-                      receipt.
+                      {t('pages.howItWorks.forSellers.steps.step4.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Instant order notifications
+                        {t('pages.howItWorks.forSellers.steps.step4.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Secure payment in escrow
+                        {t('pages.howItWorks.forSellers.steps.step4.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Clear order details and requirements
+                        {t('pages.howItWorks.forSellers.steps.step4.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -509,27 +489,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Ship & Track
+                        {t('pages.howItWorks.forSellers.steps.step5.title')}
                       </h3>
                       <Truck className="h-5 w-5 text-green-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Pack and ship the order using your preferred carrier. Add
-                      tracking information so buyers can monitor their shipment
-                      in real-time.
+                      {t('pages.howItWorks.forSellers.steps.step5.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Integrate with major carriers
+                        {t('pages.howItWorks.forSellers.steps.step5.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Auto-update buyer on shipment status
+                        {t('pages.howItWorks.forSellers.steps.step5.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Print shipping labels directly
+                        {t('pages.howItWorks.forSellers.steps.step5.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -547,27 +525,25 @@ export default function HowItWorks() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold">
-                        Receive Payment & Build Reputation
+                        {t('pages.howItWorks.forSellers.steps.step6.title')}
                       </h3>
                       <Star className="h-5 w-5 text-green-600" />
                     </div>
                     <p className="text-muted-foreground mb-3">
-                      Once buyer confirms receipt, payment is released to your
-                      account. Build your reputation through positive ratings
-                      and reviews to attract more customers.
+                      {t('pages.howItWorks.forSellers.steps.step6.description')}
                     </p>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Instant payout upon confirmation
+                        {t('pages.howItWorks.forSellers.steps.step6.feature1')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Build seller rating and reviews
+                        {t('pages.howItWorks.forSellers.steps.step6.feature2')}
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        Access seller analytics dashboard
+                        {t('pages.howItWorks.forSellers.steps.step6.feature3')}
                       </li>
                     </ul>
                   </div>
@@ -596,13 +572,10 @@ export default function HowItWorks() {
                   <HelpCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold text-lg mb-2">
-                      Is it safe to buy on Pluribus?
+                      {t('pages.howItWorks.faq.questions.q1.question')}
                     </h3>
                     <p className="text-muted-foreground">
-                      Yes! Pluribus uses escrow protection for all transactions.
-                      Your payment is held securely until you confirm receipt of
-                      the product. We also verify seller identities and maintain
-                      a transparent review system.
+                      {t('pages.howItWorks.faq.questions.q1.answer')}
                     </p>
                   </div>
                 </div>
@@ -616,13 +589,10 @@ export default function HowItWorks() {
                   <HelpCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold text-lg mb-2">
-                      What are the payment methods?
+                      {t('pages.howItWorks.faq.questions.q2.question')}
                     </h3>
                     <p className="text-muted-foreground">
-                      We accept all major credit and debit cards through Stripe
-                      integration. Additional payment methods may be available
-                      depending on your location. All payments are encrypted and
-                      secure.
+                      {t('pages.howItWorks.faq.questions.q2.answer')}
                     </p>
                   </div>
                 </div>
@@ -636,13 +606,10 @@ export default function HowItWorks() {
                   <HelpCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold text-lg mb-2">
-                      How long does shipping take?
+                      {t('pages.howItWorks.faq.questions.q3.question')}
                     </h3>
                     <p className="text-muted-foreground">
-                      Shipping times vary depending on the seller's location and
-                      your destination. Each product listing shows estimated
-                      delivery times. International shipments typically take 7-30
-                      days depending on the route.
+                      {t('pages.howItWorks.faq.questions.q3.answer')}
                     </p>
                   </div>
                 </div>
@@ -656,13 +623,10 @@ export default function HowItWorks() {
                   <HelpCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold text-lg mb-2">
-                      What if I don't receive my order?
+                      {t('pages.howItWorks.faq.questions.q4.question')}
                     </h3>
                     <p className="text-muted-foreground">
-                      We have a comprehensive buyer protection policy. If you
-                      don't receive your order, contact us immediately with
-                      tracking information. We'll work with the seller and
-                      carrier to resolve the issue or provide a refund.
+                      {t('pages.howItWorks.faq.questions.q4.answer')}
                     </p>
                   </div>
                 </div>
@@ -676,13 +640,10 @@ export default function HowItWorks() {
                   <HelpCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold text-lg mb-2">
-                      Are there any hidden fees?
+                      {t('pages.howItWorks.faq.questions.q5.question')}
                     </h3>
                     <p className="text-muted-foreground">
-                      No hidden fees! For buyers, you see the full price upfront
-                      including shipping. For sellers, we charge a small
-                      transaction fee (clearly disclosed) to cover payment
-                      processing and platform maintenance.
+                      {t('pages.howItWorks.faq.questions.q5.answer')}
                     </p>
                   </div>
                 </div>
@@ -696,13 +657,10 @@ export default function HowItWorks() {
                   <HelpCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold text-lg mb-2">
-                      How do I become a seller?
+                      {t('pages.howItWorks.faq.questions.q6.question')}
                     </h3>
                     <p className="text-muted-foreground">
-                      Sign up for a seller account, complete your business
-                      profile, and add your products. Our team will verify your
-                      information, and once approved, you can start accepting
-                      orders within 24-48 hours.
+                      {t('pages.howItWorks.faq.questions.q6.answer')}
                     </p>
                   </div>
                 </div>
@@ -716,13 +674,10 @@ export default function HowItWorks() {
                   <HelpCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold text-lg mb-2">
-                      Can I request custom items?
+                      {t('pages.howItWorks.faq.questions.q7.question')}
                     </h3>
                     <p className="text-muted-foreground">
-                      Absolutely! Message sellers directly to discuss custom
-                      orders or special requests. Many sellers are happy to
-                      accommodate specific requirements. You can negotiate terms
-                      and pricing through our chat feature.
+                      {t('pages.howItWorks.faq.questions.q7.answer')}
                     </p>
                   </div>
                 </div>
@@ -736,13 +691,10 @@ export default function HowItWorks() {
                   <HelpCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold text-lg mb-2">
-                      What about customs and taxes?
+                      {t('pages.howItWorks.faq.questions.q8.question')}
                     </h3>
                     <p className="text-muted-foreground">
-                      Buyers are responsible for any customs duties or import
-                      taxes based on their country's regulations. Sellers will
-                      declare the item value accurately on customs forms. Check
-                      your local customs regulations before ordering.
+                      {t('pages.howItWorks.faq.questions.q8.answer')}
                     </p>
                   </div>
                 </div>
@@ -766,10 +718,9 @@ export default function HowItWorks() {
             <Card>
               <CardContent className="pt-6">
                 <Lock className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Secure Payments</h3>
+                <h3 className="font-semibold mb-2">{t('pages.howItWorks.security.features.securePayments.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  All transactions processed through Stripe with industry-leading
-                  encryption and fraud detection
+                  {t('pages.howItWorks.security.features.securePayments.description')}
                 </p>
               </CardContent>
             </Card>
@@ -777,10 +728,9 @@ export default function HowItWorks() {
             <Card>
               <CardContent className="pt-6">
                 <Shield className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Escrow Protection</h3>
+                <h3 className="font-semibold mb-2">{t('pages.howItWorks.security.features.escrowProtection.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Funds held securely until buyer confirms receipt and seller
-                  protection against chargebacks
+                  {t('pages.howItWorks.security.features.escrowProtection.description')}
                 </p>
               </CardContent>
             </Card>
@@ -788,10 +738,9 @@ export default function HowItWorks() {
             <Card>
               <CardContent className="pt-6">
                 <Users className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Verified Users</h3>
+                <h3 className="font-semibold mb-2">{t('pages.howItWorks.security.features.verifiedUsers.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Email verification and seller account validation ensure you're
-                  communicating with legitimate users
+                  {t('pages.howItWorks.security.features.verifiedUsers.description')}
                 </p>
               </CardContent>
             </Card>
@@ -799,10 +748,9 @@ export default function HowItWorks() {
             <Card>
               <CardContent className="pt-6">
                 <Star className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Transparent Reviews</h3>
+                <h3 className="font-semibold mb-2">{t('pages.howItWorks.security.features.transparentReviews.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Verified purchase reviews with seller response ratings help
-                  identify trustworthy partners
+                  {t('pages.howItWorks.security.features.transparentReviews.description')}
                 </p>
               </CardContent>
             </Card>
@@ -810,10 +758,9 @@ export default function HowItWorks() {
             <Card>
               <CardContent className="pt-6">
                 <MessageSquare className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Direct Communication</h3>
+                <h3 className="font-semibold mb-2">{t('pages.howItWorks.security.features.directCommunication.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  All messages routed through our platform for transparency and
-                  dispute resolution support
+                  {t('pages.howItWorks.security.features.directCommunication.description')}
                 </p>
               </CardContent>
             </Card>
@@ -821,10 +768,9 @@ export default function HowItWorks() {
             <Card>
               <CardContent className="pt-6">
                 <CreditCard className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Buyer Protection</h3>
+                <h3 className="font-semibold mb-2">{t('pages.howItWorks.security.features.buyerProtection.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Comprehensive claims process protects against fraud and
-                  non-delivery issues
+                  {t('pages.howItWorks.security.features.buyerProtection.description')}
                 </p>
               </CardContent>
             </Card>

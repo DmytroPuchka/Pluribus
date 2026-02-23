@@ -3,14 +3,13 @@
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Upload, Check, X, ArrowLeft, Star } from "lucide-react"
+import { Check, X, ArrowLeft, Star } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Form,
   FormField,
@@ -27,7 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { AvatarUpload } from "@/components/features/AvatarUpload"
 import { profileFormSchema, changePasswordSchema, type ProfileFormData, type ChangePasswordData } from "./schema"
 import { useTranslations } from '@/contexts/TranslationsContext'
 import { useAuth } from '@/contexts/AuthContext'
@@ -41,7 +40,6 @@ export default function ProfilePage() {
   const { t, language } = useTranslations()
   const { user, refreshUser, isLoading: authLoading } = useAuth()
   const router = useRouter()
-  const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null)
   const [isPasswordOpen, setIsPasswordOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isPasswordChanging, setIsPasswordChanging] = useState(false)
@@ -134,16 +132,9 @@ export default function ProfilePage() {
     },
   })
 
-  const onProfilePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        const result = reader.result as string
-        setProfilePhotoPreview(result)
-      }
-      reader.readAsDataURL(file)
-    }
+  const handleAvatarUploadSuccess = async (url: string) => {
+    // Refresh user data to show new avatar
+    await refreshUser()
   }
 
   const onSubmit = async (data: ProfileFormData) => {
@@ -156,7 +147,6 @@ export default function ProfilePage() {
         country: data.country,
         city: data.city,
         deliveryCountries: data.role === 'SELLER' ? data.deliveryCountries : undefined,
-        // TODO: Add avatar upload with Cloudinary
       })
 
       // Refresh user data
@@ -165,8 +155,6 @@ export default function ProfilePage() {
       toast.success('Profile updated!', {
         description: 'Your profile has been updated successfully.',
       })
-
-      setProfilePhotoPreview(null)
     } catch (error: any) {
       console.error('Profile update error:', error)
       const errorMessage = error?.response?.data?.error || 'Failed to update profile'
@@ -188,17 +176,6 @@ export default function ProfilePage() {
       setIsPasswordChanging(false)
     }
   }
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map(n => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2)
-  }
-
-  const displayPhoto = profilePhotoPreview || user?.avatar
 
   // Show loading state
   if (authLoading || !user) {
@@ -227,16 +204,6 @@ export default function ProfilePage() {
   return (
     <div className="container py-8 md:py-12">
       <div className="max-w-4xl">
-        {/* Back Button */}
-        <div className="mb-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              {t('common.buttons.back')}
-            </Link>
-          </Button>
-        </div>
-
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">{t('pages.dashboard.profile.title')}</h1>
           <p className="text-muted-foreground mt-2">
@@ -253,41 +220,12 @@ export default function ProfilePage() {
                 {t('pages.dashboard.profile.photo.description')}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-end gap-6">
-                <Avatar className="h-24 w-24">
-                  <AvatarImage src={displayPhoto || undefined} alt={user.name} />
-                  <AvatarFallback className="text-lg font-semibold">
-                    {getInitials(user.name)}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div className="flex-1">
-                  <Label htmlFor="profile-photo" className="block mb-2">
-                    {t('pages.dashboard.profile.photo.upload')}
-                  </Label>
-                  <div className="flex items-center gap-3">
-                    <Input
-                      id="profile-photo"
-                      type="file"
-                      accept="image/*"
-                      onChange={onProfilePhotoChange}
-                      className="flex-1"
-                    />
-                    {profilePhotoPreview && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setProfilePhotoPreview(null)}
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        {t('pages.dashboard.profile.photo.clear')}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
+            <CardContent>
+              <AvatarUpload
+                currentAvatar={user.avatar}
+                userName={user.name}
+                onUploadSuccess={handleAvatarUploadSuccess}
+              />
             </CardContent>
           </Card>
 

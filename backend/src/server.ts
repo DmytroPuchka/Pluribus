@@ -16,6 +16,7 @@ import { rateLimiter } from './config/rateLimiter';
 import logger from './config/logger';
 import { connectDatabase, disconnectDatabase } from './config/database';
 import { configurePassport } from './config/passport';
+import { configureCloudinary } from './config/cloudinary';
 
 // Import routes
 import authRoutes from './routes/authRoutes';
@@ -25,6 +26,7 @@ import ordersRoutes from './routes/ordersRoutes';
 import reviewsRoutes from './routes/reviewsRoutes';
 import customOrdersRoutes from './routes/customOrdersRoutes';
 import adminRoutes from './routes/adminRoutes';
+import uploadRoutes from './routes/uploadRoutes';
 
 // Import error handler middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -74,6 +76,7 @@ app.get(`/api/${API_VERSION}`, (_req: Request, res: Response) => {
       reviews: `/api/${API_VERSION}/reviews`,
       customOrders: `/api/${API_VERSION}/custom-orders`,
       admin: `/api/${API_VERSION}/admin`,
+      upload: `/api/${API_VERSION}/upload`,
     },
   });
 });
@@ -86,6 +89,7 @@ app.use(`/api/${API_VERSION}/orders`, ordersRoutes);
 app.use(`/api/${API_VERSION}/reviews`, reviewsRoutes);
 app.use(`/api/${API_VERSION}/custom-orders`, customOrdersRoutes);
 app.use(`/api/${API_VERSION}/admin`, adminRoutes);
+app.use(`/api/${API_VERSION}/upload`, uploadRoutes);
 
 // Error handling middleware
 app.use(notFound); // 404 handler
@@ -116,6 +120,9 @@ process.on('SIGINT', gracefulShutdown);
 // Start server
 const startServer = async () => {
   try {
+    // Configure Cloudinary
+    configureCloudinary();
+
     // Connect to database
     await connectDatabase();
 

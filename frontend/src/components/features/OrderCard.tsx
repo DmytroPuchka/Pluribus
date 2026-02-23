@@ -38,10 +38,12 @@ const statusColors: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
   ACCEPTED: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
   PAID: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+  PROCESSING: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300',
   SHIPPED: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
   DELIVERED: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
   COMPLETED: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
   CANCELLED: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+  REFUNDED: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
 };
 
 export function OrderCard({ order: initialOrder }: OrderCardProps) {
@@ -72,12 +74,19 @@ export function OrderCard({ order: initialOrder }: OrderCardProps) {
   // Get available status transitions based on current status
   const getAvailableStatuses = (): OrderStatus[] => {
     const transitions: Record<string, OrderStatus[]> = {
+      // Order pending seller confirmation
       PENDING: ['ACCEPTED', 'CANCELLED'],
-      ACCEPTED: ['PAID', 'PROCESSING'],
-      PAID: ['PROCESSING'],
-      PROCESSING: ['SHIPPED'],
+      // Order confirmed by seller - can proceed to payment or processing
+      ACCEPTED: ['PAID', 'PROCESSING', 'CANCELLED'],
+      // Order paid - ready for processing
+      PAID: ['PROCESSING', 'CANCELLED'],
+      // Order being processed - ready to ship
+      PROCESSING: ['SHIPPED', 'CANCELLED'],
+      // Order shipped - on the way to customer
       SHIPPED: ['DELIVERED'],
-      DELIVERED: [],
+      // Order delivered - can be refunded if needed
+      DELIVERED: ['REFUNDED'],
+      // Terminal states
       CANCELLED: [],
       REFUNDED: [],
     };
@@ -246,7 +255,7 @@ export function OrderCard({ order: initialOrder }: OrderCardProps) {
               </div>
             </div>
             <Badge className={statusColors[order.status] || ''}>
-              {order.status}
+              {t(`pages.dashboard.orderStatus.${order.status}`)}
             </Badge>
           </div>
         </CardHeader>
@@ -327,7 +336,9 @@ export function OrderCard({ order: initialOrder }: OrderCardProps) {
           {/* Seller Status Management */}
           {isSeller && getAvailableStatuses().length > 0 && (
             <div className="border-t pt-4">
-              <Label className="text-sm font-medium mb-2 block">Update Order Status</Label>
+              <Label className="text-sm font-medium mb-2 block">
+                {t('components.orderCard.updateOrderStatus')}
+              </Label>
               <div className="flex gap-2">
                 <Select
                   value={order.status}
@@ -338,10 +349,12 @@ export function OrderCard({ order: initialOrder }: OrderCardProps) {
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={order.status}>{order.status}</SelectItem>
+                    <SelectItem value={order.status}>
+                      {t(`pages.dashboard.orderStatus.${order.status}`)}
+                    </SelectItem>
                     {getAvailableStatuses().map((status) => (
                       <SelectItem key={status} value={status}>
-                        {status}
+                        {t(`pages.dashboard.orderStatus.${status}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
