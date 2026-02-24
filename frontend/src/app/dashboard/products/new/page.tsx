@@ -28,21 +28,12 @@ export default function NewProductPage() {
   const handleSubmit = async (data: ProductFormData) => {
     setIsSubmitting(true);
     try {
-      // TODO: Upload photos to Cloudinary and get URLs
-      // For now, use placeholder URLs for uploaded photos
-      const photoUrls = data.existingPhotos || [];
-      if (data.photos && data.photos.length > 0) {
-        // Placeholder: In production, upload to Cloudinary here
-        data.photos.forEach((file, index) => {
-          photoUrls.push(`https://via.placeholder.com/500?text=Product+Photo+${index + 1}`);
-        });
-      }
-
+      // Photos are already uploaded to Cloudinary by ProductForm component
       // Create product via API
       await productsService.createProduct({
         title: data.title,
         description: data.description,
-        photos: photoUrls,
+        photos: data.photos,
         price: data.price,
         category: data.category,
         stockQuantity: 999999, // Default unlimited stock

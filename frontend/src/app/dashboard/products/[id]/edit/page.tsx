@@ -72,21 +72,12 @@ export default function EditProductPage() {
   const handleSubmit = async (data: ProductFormData) => {
     setIsSubmitting(true);
     try {
-      // Handle photos: combine existing + new uploads
-      const photoUrls = data.existingPhotos || [];
-      if (data.photos && data.photos.length > 0) {
-        // TODO: Upload new photos to Cloudinary and get URLs
-        // For now, use placeholder URLs for uploaded photos
-        data.photos.forEach((file, index) => {
-          photoUrls.push(`https://via.placeholder.com/500?text=Product+Photo+${photoUrls.length + index + 1}`);
-        });
-      }
-
+      // Photos are already uploaded to Cloudinary by ProductForm component
       // Update product via API
       const updateData = {
         title: data.title,
         description: data.description,
-        photos: photoUrls,
+        photos: data.photos,
         price: data.price,
         currency: data.currency,
         category: data.category,

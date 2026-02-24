@@ -113,6 +113,29 @@ export function ProductForm({ product, onSubmit, onCancel, isSubmitting }: Produ
     },
   });
 
+  // Update photoUrls when product prop changes
+  useEffect(() => {
+    if (product?.photos) {
+      setPhotoUrls(product.photos);
+    }
+  }, [product?.photos]);
+
+  // Update form when product prop changes
+  useEffect(() => {
+    if (product) {
+      form.reset({
+        title: product.title,
+        description: product.description,
+        price: Number(product.price),
+        currency: product.currency,
+        category: product.category,
+        photos: product.photos,
+        isAvailable: product.isAvailable ?? true,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
+
   const handlePhotoUpload = async (files: File[]): Promise<string[]> => {
     try {
       const uploadPromises = files.map(async (file) => {
